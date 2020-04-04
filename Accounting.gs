@@ -10,29 +10,35 @@ function onUpdateSupplierAccountSummary() {
 //=============================================================================================
 // Class SupplierAccountBuilder
 //
-var SupplierAccountBuilder = function(targetRangeName) {
-  this.targetRangeName = targetRangeName;
-  this.targetRange = Range.getByName(targetRangeName);
-  this.targetSheet = this.targetRange.getSheet();
-  this.targetRowOffset = 0;
-  trace("NEW " + this.trace());
-}
+class SupplierAccountBuilder {
+  constructor(targetRangeName) {
+    this.targetRangeName = targetRangeName;
+    this.targetRange = CellRange.getByName(targetRangeName);
+    this.targetSheet = this.targetRange.sheet;
+    this.targetRowOffset = 0;
+    trace(`NEW ${this.trace}`);
+  }
 
-SupplierAccountBuilder.prototype.onBegin = function() {
-  trace("SupplierAccountBuilder.onBegin - reset context");
-}
+  onBegin() {
+    trace("SupplierAccountBuilder.onBegin - reset context");
+  }
 
-SupplierAccountBuilder.prototype.onEnd = function() {
-  trace("SupplierAccountBuilder.onEnd - fill final title sum & autofit");
-}
+  onEnd() {
+    trace("SupplierAccountBuilder.onEnd - fill final title sum & autofit");
+  }
 
-SupplierAccountBuilder.prototype.onTitle = function(row) {
-  this.currentTitle = row.getTitle();
-}
+  onTitle(row) {
+    this.currentTitle = row.title;
+  }
   
-SupplierAccountBuilder.prototype.onRow = function(row) {
-}
+  onRow(row) {
+    let supplier = row.supplier;
+    if (supplier != "") {
+      trace(`SupplierAccountBuilder.onRow ${supplier}`);
+    }
+  }
 
-SupplierAccountBuilder.prototype.trace = function() {
-  return "{SupplierAccountBuilder " + Range.trace(this.targetRange) + "}";
+  get trace() {
+    return `{SupplierAccountBuilder ${this.targetRange.trace}}`;
+  }
 }

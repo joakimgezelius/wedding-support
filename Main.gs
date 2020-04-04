@@ -7,24 +7,24 @@
 globalLibName = "Undefined";
 
 function onOpen() { // For backward compatibility
-  trace("onOpen globalLibName=" +globalLibName);
+  trace(`onOpen globalLibName=${globalLibName}`);
   addWeddingMenu();
 }
 
 function onWeddingSheetOpen(libName) { // onWeddingSheetOpen("WedLib");
-  trace("onWeddingSheetOpen globalLibName=" + libName);
+  trace(`onWeddingSheetOpen globalLibName=${libName}`);
   globalLibName = libName;
   addWeddingMenu();
 }
 
 function onRotaSheetOpen(libName) {
-  trace("onRotaSheetOpen globalLibName=" + libName);
+  trace(`onRotaSheetOpen globalLibName=${libName}`);
   globalLibName = libName;
   addRotaMenu();
 }
 
 function onQuoteSheetOpen(libName) {
-  trace("onQuoteSheetOpen globalLibName=" + libName);
+  trace(`onQuoteSheetOpen globalLibName=${libName}`);
   globalLibName = libName;
   addQuoteMenu();
 }

@@ -1,29 +1,54 @@
+//=============================================================================================
+// Class CellRange
+//
+
+class CellRange {
+  constructor(range) {
+    this.myRange = range;
+  }
+  
+  clear() {
+    trace(`clear ${this.trace}`);
+    Range.clear(this.range);
+  }
+
+  static getByName(rangeName, spreadsheet) {
+    let cellRange = new CellRange(Range.getByName(rangeName, spreadsheet));
+    trace(`CellRange.getByName ${rangeName} --> ${cellRange.trace}`);
+    return cellRange;
+  }
+
+  get range()  { return this.myRange; }
+  get trace()  { return `{CellRange ${Range.trace(this.range)}}`; }
+  get sheet()  { return this.myRange.getSheet(); }
+  get values() { return this.myRange.getValues(); }
+  get height() { return this.myRange.getHeight(); }
+}
+
 
 //=============================================================================================
 // Class Range
 //
 
-var Range = function() {
-}
-
-Range.clear = function(range) {
-  trace("Range.clear " + range);
-  range.setValue("");
-}
-
-Range.getByName = function(rangeName, spreadsheet) {
-  if (spreadsheet == null) {
-    spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+class Range {
+  static clear(range) {
+    trace(`Range.clear  ${Range.trace(range)}`);
+    range.setValue("");
   }
-  var range = spreadsheet.getRangeByName(rangeName)
-  if (range === null) {
-    Error.fatal("Cannot find named range " + rangeName);
+
+  static getByName(rangeName, spreadsheet) {
+    if (spreadsheet == null) {
+      spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+    }
+    let range = spreadsheet.getRangeByName(rangeName)
+    if (range === null) {
+      Error.fatal(`Cannot find named range ${rangeName}`);
+    }
+    trace(`Range.getByName ${rangeName} --> ${Range.trace(range)}`);
+    return range;
   }
-  trace("Range.getByName " + rangeName + " --> " + Range.trace(range));
-  return range;
-}
 
-Range.trace = function(range) {
-  return "{" + range.getSheet().getName() + "!" + range.getA1Notation() + "}";
+  static trace(range) {
+    return `[${range.getSheet().getName()}!${range.getA1Notation()}]`;
+  }
 }
-
