@@ -4,7 +4,6 @@ function onUpdateBudget() {
   var eventDetailsIterator = new EventDetailsIterator();
   var budgetBuilder = new BudgetBuilder("Budget");
   eventDetailsIterator.iterate(budgetBuilder);
-  
 }
 
 //=============================================================================================
