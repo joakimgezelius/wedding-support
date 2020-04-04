@@ -1,34 +1,34 @@
 // var ui = SpreadsheetApp.getUi();
 
-function addEventMenu() {
-  trace("> Adding custom event menu");
+function addWeddingMenu() {
+  trace("> Adding custom wedding menu");
   var ui = SpreadsheetApp.getUi();
-  ui.createMenu('Event')
-      .addItem('Create New Client Sheet', globalLibName + '.onCreateNewClient')
-      .addItem('Clear Sheet', globalLibName + '.onClearSheet')
-      .addSeparator()
-      .addItem('Pull Client Information', globalLibName + '.onPullClientInformation') // in client.gs
-      .addSeparator()
-      .addItem('Update Coordinator', globalLibName + '.onUpdateCoordinator')
-      .addItem('Check Coordinator', globalLibName + '.onCheckCoordinator')
+  ui.createMenu('Wedding')
+      //.addItem('Create New Client Sheet', globalLibName + '.onCreateNewClient')
+      //.addItem('Clear Sheet', globalLibName + '.onClearSheet')
+      //.addSeparator()
+      //.addItem('Pull Client Information', globalLibName + '.onPullClientInformation') // in client.gs
+      //.addSeparator()
+      //.addItem('Update Coordinator', globalLibName + '.onUpdateCoordinator')
+      //.addItem('Check Coordinator', globalLibName + '.onCheckCoordinator')
       .addItem('Update Budget', globalLibName + '.onUpdateBudget')
-      .addItem('Update Itinerary', globalLibName + '.onUpdateItinerary') // In itinerary.gs
+      //.addItem('Update Itinerary', globalLibName + '.onUpdateItinerary') // In itinerary.gs
       .addItem('Update Decor Sumamry', globalLibName + '.onUpdateDecorSummary')
-      .addItem('Update Suppliers', globalLibName + '.onUpdateSuppliers')
-      .addItem('Update Rota', globalLibName + '.onUpdateRota')
+      //.addItem('Update Suppliers', globalLibName + '.onUpdateSuppliers')
+      //.addItem('Update Rota', globalLibName + '.onUpdateRota')
       .addSeparator()
-      .addSubMenu(ui.createMenu('Tasks')
-                  .addItem('Small Wedding', globalLibName + '.onShowSmallWeddingTasks')
-                  .addItem('Big Wedding', globalLibName + '.onShowBigWeddingTasks')
-                  .addItem('Show All', globalLibName + '.onShowAllTasks')
-                  )
+      //.addSubMenu(ui.createMenu('Tasks')
+      //            .addItem('Small Wedding', globalLibName + '.onShowSmallWeddingTasks')
+      //            .addItem('Big Wedding', globalLibName + '.onShowBigWeddingTasks')
+      //            .addItem('Show All', globalLibName + '.onShowAllTasks')
+      //            )
       .addSubMenu(ui.createMenu('Helpers')
                   .addItem('Set Colour', globalLibName + '.onSetColour')
                   )
       .addSeparator()
       .addItem('Update Exchange Rates', globalLibName + '.onUpdateExchangeRates')
       .addToUi();
-  trace("< Custom event menu added");
+  trace("< Custom wedding menu added");
 }
 
 function addTestMenu() {

@@ -1,30 +1,30 @@
-// This script library is the main entry point for the Event Summary spreadsheets
+// This script library is the main entry point for the Wedding Summary spreadsheets
 // It can be accessed by referencing it using the script ID:
 //
-//  ScriptID: 1p3MGZxgnlKyi5cthDWd22lfSE6GWmy2LOhJrsSY05qjsk4DPs2n2xdEo
-//  SDC key:  53741d44402f4b2c
+//  ScriptID: 1CiKOqQNFxdyAR5PZ7GaJDnGyZfrh-b-rJIlyCFAI2ABvu8yV1pCmm3ER
+//  SDC key:  ef0d427283541f50
 
-globalLibName = "Event";
+globalLibName = "Undefined";
 
 function onOpen() { // For backward compatibility
-  trace("onOpen");
-  addEventMenu();
+  trace("onOpen globalLibName=" +globalLibName);
+  addWeddingMenu();
 }
 
-function onEventSheetOpen(libName) {
-  trace("onEventSheetOpen " + libName);
+function onWeddingSheetOpen(libName) { // onWeddingSheetOpen("WedLib");
+  trace("onWeddingSheetOpen globalLibName=" + libName);
   globalLibName = libName;
-  addEventMenu();
+  addWeddingMenu();
 }
 
 function onRotaSheetOpen(libName) {
-  trace("onRotaSheetOpen");
+  trace("onRotaSheetOpen globalLibName=" + libName);
   globalLibName = libName;
   addRotaMenu();
 }
 
 function onQuoteSheetOpen(libName) {
-  trace("onQuoteSheetOpen");
+  trace("onQuoteSheetOpen globalLibName=" + libName);
   globalLibName = libName;
   addQuoteMenu();
 }
