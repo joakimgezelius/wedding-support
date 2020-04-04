@@ -21,9 +21,11 @@ DecorSummaryBuilder.prototype.onBegin = function() {
   trace("DecorSummaryBuilder.onBegin - reset context");
   this.targetRowOffset = 0;
   // Delete all but the first and the last row in the target range
+  this.targetRange.breakApart().setFontWeight("normal").setFontSize(10).setBackground("#ffffff").setWrap(true);
   var targetRangeHeight = this.targetRange.getHeight();
   if (targetRangeHeight > 2) {
     this.targetRange.getSheet().deleteRows(this.targetRange.getRowIndex() + 1, targetRangeHeight - 2);
+    this.targetRange = Range.getByName(this.targetRangeName); // Reload the range as it has changed now
   }
   this.targetRange.setValue("").setFontWeight("normal").setFontSize(10);
 }
@@ -36,7 +38,8 @@ DecorSummaryBuilder.prototype.onTitle = function(row) {
   trace("DecorSummaryBuilder.onTitle " + row.getTitle());
   if (row.isDecorTicked()) { // This is a decor summary item
     var targetRow = this.getNextTargetRow();
-    targetRow.getCell(1,3).setValue(row.getTitle()).setFontWeight("bold").setFontSize(14);
+    targetRow.merge();
+    targetRow.getCell(1,1).setValue(row.getTitle()).setFontWeight("bold").setFontSize(14).setBackground("#f2f0ef");
   }
 }
 
@@ -46,13 +49,19 @@ DecorSummaryBuilder.prototype.onRow = function(row) {
     var targetRow = this.getNextTargetRow();
     var column = 1;
     var image = "";
-    targetRow.getCell(1,column++).setValue(image);
+    var itemStoreLocation = "";
+//  targetRow.getCell(1,column++).setValue(image);
+    targetRow.getCell(1,column++).setValue(itemStoreLocation);
+    targetRow.getCell(1,column++).setValue(row.getSupplier());
+    targetRow.getCell(1,column++).setValue(row.getDate());
+    targetRow.getCell(1,column++).setValue(row.getStartTime());
+    targetRow.getCell(1,column++).setValue(row.getEndTime());
+    targetRow.getCell(1,column++).setValue(row.getWho());
     targetRow.getCell(1,column++).setValue(row.getLocation());
     targetRow.getCell(1,column++).setValue(row.getDescription());
     targetRow.getCell(1,column++).setValue(row.getQuantity());
-    targetRow.getCell(1,column++).setValue(row.getUnitPrice());
-    targetRow.getCell(1,column++).setValue(row.getTotalPrice());
-    targetRow.getCell(1,column++).setValue(row.getClientNotes());
+    targetRow.getCell(1,column++).setValue(row.getLinks());
+    targetRow.getCell(1,column++).setValue(row.getNotes());
   }
 }
   
@@ -61,6 +70,7 @@ DecorSummaryBuilder.prototype.onRow = function(row) {
 DecorSummaryBuilder.prototype.getNextTargetRow = function() {
   var targetRow = this.targetRange.offset(this.targetRowOffset++, 0, 1); // A range of 1 row height
   targetRow.getSheet().insertRowAfter(targetRow.getRowIndex());
+  targetRow.breakApart().setFontWeight("normal").setFontSize(10).setBackground("#ffffff");
   return targetRow;
 }
   

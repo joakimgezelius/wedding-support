@@ -19,7 +19,7 @@ var SupplierSummaryBuilder = function(targetRangeName) {
 }
 
 SupplierSummaryBuilder.prototype.onBegin = function() {
-  trace("InvoiceSummaryBuilder.onBegin - reset context");
+  trace("SupplierSummaryBuilder.onBegin - reset context");
   this.currentTitle = "";
   this.currentTitleSumCell = null;
   this.currentTitleSum = 0;
@@ -34,7 +34,7 @@ SupplierSummaryBuilder.prototype.onBegin = function() {
 }
 
 SupplierSummaryBuilder.prototype.onEnd = function() {
-  trace("InvoiceSummaryBuilder.onEnd - fill final title sum & autofit");
+  trace("SupplierSummaryBuilder.onEnd - fill final title sum & autofit");
   this.fillTitleSum(null);
   this.targetSheet.setColumnWidth(1, 1);
   this.targetSheet.setColumnWidth(2, 500);
@@ -43,7 +43,7 @@ SupplierSummaryBuilder.prototype.onEnd = function() {
 
 SupplierSummaryBuilder.prototype.onTitle = function(row) {
   this.currentTitle = row.getTitle();
-  trace("InvoiceSummaryBuilder.onTitle " + this.currentTitle);
+  trace("SupplierSummaryBuilder.onTitle " + this.currentTitle);
   this.getNextTargetRow(); // Leave one blank row
   var targetRow = this.getNextTargetRow();
   var column = 1;
@@ -59,7 +59,7 @@ SupplierSummaryBuilder.prototype.onTitle = function(row) {
 SupplierSummaryBuilder.prototype.onRow = function(row) {
   var totalPrice = row.getTotalPrice();
   if (totalPrice > 0) {
-    trace("InvoiceSummaryBuilder.onRow " + row.getDescription());
+    trace("SupplierSummaryBuilder.onRow " + row.getDescription());
     var targetRow = this.getNextTargetRow();
     var column = 1;
     targetRow.getCell(1,column++).setValue(this.currentTitle);
@@ -71,7 +71,7 @@ SupplierSummaryBuilder.prototype.onRow = function(row) {
     targetRow.setFontSize(10);
     this.currentTitleSum += totalPrice;
   } else {
-    trace("InvoiceSummaryBuilder.onRow - ignore (no price): " + row.getDescription());
+    trace("SupplierSummaryBuilder.onRow - ignore (no price): " + row.getDescription());
   }
 }
 
@@ -90,5 +90,5 @@ SupplierSummaryBuilder.prototype.getNextTargetRow = function() {
 }
 
 SupplierSummaryBuilder.prototype.trace = function() {
-  return "{InvoiceSummaryBuilder " + Range.trace(this.targetRange) + "}";
+  return "{SupplierSummaryBuilder " + Range.trace(this.targetRange) + "}";
 }

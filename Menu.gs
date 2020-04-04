@@ -11,7 +11,7 @@ function addEventMenu() {
       .addSeparator()
       .addItem('Update Coordinator', globalLibName + '.onUpdateCoordinator')
       .addItem('Check Coordinator', globalLibName + '.onCheckCoordinator')
-      .addItem('Update Invoice Sumamry', globalLibName + '.onUpdateInvoiceSummary')
+      .addItem('Update Budget', globalLibName + '.onUpdateBudget')
       .addItem('Update Itinerary', globalLibName + '.onUpdateItinerary') // In itinerary.gs
       .addItem('Update Decor Sumamry', globalLibName + '.onUpdateDecorSummary')
       .addItem('Update Suppliers', globalLibName + '.onUpdateSuppliers')
@@ -21,6 +21,9 @@ function addEventMenu() {
                   .addItem('Small Wedding', globalLibName + '.onShowSmallWeddingTasks')
                   .addItem('Big Wedding', globalLibName + '.onShowBigWeddingTasks')
                   .addItem('Show All', globalLibName + '.onShowAllTasks')
+                  )
+      .addSubMenu(ui.createMenu('Helpers')
+                  .addItem('Set Colour', globalLibName + '.onSetColour')
                   )
       .addSeparator()
       .addItem('Update Exchange Rates', globalLibName + '.onUpdateExchangeRates')

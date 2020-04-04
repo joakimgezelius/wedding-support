@@ -118,6 +118,8 @@ EventRow.prototype.isTitle            = function() { return this.getCategory() =
 EventRow.prototype.getTitle           = function() { return this.get("Description"); }
 EventRow.prototype.getDate            = function() { return this.get("Date"); }
 EventRow.prototype.getTime            = function() { return this.get("Time"); }
+EventRow.prototype.getStartTime       = function() { return this.get("Time"); }
+EventRow.prototype.getEndTime         = function() { return this.get("EndTime"); }
 EventRow.prototype.getLocation        = function() { return this.get("Location"); }
 EventRow.prototype.getDescription     = function() { return this.get("Description"); }
 EventRow.prototype.getCurrency        = function() { return this.get("Currency"); }
@@ -128,8 +130,10 @@ EventRow.prototype.getMarkup          = function() { return this.get("Markup"); 
 EventRow.prototype.getUnitPrice       = function() { return this.get("UnitPrice"); }
 EventRow.prototype.getTotalPrice      = function() { return this.get("TotalPrice"); }
 EventRow.prototype.getItemNotes       = function() { return this.get("ItemNotes"); }
+EventRow.prototype.getNotes           = function() { return this.get("ItemNotes"); }
 EventRow.prototype.getClientNotes     = function() { return ""; } // this.get("ItemNotes"); }
 EventRow.prototype.getInventoryNotes  = function() { return ""; } // this.get("ItemNotes"); }
+EventRow.prototype.getLinks           = function() { return this.get("Links"); }
   
 EventRow.prototype.compareTime = function(other) {
   var result = 0;

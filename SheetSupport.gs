@@ -54,3 +54,9 @@ function HIDEZERO(value) {
   return (value == 0 ? "" : value);
 }
 
+function onSetColour() {
+  var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  var cell = spreadsheet.getActiveSheet().getActiveCell()
+  cell.setBackground(cell.getValue());
+  trace("onSetColour " + cell.getValue());
+}
