@@ -11,7 +11,6 @@ function onUpdateBudget() {
 //
 class BudgetBuilder {
   constructor(targetRangeName) {
-    this.targetRangeName = targetRangeName;
     this.targetRange = CRange.getByName(targetRangeName);
     this.targetSheet = this.targetRange.sheet;
     this.targetRowOffset = 0;
