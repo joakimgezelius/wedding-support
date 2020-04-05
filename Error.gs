@@ -1,11 +1,21 @@
 //=============================================================================================
 // Class Error
 
-var Error = function() {
-}
+class Error {
+  constructor(message) {
+    this.myMessage = message;
+  }
 
-Error.fatal = function(errorMessage) {
-  trace("Fatal error, terminating: " + errorMessage);
-  //  Browser.msgBox("Fatal error:" + errorMessage, Browser.Buttons.OK);
-  throw(errorMessage);
+  throw() {
+    throw(this.myMessage);    
+  }
+  
+  static fatal(errorMessage) {
+    let error = new Error(errorMessage);
+    trace("Fatal error, terminating: " + errorMessage);
+    //  Browser.msgBox("Fatal error:" + errorMessage, Browser.Buttons.OK);
+    error.throw();
+  }
+
+  get message() { return this.myMessage; }
 }

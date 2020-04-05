@@ -13,25 +13,27 @@ function trace(text) {
         sheet = currentSpreadSheet.insertSheet("Trace", 99);
       }
       traceArea = sheet.getRange(1, 1, sheet.getMaxRows());
-      clearTrace(); // Always clear trace upon new run
+      Trace.clear(); // Always clear trace upon new run
     }
     traceArea.getCell(traceRow++,1).setValue(text);
   }
 }
 
-function clearTrace() {
-  // Clear trace area
-  traceArea.setValue("");
-  trace("Trace cleared: " + Range.trace(traceArea));
-  return 0;
-}
+class Trace {
+  
+  static clear() {
+    // Clear trace area
+    traceArea.setValue("");
+    trace("Trace cleared: " + CRange.trace(traceArea));
+  }
 
 /*
-function showTraceSidebar() {
-  var html = HtmlService.createHtmlOutputFromFile('Page')
+  static showTraceSidebar() {
+    var html = HtmlService.createHtmlOutputFromFile('Page')
       .setTitle('My custom sidebar')
       .setWidth(300);
-  SpreadsheetApp.getUi() // Or DocumentApp or SlidesApp or FormApp.
+    SpreadsheetApp.getUi() // Or DocumentApp or SlidesApp or FormApp.
       .showSidebar(html);
-}
+  }
 */
+}

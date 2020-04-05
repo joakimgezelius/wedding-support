@@ -1,16 +1,16 @@
 function onUpdateCoordinator() {
   trace("onUpdateCoordinator");
   if (Dialog.confirm("Update Coordinator - Confirmation Required", "Are you sure you want to update the coordinator? It will overwrite the row numbers, make sure the sheet is sorted properly!") == true) {
-    var eventDetailsIterator = new EventDetailsIterator();
-    var eventDetailsUpdater = new EventDetailsUpdater();
+    let eventDetailsIterator = new EventDetailsIterator();
+    let eventDetailsUpdater = new EventDetailsUpdater();
     eventDetailsIterator.iterate(eventDetailsUpdater);
   }
 }
 
 function onCheckCoordinator() {
   trace("onCheckCoordinator");
-  var eventDetailsIterator = new EventDetailsIterator();
-  var eventDetailsChecker = new EventDetailsChecker();
+  let eventDetailsIterator = new EventDetailsIterator();
+  let eventDetailsChecker = new EventDetailsChecker();
   eventDetailsIterator.iterate(eventDetailsChecker);
 }
 
@@ -20,8 +20,8 @@ function onCheckCoordinator() {
 //
 class EventDetailsIterator {
   constructor() {
-    this.sourceRange = CellRange.getByName("EventDetails");
-    let columnNamesRange = CellRange.getByName("EventDetailsColumnIds");
+    this.sourceRange = CRange.getByName("EventDetails");
+    let columnNamesRange = CRange.getByName("EventDetailsColumnIds");
     this.rowCount = this.sourceRange.height;
     this.data = this.sourceRange.values;
     // let columnNamesRange = this.range.offset(-1, 0, 1); // We expect to find the column names in the row above the data
@@ -95,13 +95,13 @@ class EventRow {
   getCell(fieldName) { 
     let columnNo = this.getColumnNo(fieldName);
     let cell = this.range.offset(0, columnNo, 1, 1);
-    trace(`EventRow.getCell --> ${Range.trace(cell)}`);
+    trace(`EventRow.getCell --> ${CRange.trace(cell)}`);
     return cell;
   }
 
   set(fieldName, value) { 
     let cell = this.getCell(fieldName);
-    //trace("EventRow.set " + Range.trace(cell) + " = " + value);
+    //trace("EventRow.set " + CRange.trace(cell) + " = " + value);
     cell.setValue(value);
   }
 
@@ -111,35 +111,35 @@ class EventRow {
     return cell.getA1Notation();
   }
 
-  getSectionNo()      { return this.get("SectionNo"); }
-  getItemNo()         { return this.get("ItemNo"); }
-  isDecorTicked()     { return this.get("DecorTicked"); }
-  isSupplierTicked()  { return this.get("SupplierTicked"); }
-  isItineraryTicked() { return this.get("ItineraryTicked"); }
-  getWho()            { return this.get("Who"); }
-  getCategory()       { return this.get("Category"); }
-  getStatus()         { return this.get("Status"); }
-  get supplier()      { return this.get("Supplier"); }
-  get isTitle()       { return this.getCategory() === "Title"; }  // Is this a title row?
-  get title()         { return this.get("Description"); }
-  getDate()           { return this.get("Date"); }
-  getTime()           { return this.get("Time"); }
-  getStartTime()      { return this.get("Time"); }
-  getEndTime()        { return this.get("EndTime"); }
-  getLocation()       { return this.get("Location"); }
-  getDescription()    { return this.get("Description"); }
-  getCurrency()       { return this.get("Currency"); }
-  getCurrencySymbol() { return this.get("Currency") === GBP ? "£" : "€"; }
-  getQuantity()       { return this.get("Quantity"); }
-  getNativeUnitCost() { return this.get("NativeUnitCost");  }
-  getMarkup()         { return this.get("Markup"); }
-  getUnitPrice()      { return this.get("UnitPrice"); }
-  getTotalPrice()     { return this.get("TotalPrice"); }
-  getItemNotes()      { return this.get("ItemNotes"); }
-  getNotes()          { return this.get("ItemNotes"); }
-  getClientNotes()    { return ""; } // this.get("ItemNotes"); }
-  getInventoryNotes() { return ""; } // this.get("ItemNotes"); }
-  getLinks()          { return this.get("Links"); }
+  get sectionNo()         { return this.get("SectionNo"); }
+  get itemNo()            { return this.get("ItemNo"); }
+  get isDecorTicked()     { return this.get("DecorTicked"); }
+  get isSupplierTicked()  { return this.get("SupplierTicked"); }
+  get isItineraryTicked() { return this.get("ItineraryTicked"); }
+  get who()               { return this.get("Who"); }
+  get category()          { return this.get("Category"); }
+  get status()            { return this.get("Status"); }
+  get supplier()          { return this.get("Supplier"); }
+  get isTitle()           { return this.category === "Title"; }  // Is this a title row?
+  get title()             { return this.get("Description"); }
+  get date()              { return this.get("Date"); }
+  get time()              { return this.get("Time"); }
+  get startTime()         { return this.get("Time"); }
+  get endTime()           { return this.get("EndTime"); }
+  get location()          { return this.get("Location"); }
+  get description()       { return this.get("Description"); }
+  get currency()          { return this.get("Currency"); }
+  get currencySymbol()    { return this.get("Currency") === GBP ? "£" : "€"; }
+  get quantity()          { return this.get("Quantity"); }
+  get nativeUnitCost()    { return this.get("NativeUnitCost");  }
+  get markup()            { return this.get("Markup"); }
+  get unitPrice()         { return this.get("UnitPrice"); }
+  get totalPrice()        { return this.get("TotalPrice"); }
+  get itemNotes()         { return this.get("ItemNotes"); }
+  get notes()             { return this.get("ItemNotes"); }
+  get clientNotes()       { return ""; } // this.get("ItemNotes"); }
+  get inventoryNotes()    { return ""; } // this.get("ItemNotes"); }
+  get links()             { return this.get("Links"); }
   
   compareTime(other) {
     let result = 0;
@@ -159,71 +159,73 @@ class EventRow {
 // Class EventDetailsUpdater
 //
 
-var EventDetailsUpdater = function() {
-  trace("NEW " + this.trace());
-}
+class EventDetailsUpdater {
+  constructor() {
+    trace("NEW " + this.trace);
+  }
 
-EventDetailsUpdater.prototype.onBegin = function() {
-  this.itemNo = 0;
-  this.sectionNo = 0;
-  this.eurGbpRate = Range.getByName("EURGBP").getValue();
-  trace("EventDetailsUpdater.onBegin - EURGBP=" + this.eurGbpRate);
-}
+  onBegin() {
+    this.itemNo = 0;
+    this.sectionNo = 0;
+    this.eurGbpRate = CRange.getByName("EURGBP").value;
+    trace("EventDetailsUpdater.onBegin - EURGBP=" + this.eurGbpRate);
+  }
   
-EventDetailsUpdater.prototype.onEnd = function() {
-  trace("EventDetailsUpdater.onEnd - no-op");
-}
-
-EventDetailsUpdater.prototype.onTitle = function(row) {
-  trace("EventDetailsUpdater.onTitle " + row.getTitle());
-  this.itemNo = 0;
-  ++this.sectionNo;
-  if (row.getSectionNo() === "") { // Only set section id if empty
-    row.set("SectionNo", this.generateSectionNo());
+  onEnd() {
+    trace("EventDetailsUpdater.onEnd - no-op");
   }
-  row.set("ItemNo", this.generateSectionNo());
-}
 
-EventDetailsUpdater.prototype.onRow = function(row) {
-  ++this.itemNo;
-  trace("EventDetailsUpdater.onRow " + this.itemNo);
-  var currencyA1 = row.getA1Notation("Currency");
-  var quantityA1 = row.getA1Notation("Quantity");
-  var nativeUnitCostA1 = row.getA1Notation("NativeUnitCost");
-  var unitCostA1 = row.getA1Notation("UnitCost");
-  var markupA1 = row.getA1Notation("Markup");
-  var commissionPercentageA1 = row.getA1Notation("CommissionPercentage");
-  var unitPriceA1 = row.getA1Notation("UnitPrice");
-  //
-  // Set formulas:
-  if (row.getSectionNo() === "") { // Only set section id if empty
-    row.set("SectionNo", this.generateSectionNo());
+  onTitle(row) {
+    trace("EventDetailsUpdater.onTitle " + row.title);
+    this.itemNo = 0;
+    ++this.sectionNo;
+    if (row.sectionNo === "") { // Only set section id if empty
+      row.set("SectionNo", this.generateSectionNo());
+    }
+    row.set("ItemNo", this.generateSectionNo());
   }
-  row.set("ItemNo", this.generateItemNo());
-  row.set("UnitCost", Utilities.formatString('=IF(OR(%s="", %s="", %s=0), "", IF(%s="GBP", %s, %s / EURGBP))', currencyA1, nativeUnitCostA1, nativeUnitCostA1, currencyA1, nativeUnitCostA1, nativeUnitCostA1));
-  row.set("TotalCost", Utilities.formatString('=IF(OR(%s="", %s=0, %s="", %s=0), "", %s * %s * (1-%s))', quantityA1, quantityA1, unitCostA1, unitCostA1, quantityA1, unitCostA1, commissionPercentageA1));
-//  if (row.getMarkup() === "") { // Only set markup if empty
+
+  onRow(row) {
+    ++this.itemNo;
+    trace("EventDetailsUpdater.onRow " + this.itemNo);
+    var currencyA1 = row.getA1Notation("Currency");
+    var quantityA1 = row.getA1Notation("Quantity");
+    var nativeUnitCostA1 = row.getA1Notation("NativeUnitCost");
+    var unitCostA1 = row.getA1Notation("UnitCost");
+    var markupA1 = row.getA1Notation("Markup");
+    var commissionPercentageA1 = row.getA1Notation("CommissionPercentage");
+    var unitPriceA1 = row.getA1Notation("UnitPrice");
+    //
+    // Set formulas:
+    if (row.sectionNo === "") { // Only set section id if empty
+      row.set("SectionNo", this.generateSectionNo());
+    }
+    row.set("ItemNo", this.generateItemNo());
+    row.set("UnitCost", Utilities.formatString('=IF(OR(%s="", %s="", %s=0), "", IF(%s="GBP", %s, %s / EURGBP))', currencyA1, nativeUnitCostA1, nativeUnitCostA1, currencyA1, nativeUnitCostA1, nativeUnitCostA1));
+    row.set("TotalCost", Utilities.formatString('=IF(OR(%s="", %s=0, %s="", %s=0), "", %s * %s * (1-%s))', quantityA1, quantityA1, unitCostA1, unitCostA1, quantityA1, unitCostA1, commissionPercentageA1));
+//  if (row.markup === "") { // Only set markup if empty
 //    row.set("Markup", Utilities.formatString('=IF(OR(%s="", %s=0, %s="", %s=0), "", (%s-%s)/%s)', unitCostA1, unitCostA1, unitPriceA1, unitPriceA1, unitPriceA1, unitCostA1, unitCostA1));
 //  }
-  row.set("UnitPrice", Utilities.formatString('=IF(OR(%s="", %s=0), "", %s * ( 1 + %s))', unitCostA1, unitCostA1, unitCostA1, markupA1));
-  row.set("TotalPrice", Utilities.formatString('=IF(OR(%s="", %s=0, %s="", %s=0), "", %s * %s)', quantityA1, quantityA1, unitPriceA1, unitPriceA1, quantityA1, unitPriceA1));
+    row.set("UnitPrice", Utilities.formatString('=IF(OR(%s="", %s=0), "", %s * ( 1 + %s))', unitCostA1, unitCostA1, unitCostA1, markupA1));
+    row.set("TotalPrice", Utilities.formatString('=IF(OR(%s="", %s=0, %s="", %s=0), "", %s * %s)', quantityA1, quantityA1, unitPriceA1, unitPriceA1, quantityA1, unitPriceA1));
 //  row.set("Commission", Utilities.formatString('=IF(OR(%s="", %s=0), "", %s * %s * %s)', commissionPercentageA1, commissionPercentageA1, quantityA1, unitCostA1, commissionPercentageA1));
-  //if (=((hour(K215)*60+minute(K215))-(hour(J215)*60+minute(J215)))/60) 
-}
+//  if (=((hour(K215)*60+minute(K215))-(hour(J215)*60+minute(J215)))/60) 
+  }
 
-EventDetailsUpdater.prototype.generateSectionNo = function() {
-  return Utilities.formatString('#%02d', this.sectionNo);
-}
+  generateSectionNo() {
+    return Utilities.formatString('#%02d', this.sectionNo);
+  }
 
-EventDetailsUpdater.prototype.generateItemNo = function() {
-  if (this.itemNo == 0) 
-    return this.generateSectionNo();
-  else
-    return Utilities.formatString('%s-%02d', this.generateSectionNo(), this.itemNo);
-}
+  generateItemNo() {
+    if (this.itemNo == 0) 
+      return this.generateSectionNo();
+    else
+      return Utilities.formatString('%s-%02d', this.generateSectionNo(), this.itemNo);
+  }
 
-EventDetailsUpdater.prototype.trace = function() {
-  return "{EventDetailsUpdater}";
+  get trace() {
+    return "{EventDetailsUpdater}";
+  }
 }
 
 

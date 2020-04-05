@@ -1,8 +1,8 @@
 
 function onUpdateSupplierAccountSummary() {
   trace("onUpdateSupplierAccountSummary");
-  var eventDetailsIterator = new EventDetailsIterator();
-  var supplierAccountBuilder = new SupplierAccountBuilder("SupplierAccountSummary");
+  let eventDetailsIterator = new EventDetailsIterator();
+  let supplierAccountBuilder = new SupplierAccountBuilder("SupplierAccountSummary");
   eventDetailsIterator.iterate(supplierAccountBuilder);
   
 }
@@ -13,7 +13,7 @@ function onUpdateSupplierAccountSummary() {
 class SupplierAccountBuilder {
   constructor(targetRangeName) {
     this.targetRangeName = targetRangeName;
-    this.targetRange = CellRange.getByName(targetRangeName);
+    this.targetRange = CRange.getByName(targetRangeName);
     this.targetSheet = this.targetRange.sheet;
     this.targetRowOffset = 0;
     trace(`NEW ${this.trace}`);
