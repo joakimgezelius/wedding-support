@@ -9,10 +9,10 @@ function addWeddingMenu() {
       //.addSeparator()
       //.addItem('Pull Client Information', globalLibName + '.onPullClientInformation') // in client.gs
       //.addSeparator()
-      //.addItem('Update Coordinator', globalLibName + '.onUpdateCoordinator')
+      .addItem('Update Coordinator', globalLibName + '.onUpdateCoordinator')
       //.addItem('Check Coordinator', globalLibName + '.onCheckCoordinator')
       .addItem('Update Budget', globalLibName + '.onUpdateBudget')
-      //.addItem('Update Itinerary', globalLibName + '.onUpdateItinerary') // In itinerary.gs
+      .addItem('Update Itinerary', globalLibName + '.onUpdateItinerary') // In itinerary.gs
       .addItem('Update Decor Sumamry', globalLibName + '.onUpdateDecorSummary')
       .addItem('Update Supplier Account Summary', globalLibName + '.onUpdateSupplierAccountSummary')
       //.addItem('Update Suppliers', globalLibName + '.onUpdateSuppliers')

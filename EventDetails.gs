@@ -21,20 +21,9 @@ function onCheckCoordinator() {
 class EventDetailsIterator {
   constructor() {
     this.sourceRange = CRange.getByName("EventDetails");
-    let columnNamesRange = CRange.getByName("EventDetailsColumnIds");
     this.rowCount = this.sourceRange.height;
     this.data = this.sourceRange.values;
-    // let columnNamesRange = this.range.offset(-1, 0, 1); // We expect to find the column names in the row above the data
-    EventRow.columnNames = columnNamesRange.values[0];
     trace("NEW " + this.trace);
-    trace("Columns: " + EventRow.columnNames);
-    for (var column = 0; column < EventRow.columnNames.length; ++column) {
-      let columnName = EventRow.columnNames[column];
-      if (columnName !== "") {
-        EventRow[columnName] = column;
-//      trace("Column: " + columnName);
-      }
-    }
   }
 
   // Method iterate
@@ -44,8 +33,8 @@ class EventDetailsIterator {
     trace("EventDetailsIterator.iterate " + this.trace);
     handler.onBegin();
     for (var rowOffset = 0; rowOffset < this.rowCount; rowOffset++) {
-      var rowRange = this.sourceRange.range.offset(rowOffset, 0, 1);
-      var row = new EventRow(this.data[rowOffset], rowOffset, rowRange);
+      let rowRange = this.sourceRange.range.offset(rowOffset, 0, 1);
+      let row = new EventRow(this.data[rowOffset], rowOffset, rowRange);
       if (row.isTitle) {
         handler.onTitle(row);
       } else {
@@ -73,41 +62,38 @@ class EventDetailsIterator {
 //=============================================================================================
 // Class EventRow
 //
+  
 class EventRow {
+    
   constructor(data, offset, range) {
+    if (!("columnNumbers" in EventRow)) { // Static initialisation
+      EventRow.columnNumbers = new NamedColumns("EventRow", "EventDetailsColumnIds");
+    }
     this.data = data;
     this.offset = offset;
     this.range = range;
   }
 
-  getColumnNo(fieldName) { // Private helper
-    if (!EventRow.hasOwnProperty(fieldName)) {
-      Error.fatal(`Unknown EventRow column: ${fieldName}`);
-    }
-    let columnNo = EventRow[fieldName];
-    return columnNo;
-  }
-  
-  get(fieldName) {
-    return this.data[this.getColumnNo(fieldName)];
+  get(columnName) {
+    return this.data[EventRow.columnNumbers.getColumnNumber(columnName)];
   }
 
-  getCell(fieldName) { 
-    let columnNo = this.getColumnNo(fieldName);
-    let cell = this.range.offset(0, columnNo, 1, 1);
-    trace(`EventRow.getCell --> ${CRange.trace(cell)}`);
+  getCell(columnName) { 
+    let columnNumber = EventRow.columnNumbers.getColumnNumber(columnName);
+    let cell = this.range.offset(0, columnNumber, 1, 1);
+    trace(`EventRow.getCell ${columnName} --> ${CRange.trace(cell)}`);
     return cell;
   }
 
-  set(fieldName, value) { 
-    let cell = this.getCell(fieldName);
-    //trace("EventRow.set " + CRange.trace(cell) + " = " + value);
-    cell.setValue(value);
+  set(columnName, value) { 
+    let cell = this.getCell(columnName);
+    trace(`EventRow.set ${columnName} ${CRange.trace(cell)}  = ${value}`);
+    //cell.setValue(value);
   }
 
   getA1Notation(fieldName) { 
-    let columnNo = this.getColumnNo(fieldName);
-    let cell = this.range.offset(0, columnNo, 1, 1);
+    let columnNumber = EventRow.columnNumbers.getColumnNumber(fieldName);
+    let cell = this.range.offset(0, columnNumber, 1, 1);
     return cell.getA1Notation();
   }
 
@@ -141,7 +127,7 @@ class EventRow {
   get inventoryNotes()    { return ""; } // this.get("ItemNotes"); }
   get links()             { return this.get("Links"); }
   
-  compareTime(other) {
+  compareTime(other) { // To support sorting of rows
     let result = 0;
     if (this.getDate() < other.getDate()) result = -1;
     else if (this.getDate() > other.getDate()) result = 1;
@@ -152,6 +138,7 @@ class EventRow {
     trace("EventRow.compareTime " + result);
     return result;
   }
+  
 }
 
 
@@ -179,10 +166,9 @@ class EventDetailsUpdater {
     trace("EventDetailsUpdater.onTitle " + row.title);
     this.itemNo = 0;
     ++this.sectionNo;
-    if (row.sectionNo === "") { // Only set section id if empty
-      row.set("SectionNo", this.generateSectionNo());
+    if (row.itemNo === "") { // Only set item number if empty
+      row.set("ItemNo", this.generateSectionNo());
     }
-    row.set("ItemNo", this.generateSectionNo());
   }
 
   onRow(row) {
@@ -197,12 +183,12 @@ class EventDetailsUpdater {
     var unitPriceA1 = row.getA1Notation("UnitPrice");
     //
     // Set formulas:
-    if (row.sectionNo === "") { // Only set section id if empty
-      row.set("SectionNo", this.generateSectionNo());
+    if (row.itemNo === "") { // Only set item number if empty
+      row.set("ItemNo", this.generateSectionNo());
     }
-    row.set("ItemNo", this.generateItemNo());
-    row.set("UnitCost", Utilities.formatString('=IF(OR(%s="", %s="", %s=0), "", IF(%s="GBP", %s, %s / EURGBP))', currencyA1, nativeUnitCostA1, nativeUnitCostA1, currencyA1, nativeUnitCostA1, nativeUnitCostA1));
-    row.set("TotalCost", Utilities.formatString('=IF(OR(%s="", %s=0, %s="", %s=0), "", %s * %s * (1-%s))', quantityA1, quantityA1, unitCostA1, unitCostA1, quantityA1, unitCostA1, commissionPercentageA1));
+    let unitCost = `=IF(OR(${currencyA1}="", ${nativeUnitCostA1}="", ${nativeUnitCostA1}=0), "", IF(${currencyA1}="GBP", ${nativeUnitCostA1}, ${nativeUnitCostA1} / EURGBP))`;
+    row.set("UnitCost", unitCost);
+//  row.set("TotalCost", Utilities.formatString('=IF(OR(%s="", %s=0, %s="", %s=0), "", %s * %s * (1-%s))', quantityA1, quantityA1, unitCostA1, unitCostA1, quantityA1, unitCostA1, commissionPercentageA1));
 //  if (row.markup === "") { // Only set markup if empty
 //    row.set("Markup", Utilities.formatString('=IF(OR(%s="", %s=0, %s="", %s=0), "", (%s-%s)/%s)', unitCostA1, unitCostA1, unitPriceA1, unitPriceA1, unitPriceA1, unitCostA1, unitCostA1));
 //  }

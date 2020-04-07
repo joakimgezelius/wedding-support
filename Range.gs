@@ -58,4 +58,5 @@ class CRange {
   get values()   { return this.myRange.getValues(); }
   get height()   { return this.myRange.getHeight(); }
   get row()      { return this.myRange.getRow(); }
+  get column()   { return this.myRange.getColumn(); }
 }

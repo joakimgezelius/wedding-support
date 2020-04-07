@@ -18,4 +18,9 @@ class Error {
   }
 
   get message() { return this.myMessage; }
+  
+  static get break() {
+    trace("BREAK");
+    throw("Break");
+  }
 }
