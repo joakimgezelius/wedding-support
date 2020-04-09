@@ -15,7 +15,7 @@ class NamedColumns {
       let columnName = columnNames[columnNumber];
       if (columnName !== "") { // Only 
         this.columnNumbers[columnName] = columnNumber;
-        trace(`Column ${columnNumber}: ${columnName}`);
+//      trace(`Column ${columnNumber}: ${columnName}`);
       }
     }
   }
@@ -32,7 +32,10 @@ class NamedColumns {
     return this.getColumnNumber(columnName) + this.columnOffset;
   }
 
-  getColumnLetter() {
-    return "A";
+  getColumnLetter(columnName) {
+    let columnNumber = this.getColumnNumber(columnName);
+    let cell = this.range.range.offset(0, columnNumber, 1, 1);
+    let a1Notation = cell.getA1Notation();
+    return a1Notation;
   }
 }

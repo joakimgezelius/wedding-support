@@ -25,6 +25,8 @@ function addWeddingMenu() {
       //            )
       .addSubMenu(ui.createMenu('Helpers')
                   .addItem('Set Colour', globalLibName + '.onSetColour')
+                  .addItem('Test Case 1', globalLibName + '.onTestCase1')
+                  .addItem('Test Case 2', globalLibName + '.onTestCase2')
                   )
       .addSeparator()
       .addItem('Update Exchange Rates', globalLibName + '.onUpdateExchangeRates')
