@@ -27,7 +27,7 @@ class Trace {
   static clear() {
     // Clear trace area
     traceArea.setValue("");
-    trace("Trace cleared: " + CRange.trace(traceArea));
+    trace("Trace cleared: " + Range.trace(traceArea));
   }
 
 /*

@@ -13,7 +13,7 @@ function onUpdateDecorSummary() {
 class DecorSummaryBuilder {
   
   constructor(targetRangeName) {
-    this.targetRange = CRange.getByName(targetRangeName);
+    this.targetRange = Range.getByName(targetRangeName);
     this.targetRowOffset = 0;
     trace("NEW " + this.trace);
   }

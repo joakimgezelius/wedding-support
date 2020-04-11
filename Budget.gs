@@ -11,7 +11,7 @@ function onUpdateBudget() {
 //
 class BudgetBuilder {
   constructor(targetRangeName) {
-    this.targetRange = CRange.getByName(targetRangeName);
+    this.targetRange = Range.getByName(targetRangeName);
     this.targetSheet = this.targetRange.sheet;
     this.targetRowOffset = 0;
     trace("NEW " + this.trace);

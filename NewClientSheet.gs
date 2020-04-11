@@ -19,44 +19,6 @@ function onClearSheet() {
   trace("onClearSheet");
 }
 
-
-//=============================================================================================
-// Class Sheet
-//
-
-var Sheet = function() {
-}
-
-Sheet.autofit = function(sheet) {
-  trace("Sheet.autofit " + sheet.getName());
-  sheet.autoResizeColumns(1, sheet.getMaxColumns());
-  sheet.autoResizeRows(1, sheet.getMaxRows());
-}
-
-Sheet.getCleared = function(name) {
-  var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = spreadsheet.getSheetByName(name);
-  if (sheet == null) {
-  }
-  return sheet;
-}
-
-function saveRangeAsSpreadsheet(){ 
-  var sheet = SpreadsheetApp.getActiveSpreadsheet();
-  var range = sheet.getRange('Sheet1!A1:B3');
-  sheet.setNamedRange('buildingNameAddress', range);
-  var TestRange = sheet.getRangeByName('buildingNameAddress').getValues(); 
-  Logger.log(TestRange); 
-  var destFolder = DriveApp.getFolderById("xxxxxxxxxxxxxxxxxxxxx"); 
-  DriveApp.getFileById(sheet.getId()).makeCopy("Test File", destFolder); 
-}
-
-function saveAsSpreadsheet2() {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet();
-  var destFolder = DriveApp.getFolderById("xxxxxxxxxxxxxxxxx");
-  DriveApp.getFileById(sheet.getId()).makeCopy("desired file name", destFolder);
-} //END function saveAsSpreadsheet
-
 function getParentFolder() {
   var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
   var file = DriveApp.getFileById(spreadsheet.getId());
@@ -66,9 +28,59 @@ function getParentFolder() {
   return folder;
 }
 
+function saveAsSpreadsheet2() {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet();
+  var destFolder = DriveApp.getFolderById("xxxxxxxxxxxxxxxxx");
+  DriveApp.getFileById(sheet.getId()).makeCopy("desired file name", destFolder);
+} //END function saveAsSpreadsheet
+
 function fileExists(name, folder) {
   var files = folder.getFilesByName(name);
   result = (files.hasNext()) ? true : false;
   trace("fileExists(" + folder.getName() + ", " + name + ") --> " + result);
   return result;
+}
+
+
+//=============================================================================================
+// Class Sheet
+//
+
+class Sheet {
+  
+  constructor(sheet) {
+    mySheet = sheet;
+    myTrace = `{Sheet ${this.name}}`;
+    trace(`NEW ${this.trace}`);
+  }
+
+  autofit() {
+    trace("Sheet.autofit " + this.name);
+    sheet.autoResizeColumns(1, this.maxColumns);
+    sheet.autoResizeRows(1, this.maxRows);
+  }
+
+  static getCleared(name) {
+    let spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+    let sheet = spreadsheet.getSheetByName(name);
+    if (sheet == null) {
+    }
+    return sheet;
+  }
+
+  static saveRangeAsSpreadsheet(){ 
+    let sheet = SpreadsheetApp.getActiveSpreadsheet();
+    let range = sheet.getRange('Sheet1!A1:B3');
+    sheet.setNamedRange('buildingNameAddress', range);
+    let TestRange = sheet.getRangeByName('buildingNameAddress').getValues(); 
+    Logger.log(TestRange); 
+    var destFolder = DriveApp.getFolderById("xxxxxxxxxxxxxxxxxxxxx"); 
+    DriveApp.getFileById(sheet.getId()).makeCopy("Test File", destFolder); 
+  }
+  
+  get sheet()      { return this.mySheet; }
+  get name()       { return this.mySheet.GetName(); }
+  get maxColumns() { return this.mySheet.MaxColumnsgetMaxColumns(); }
+  get maxRows()    { return this.mySheet.getMaxRows(); }
+  get trace()      { return this.myTrace; }
 }

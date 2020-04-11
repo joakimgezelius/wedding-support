@@ -1,8 +1,14 @@
 function onUpdateCoordinator() {
   trace("onUpdateCoordinator");
-  if (Dialog.confirm("Update Coordinator - Confirmation Required", "Are you sure you want to update the coordinator? It will overwrite the row numbers, make sure the sheet is sorted properly!") == true) {
+  let eventDetailsIterator = new EventDetailsIterator();
+  let eventDetailsUpdater = new EventDetailsUpdater(false);
+}
+
+function onUpdateCoordinatorForced() {
+  trace("onUpdateCoordinatorForced");
+  if (Dialog.confirm("Forced Coordinator Update - Confirmation Required", "Are you sure you want to force-update the coordinator? It will overwrite row numbers and formulas, make sure the sheet is sorted properly!") == true) {
     let eventDetailsIterator = new EventDetailsIterator();
-    let eventDetailsUpdater = new EventDetailsUpdater();
+    let eventDetailsUpdater = new EventDetailsUpdater(true);
     eventDetailsIterator.iterate(eventDetailsUpdater);
   }
 }
@@ -20,14 +26,15 @@ function onCheckCoordinator() {
 //
 
 class EventDetailsUpdater {
-  constructor() {
+  constructor(forced) {
+    this.forced = forced;
     trace("NEW " + this.trace);
   }
 
   onBegin() {
     this.itemNo = 0;
     this.sectionNo = 0;
-    this.eurGbpRate = CRange.getByName("EURGBP").value;
+    this.eurGbpRate = Range.getByName("EURGBP").value;
     trace("EventDetailsUpdater.onBegin - EURGBP=" + this.eurGbpRate);
   }
   
@@ -39,7 +46,7 @@ class EventDetailsUpdater {
     trace("EventDetailsUpdater.onTitle " + row.title);
     this.itemNo = 0;
     ++this.sectionNo;
-    if (row.itemNo === "") { // Only set item number if empty
+    if (row.itemNo === "" || this.forced) { // Only set item number if empty (or forced)
       row.itemNo = this.generateSectionNo();
     }
   }
@@ -57,24 +64,30 @@ class EventDetailsUpdater {
     var unitPriceA1 = row.getA1Notation("UnitPrice");
     //
     // Set formulas:
-    if (row.itemNo === "") { // Only set item number if empty
+    if (row.itemNo === "" || this.forced) { // Only set item number if empty (or forced)
       row.itemNo = this.generateItemNo();
     }
-    if (row.nativeUnitCost === "" || row.nativeUnitCost[0] === "=") { // Set native unit cost equal to budget unit cost if not set
+    let nativeUnitCost = String(row.nativeUnitCost);
+    let nativeCurrencyFormat = (row.currency === "GBP") ? "£#,##0" : "€#,##0";
+    let nativeUnitCostCell = row.getCell("NativeUnitCost").setNumberFormat(nativeCurrencyFormat);
+    if (nativeUnitCost === "" || nativeUnitCost.charAt(0) === "=") { // Set native unit cost equal to budget unit cost if not set
       row.nativeUnitCost = `=${budgetUnitCostA1}`;
+      nativeUnitCostCell.setFontColor("#aaaaaa"); // Format
+    } else {
+      nativeUnitCostCell.setFontColor("#000000"); // Black
     }
+    
     row.unitCost = `=IF(OR(${currencyA1}="", ${nativeUnitCostA1}="", ${nativeUnitCostA1}=0), "", IF(${currencyA1}="GBP", ${nativeUnitCostA1}, ${nativeUnitCostA1} / EURGBP))`;
     row.totalCost = `=IF(OR(${quantityA1}="", ${quantityA1}=0, ${unitCostA1}="", ${unitCostA1}=0), "", ${quantityA1} * ${unitCostA1} * (1-${commissionPercentageA1}))`;
     if (row.markup === "") { // Only set markup if empty
       row.markup = `=IF(OR(${unitCostA1}="", ${unitCostA1}=0, ${unitPriceA1}="", ${unitPriceA1}=0), "", (${unitPriceA1}-${unitCostA1})/${unitCostA1})`;
     }
-    if (row.unitPrice === "") { // Only set unit price if empty
+    if (row.unitPrice === "" || this.forced) { // Only set unit price if empty (or forced)
       row.unitPrice = `=IF(OR(${unitCostA1}="", ${unitCostA1}=0), "", ${unitCostA1} * ( 1 + ${markupA1}))`;
     }
     row.totalPrice = `=IF(OR(${quantityA1}="", ${quantityA1}=0, ${unitPriceA1}="", ${unitPriceA1}=0), "", ${quantityA1} * ${unitPriceA1})`;
-    row.commission = `=IF(OR(${commissionPercentageA1}="", ${commissionPercentageA1}=0), "", ${quantityA1} * ${unitCostA1} * ${commissionPercentageA1})`;
-//  if ()
-//  row.quantity (=((hour(K215)*60+minute(K215))-(hour(J215)*60+minute(J215)))/60) 
+//  row.commission = `=IF(OR(${commissionPercentageA1}="", ${commissionPercentageA1}=0), "", ${quantityA1} * ${unitCostA1} * ${commissionPercentageA1})`;
+//  row.quantity (=((hour(K215)*60+minute(K215))-(hour(J215)*60+minute(J215)))/60)
   }
 
   generateSectionNo() {
@@ -89,7 +102,7 @@ class EventDetailsUpdater {
   }
 
   get trace() {
-    return "{EventDetailsUpdater}";
+    return `{EventDetailsUpdater forced=${this.forced}}`;
   }
 }
 

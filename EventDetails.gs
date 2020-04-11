@@ -3,7 +3,7 @@
 //
 class EventDetailsIterator {
   constructor() {
-    this.sourceRange = CRange.getByName("EventDetails");
+    this.sourceRange = Range.getByName("EventDetails");
     this.rowCount = this.sourceRange.height;
     this.data = this.sourceRange.values; // NOTE: indexed from [0][0]
     trace("NEW " + this.trace);
@@ -27,14 +27,14 @@ class EventDetailsIterator {
     handler.onEnd();
   }
   
-  sortByTime() {
-    compareTime = function(row1, row2) {
-      eventRow1 = new EventRow(row1);
-      eventRow2 = new EventRow(row2);
-      return eventRow1.compareTime(eventRow2);
+  sort(type) {
+    function compare(row1, row2) {
+      let eventRow1 = new EventRow(row1);
+      let eventRow2 = new EventRow(row2);
+      return eventRow1.compare(eventRow2, type);
     }
     trace("EventDetailsIterator.sortByTime " + this.trace);
-    this.data.sort(compareTime);
+    this.data.sort(compare);
   }
   
   get trace() {
@@ -68,13 +68,13 @@ class EventRow {
   getCell(columnName) { 
     let columnNumber = EventRow.columnNumbers.getColumnNumber(columnName);
     let cell = this.range.offset(0, columnNumber, 1, 1);
-//  trace(`EventRow.getCell ${columnName} --> ${CRange.trace(cell)}`);
+//  trace(`EventRow.getCell ${columnName} --> ${Range.trace(cell)}`);
     return cell;
   }
 
   set(columnName, value) { 
     let cell = this.getCell(columnName);
-    trace(`EventRow.set ${columnName} ${CRange.trace(cell)}  = ${value}`);
+    trace(`EventRow.set ${columnName} ${Range.trace(cell)}  = ${value}`);
     cell.setValue(value);
   }
 
@@ -123,18 +123,36 @@ class EventRow {
   set totalPrice(value)     { this.set("TotalPrice", value); }
   set commission(value)     { this.set("Commission", value); }
 
-  compareTime(other) { // To support sorting of rows
+  compare(other, compareType) { // To support sorting of rows
     let result = 0;
-    if (this.getDate() < other.getDate()) result = -1;
-    else if (this.getDate() > other.getDate()) result = 1;
+    if (compareType === "supplier") { // complare suppliers
+      result = this.compareSupplier(other);
+    }
+    if (result !== 0) return result;
+    // supplier is the same, now compare dates
+    result = this.compareDate(other);
+    if (result !== 0) return result;
     // Same date, now compare times
-    else if (this.getTime() < other.getTime()) result = -1;
-    else if (this.getTime() > other.getTime()) return 1;
-    else result = 0; // Both date & time are the same
-    trace("EventRow.compareTime " + result);
+    result = this.compareTime(other);
     return result;
   }
-  
+
+  compareSupplier(other) {
+    let myValue = this.supplier;
+    let otherValue = other.supplier;
+    return myValue < otherValue ? -1 : (myValue > otherValue ? 1 : 0);
+  }
+
+  compareDate(other) {
+    let myValue = this.date;
+    let otherValue = other.date;
+    return myValue < otherValue ? -1 : (myValue > otherValue ? 1 : 0);
+  }
+
+  compareTime(other) {
+    let myValue = this.time;
+    let otherValue = other.time;
+    return myValue < otherValue ? -1 : (myValue > otherValue ? 1 : 0);
+  }
+
 }
-
-

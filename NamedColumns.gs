@@ -1,7 +1,7 @@
 class NamedColumns {
   constructor(rowName, columnNamesRange) {
     if (typeof(columnNamesRange) === 'string') {
-      columnNamesRange = CRange.getByName("EventDetailsColumnIds");
+      columnNamesRange = Range.getByName("EventDetailsColumnIds");
     }
     this.range = columnNamesRange;
     this.rowOffset = columnNamesRange.row;

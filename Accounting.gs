@@ -1,30 +1,30 @@
 
-function onUpdateSupplierAccountSummary() {
-  trace("onUpdateSupplierAccountSummary");
+function onUpdateAccountSummary() {
+  trace("onUpdateAccountSummary");
   let eventDetailsIterator = new EventDetailsIterator();
-  let supplierAccountBuilder = new SupplierAccountBuilder("SupplierAccountSummary");
-  eventDetailsIterator.iterate(supplierAccountBuilder);
+  let accountSummaryBuilder = new AccountSummaryBuilder("SupplierAccountSummary");
+  eventDetailsIterator.iterate(accountSummaryBuilder);
   
 }
 
 //=============================================================================================
 // Class SupplierAccountBuilder
 //
-class SupplierAccountBuilder {
+class AccountSummaryBuilder {
   constructor(targetRangeName) {
-    this.targetRange = CRange.getByName(targetRangeName);
+    this.targetRange = Range.getByName(targetRangeName);
     this.targetSheet = this.targetRange.sheet;
     this.targetRowOffset = 0;
     trace(`NEW ${this.trace}`);
   }
 
   onBegin() {
-    trace("SupplierAccountBuilder.onBegin - reset context");
+    trace("AccountSummaryBuilder.onBegin - reset context");
     this.suppliers = new SupplierList;
   }
 
   onEnd() {
-    trace("SupplierAccountBuilder.onEnd - fill final title sum & autofit");
+    trace("AccountSummaryBuilder.onEnd - fill final title sum & autofit");
     this.suppliers.sortUnique();
     trace("Suppliers: " + this.suppliers.trace);
     this.targetRange.deleteExcessiveRows(2); // Keep 2 rows
@@ -59,7 +59,7 @@ class SupplierAccountBuilder {
   }
 
   get trace() {
-    return `{SupplierAccountBuilder ${this.targetRange.trace}}`;
+    return `{AccountSummaryBuilder ${this.targetRange.trace}}`;
   }
 }
 

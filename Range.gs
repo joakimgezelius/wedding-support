@@ -1,13 +1,15 @@
 //=============================================================================================
-// Class CRange
+// Class Range
 //
 
-class CRange {
-  constructor(range, name) {
+class Range {
+  constructor(range, name = "", sheetName = "") {
     this.myRange = range;
     this.myName = name;
-    if (name !== "") name = name + " "; 
-    this.myTrace = `{CRange ${name}${CRange.trace(range)}}`;
+    this.mySheetName = sheetName;
+    if (name !== "") name = name + " "; // Pad it to trace nicely
+    if (sheetName !== "") sheetName = sheetName + "!"; // Pad it to trace nicely
+    this.myTrace = `{Range ${sheetName}${name}${Range.trace(range)}}`;
     trace(`NEW ${this.myTrace}`);
   }
   
@@ -18,7 +20,7 @@ class CRange {
 
   refresh() { // Reload the range - e.g. if it has changed
     trace(`${this.trace} refresh`);
-    let newRange = CRange.getByName(this.myName); 
+    let newRange = Range.getByName(this.myName); 
     this.myRange = newRange.range;
     this.myTrace = newRange.trace;    
   }
@@ -35,16 +37,25 @@ class CRange {
     }
   }
   
-  static getByName(rangeName, spreadsheet) {
-    if (spreadsheet == null) {
-      spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  getNextRow() {
+    let nextRow = null;
+    return nextRow;
+  }
+  
+  static getByName(rangeName, sheetName = "", spreadsheet = null) {
+    spreadsheet = spreadsheet || SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = (sheetName === "") ? null : spreadsheet.getSheetByName(sheetName);
+    let range = spreadsheet.getRangeByName(rangeName);
+    if (range === null && sheet !== null) {
+      trace (`attempting to get named range from sheet ${sheetName}`);
+      range = sheet.getRange(rangeName);
     }
-    let range = spreadsheet.getRangeByName(rangeName)
     if (range === null) {
       Error.fatal(`Cannot find named range ${rangeName}`);
     }
-    let newRange = new CRange(range, rangeName);
-    trace(`CRange.getByName ${rangeName} --> ${newRange.trace}`);
+
+    let newRange = new Range(range, rangeName, sheetName);
+    trace(`Range.getByName ${rangeName} --> ${newRange.trace}`);
     return newRange;
   }
 
