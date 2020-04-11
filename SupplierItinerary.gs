@@ -2,7 +2,7 @@ function onUpdateSupplierItinerary() {
   trace("onUpdateSupplierItinerary");
   var eventDetailsIterator = new EventDetailsIterator();
   var itineraryBuilder = new SupplierItineraryBuilder("SupplierItinerary", "Supplier Itinerary");
-  eventDetailsIterator.sortByTime();
+  eventDetailsIterator.sort(SortType.supplier);
   eventDetailsIterator.iterate(itineraryBuilder);
 }
 

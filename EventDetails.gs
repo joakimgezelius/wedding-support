@@ -1,6 +1,8 @@
 //=============================================================================================
 // Class EventDetailsIterator
 //
+const SortType = { time: "time", supplier: "supplier" };
+
 class EventDetailsIterator {
   constructor() {
     this.sourceRange = Range.getByName("EventDetails");
@@ -26,14 +28,14 @@ class EventDetailsIterator {
     }  
     handler.onEnd();
   }
-  
+                      
   sort(type) {
     function compare(row1, row2) {
       let eventRow1 = new EventRow(row1);
       let eventRow2 = new EventRow(row2);
       return eventRow1.compare(eventRow2, type);
     }
-    trace("EventDetailsIterator.sortByTime " + this.trace);
+    trace(`EventDetailsIterator.sort(${type}) ${this.trace}`);
     this.data.sort(compare);
   }
   
@@ -123,9 +125,9 @@ class EventRow {
   set totalPrice(value)     { this.set("TotalPrice", value); }
   set commission(value)     { this.set("Commission", value); }
 
-  compare(other, compareType) { // To support sorting of rows
+  compare(other, type) { // To support sorting of rows
     let result = 0;
-    if (compareType === "supplier") { // complare suppliers
+    if (type === SortType.supplier) { // complare suppliers
       result = this.compareSupplier(other);
     }
     if (result !== 0) return result;

@@ -8,7 +8,7 @@ function updatePagedItinerary() {
   trace("updatePagedItinerary");
   var eventDetailsIterator = new EventDetailsIterator();
   var itineraryBuilder = new StaticItineraryBuilder("Itinerary");
-  eventDetailsIterator.sortByTime();
+  eventDetailsIterator.sort(SortType.time);
   eventDetailsIterator.iterate(itineraryBuilder);
 }
 
@@ -16,7 +16,7 @@ function updateDynamicItinerary() {
   trace("updateDynamicItinerary");
   var eventDetailsIterator = new EventDetailsIterator();
   var itineraryBuilder = new DynamicItineraryBuilder("DynamicItinerary");
-  eventDetailsIterator.sortByTime();
+  eventDetailsIterator.sort(SortType.time);
   eventDetailsIterator.iterate(itineraryBuilder);
 }
 

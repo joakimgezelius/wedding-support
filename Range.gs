@@ -18,33 +18,13 @@ class Range {
     this.myRange.setValue("");
   }
 
-  refresh() { // Reload the range - e.g. if it has changed
-    trace(`${this.trace} refresh`);
-    let newRange = Range.getByName(this.myName); 
-    this.myRange = newRange.range;
-    this.myTrace = newRange.trace;    
-  }
-  
-  deleteExcessiveRows(rowsToKeep) {
-    let height = this.height;
-    trace(`${this.trace} deleteExcessiveRows rowsToKeep=${rowsToKeep} height=${this.height}`);
-    if (height > rowsToKeep) {
-      let startRow = this.row + rowsToKeep;
-      let rowsToDelete = height - rowsToKeep;
-      trace(`deleteRows startRow=${startRow} rowsToDelete=${rowsToDelete}`);
-      this.sheet.deleteRows(startRow, rowsToDelete);
-      this.refresh(); // Reload the range as it has changed now
-    }
-  }
-  
-  getNextRow() {
-    let nextRow = null;
-    return nextRow;
-  }
-  
   static getByName(rangeName, sheetName = "", spreadsheet = null) {
     spreadsheet = spreadsheet || SpreadsheetApp.getActiveSpreadsheet();
-    var sheet = (sheetName === "") ? null : spreadsheet.getSheetByName(sheetName);
+    let sheet = null;
+    if (sheetName !== "") { // A sheet name is provided, if the named range cannot be found globally, a local named range will be attempted
+      sheet = spreadsheet.getSheetByName(sheetName);
+      trace (`getSheetByName sheet ${sheetName} -> ${sheet}`);
+    }
     let range = spreadsheet.getRangeByName(rangeName);
     if (range === null && sheet !== null) {
       trace (`attempting to get named range from sheet ${sheetName}`);
@@ -70,4 +50,32 @@ class Range {
   get height()   { return this.myRange.getHeight(); }
   get row()      { return this.myRange.getRow(); }
   get column()   { return this.myRange.getColumn(); }
+  
+  // Dynamic Range Features
+  //
+  
+  refresh() { // Reload the range - e.g. if it has changed
+    trace(`${this.trace} refresh`);
+    let newRange = Range.getByName(this.myName); 
+    this.myRange = newRange.range;
+    this.myTrace = newRange.trace;    
+  }
+  
+  deleteExcessiveRows(rowsToKeep) {
+    let height = this.height;
+    trace(`${this.trace} deleteExcessiveRows rowsToKeep=${rowsToKeep} height=${this.height}`);
+    if (height > rowsToKeep) {
+      let startRow = this.row + rowsToKeep;
+      let rowsToDelete = height - rowsToKeep;
+      trace(`deleteRows startRow=${startRow} rowsToDelete=${rowsToDelete}`);
+      this.sheet.deleteRows(startRow, rowsToDelete);
+      this.refresh(); // Reload the range as it has changed now
+    }
+  }
+  
+  getNextRow() {
+    let nextRow = null;
+    return nextRow;
+  }
+  
 }

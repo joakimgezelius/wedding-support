@@ -7,11 +7,11 @@ class Dialog {
   }
 
   static prompt(title, message) {
-    var ui = SpreadsheetApp.getUi();
+    let ui = SpreadsheetApp.getUi();
     trace("Dialog.prompt " + title + ", " + message);
-    var result = ui.prompt(title, message, ui.ButtonSet.OK_CANCEL);
-    var button = result.getSelectedButton();
-    var text = result.getResponseText();
+    let result = ui.prompt(title, message, ui.ButtonSet.OK_CANCEL);
+    let button = result.getSelectedButton();
+    let text = result.getResponseText();
     if (button == ui.Button.CANCEL) {
       trace("Dialog.prompt --> CANCEL");
       text = "CANCEL";
@@ -22,16 +22,16 @@ class Dialog {
   }
 
   static confirm(title, message) {
-    var ui = SpreadsheetApp.getUi();
+    let ui = SpreadsheetApp.getUi();
     trace("Dialog.confirm " + title + ", " + message);
-    var response = ui.alert(title, message, ui.ButtonSet.OK_CANCEL);
-    result = (response == ui.Button.OK) ? true : false;
+    let response = ui.alert(title, message, ui.ButtonSet.OK_CANCEL);
+    let result = (response == ui.Button.OK) ? true : false;
     trace("Dialog.confirm --> " + result);
     return result;
   }
 
   static notify(title, message) {
-    var ui = SpreadsheetApp.getUi();
+    let ui = SpreadsheetApp.getUi();
     trace("Dialog.notify " + title + ", " + message);
     ui.alert(title, message, ui.ButtonSet.OK);
     trace("Dialog.notify");

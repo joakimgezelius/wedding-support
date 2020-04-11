@@ -3,7 +3,7 @@ function onUpdateRota() {
   trace("onUpdateRota");
   var eventDetailsIterator = new EventDetailsIterator();
   var eventRotaBuilder = new EventRotaBuilder("EventRota");  
-  eventDetailsIterator.sortByTime();
+  eventDetailsIterator.sort(SortType.time);
   eventDetailsIterator.iterate(eventRotaBuilder);
 }
 
