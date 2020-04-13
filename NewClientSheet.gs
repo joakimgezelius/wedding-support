@@ -49,8 +49,8 @@ function fileExists(name, folder) {
 class Sheet {
   
   constructor(sheet) {
-    mySheet = sheet;
-    myTrace = `{Sheet ${this.name}}`;
+    _sheet = sheet;
+    _trace = `{Sheet ${this.name}}`;
     trace(`NEW ${this.trace}`);
   }
 
@@ -78,9 +78,9 @@ class Sheet {
     DriveApp.getFileById(sheet.getId()).makeCopy("Test File", destFolder); 
   }
   
-  get sheet()      { return this.mySheet; }
-  get name()       { return this.mySheet.GetName(); }
-  get maxColumns() { return this.mySheet.MaxColumnsgetMaxColumns(); }
-  get maxRows()    { return this.mySheet.getMaxRows(); }
-  get trace()      { return this.myTrace; }
+  get sheet()      { return this._sheet; }
+  get name()       { return this._sheet.GetName(); }
+  get maxColumns() { return this._sheet.MaxColumnsgetMaxColumns(); }
+  get maxRows()    { return this._sheet.getMaxRows(); }
+  get trace()      { return this._trace; }
 }

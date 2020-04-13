@@ -69,24 +69,24 @@ class AccountSummaryBuilder {
 
 class SupplierList {
   constructor() {
-    this.myList = [];
+    this._list = [];
   }
   
   add(supplier) {
-    //if this.myList[supplier];
-    this.myList.push(supplier);
+    //if this._list[supplier];
+    this._list.push(supplier);
   }
   
   sortUnique() {
-    this.myList = [...new Set(this.myList)]; 
-    this.myList.sort();
+    this._list = [...new Set(this._list)]; 
+    this._list.sort();
   }
 
-  get list() { return this.myList; }
+  get list() { return this._list; }
   
   get trace() {
     let text = "";
-    this.myList.forEach((item) => { text = text + item + " " })
+    this._list.forEach((item) => { text = text + item + " " })
     return text;
   }
 }

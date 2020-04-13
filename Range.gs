@@ -4,18 +4,20 @@
 
 class Range {
   constructor(range, name = "", sheetName = "") {
-    this.myRange = range;
-    this.myName = name;
-    this.mySheetName = sheetName;
+    this._range = range;
+    this._name = name;
+    this._sheetName = sheetName;
+    this._sheet = this._range.getSheet();
+    this._currentRowOffset = 0;
     if (name !== "") name = name + " "; // Pad it to trace nicely
     if (sheetName !== "") sheetName = sheetName + "!"; // Pad it to trace nicely
-    this.myTrace = `{Range ${sheetName}${name}${Range.trace(range)}}`;
-    trace(`NEW ${this.myTrace}`);
+    this._trace = `{Range ${sheetName}${name}${Range.trace(range)}}`;
+    trace(`NEW ${this._trace}`);
   }
   
   clear() {
     trace(`clear ${this.trace}`);
-    this.myRange.setValue("");
+    this._range.setValue("");
   }
 
   static getByName(rangeName, sheetName = "", spreadsheet = null) {
@@ -43,39 +45,59 @@ class Range {
     return `[${range.getSheet().getName()}!${range.getA1Notation()}]`;
   }
 
-  get range()    { return this.myRange; }
-  get trace()    { return this.myTrace; }
-  get sheet()    { return this.myRange.getSheet(); }
-  get values()   { return this.myRange.getValues(); }
-  get height()   { return this.myRange.getHeight(); }
-  get row()      { return this.myRange.getRow(); }
-  get column()   { return this.myRange.getColumn(); }
+  get range()            { return this._range; }
+  get trace()            { return this._trace; }
+  get sheet()            { return this._sheet; }
+  get values()           { return this._range.getValues(); }
+  get height()           { return this._range.getHeight(); }
+  get row()              { return this._range.getRow(); }
+  get column()           { return this._range.getColumn(); }
+  get currentRow()       { return this._range.offset(this._currentRowOffset, 0, 1); } // A range of 1 row height
+  get currentRowOffset() { return this._currentRowOffset; }
   
   // Dynamic Range Features
   //
   
   refresh() { // Reload the range - e.g. if it has changed
     trace(`${this.trace} refresh`);
-    let newRange = Range.getByName(this.myName); 
-    this.myRange = newRange.range;
-    this.myTrace = newRange.trace;    
+    let newRange = Range.getByName(this._name); 
+    this._range = newRange.range;
+    this._trace = newRange.trace;
   }
   
   deleteExcessiveRows(rowsToKeep) {
-    let height = this.height;
     trace(`${this.trace} deleteExcessiveRows rowsToKeep=${rowsToKeep} height=${this.height}`);
-    if (height > rowsToKeep) {
+    if (this.height > rowsToKeep) {
       let startRow = this.row + rowsToKeep;
-      let rowsToDelete = height - rowsToKeep;
+      let rowsToDelete = this.height - rowsToKeep;
       trace(`deleteRows startRow=${startRow} rowsToDelete=${rowsToDelete}`);
       this.sheet.deleteRows(startRow, rowsToDelete);
       this.refresh(); // Reload the range as it has changed now
     }
   }
   
-  getNextRow() {
-    let nextRow = null;
-    return nextRow;
+  minimizeAndClear(callback = null) {
+    this.deleteExcessiveRows(2); // Delete all but the first two rows
+    this.clear();
+    this._currentRowOffset = 0;
+    if (callback !== null) callback(this._range);
   }
   
+  getNextRowAndExtend() {
+    let row = this.currentRow;
+    ++this._currentRowOffset;
+    if (this.height - this._currentRowOffset < 2) { // Extend if we're 1 row from the end
+      this._sheet.insertRowAfter(row.getRowIndex());
+      this.refresh();
+    }
+    return row;
+  }
+  
+  getPreviousRow() {
+    if (this._currentRowOffset > 0) { // Don't back up beyond beginning of range
+      --this._currentRowOffset;
+    }
+    return this.currentRow;
+  }
+
 }

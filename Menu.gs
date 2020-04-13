@@ -13,7 +13,7 @@ function addWeddingMenu() {
       .addItem("Force-Update Coordinator - over-writes data", globalLibName + ".onUpdateCoordinatorForced")
       //.addItem("Check Coordinator", globalLibName + ".onCheckCoordinator")
       .addItem("Update Budget", globalLibName + ".onUpdateBudget")
-      .addItem("Update Itinerary", globalLibName + ".onUpdateItinerary") // In itinerary.gs
+      .addItem("Update Client Itinerary", globalLibName + ".onUpdateClientItinerary") // In itinerary.gs
       .addItem("Update Decor Sumamry", globalLibName + ".onUpdateDecorSummary")
       .addItem("Update Account Summary", globalLibName + ".onUpdateAccountSummary")
       .addItem("Update Supplier Itinerary", globalLibName + ".onUpdateSupplierItinerary")

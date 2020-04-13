@@ -3,11 +3,11 @@
 
 class Error {
   constructor(message) {
-    this.myMessage = message;
+    this._message = message;
   }
 
   throw() {
-    throw(this.myMessage);    
+    throw(this._message);    
   }
   
   static fatal(errorMessage) {
@@ -17,7 +17,7 @@ class Error {
     error.throw();
   }
 
-  get message() { return this.myMessage; }
+  get message() { return this._message; }
   
   static get break() {
     trace("BREAK");
