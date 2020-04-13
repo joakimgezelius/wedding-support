@@ -91,14 +91,14 @@ class EventDetailsUpdater {
   }
 
   generateSectionNo() {
-    return Utilities.formatString('#%02d', this.sectionNo);
+    return Utilities.formatString("#%02d", this.sectionNo);
   }
 
   generateItemNo() {
     if (this.itemNo == 0) 
       return this.generateSectionNo();
     else
-      return Utilities.formatString('%s-%02d', this.generateSectionNo(), this.itemNo);
+      return Utilities.formatString("%s-%02d", this.generateSectionNo(), this.itemNo);
   }
 
   get trace() {

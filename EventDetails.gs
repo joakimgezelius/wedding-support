@@ -94,7 +94,7 @@ class EventRow {
   get category()          { return this.get("Category"); }
   get status()            { return this.get("Status"); }
   get supplier()          { return this.get("Supplier"); }
-  get isTitle()           { return this.category === "Title"; }  // Is this a title row?
+  get isTitle()           { return this.category.toUpperCase() === "TITLE"; }  // Is this a title row?
   get title()             { return this.get("Description"); }
   get date()              { return this.get("Date"); }
   get time()              { return this.get("Time"); }
@@ -102,8 +102,9 @@ class EventRow {
   get endTime()           { return this.get("EndTime"); }
   get location()          { return this.get("Location"); }
   get description()       { return this.get("Description"); }
-  get currency()          { return this.get("Currency"); }
-  get currencySymbol()    { return this.get("Currency") === GBP ? "£" : "€"; }
+  get currency()          { return this.get("Currency").toUpperCase(); }
+  get currencySymbol()    { return this.currency === "GBP" ? "£" : "€"; }
+  get currencyFormat()    { return `{this.currencySymbol}#,##0`; }
   get quantity()          { return this.get("Quantity"); }
   get budgetUnitCost()    { return this.get("BudgetUnitCost");  }
   get nativeUnitCost()    { return this.get("NativeUnitCost");  }

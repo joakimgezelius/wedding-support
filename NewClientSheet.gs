@@ -1,5 +1,5 @@
 function onCreateNewClient() {
-  var name = Dialog.prompt('Create New Client Sheet', 'Please enter client sheet name:');
+  var name = Dialog.prompt("Create New Client Sheet", "Please enter client sheet name:");
   if (name !== "CANCEL") {
     if (name === "") {
       throw("New client name required");
@@ -24,7 +24,7 @@ function getParentFolder() {
   var file = DriveApp.getFileById(spreadsheet.getId());
   var folders = file.getParents();
   var folder = folders.next();  
-  trace('getParentFolder --> ' + folder.getName());
+  trace("getParentFolder --> " + folder.getName());
   return folder;
 }
 
@@ -70,9 +70,9 @@ class Sheet {
 
   static saveRangeAsSpreadsheet(){ 
     let sheet = SpreadsheetApp.getActiveSpreadsheet();
-    let range = sheet.getRange('Sheet1!A1:B3');
-    sheet.setNamedRange('buildingNameAddress', range);
-    let TestRange = sheet.getRangeByName('buildingNameAddress').getValues(); 
+    let range = sheet.getRange("Sheet1!A1:B3");
+    sheet.setNamedRange("buildingNameAddress", range);
+    let TestRange = sheet.getRangeByName("buildingNameAddress").getValues(); 
     Logger.log(TestRange); 
     var destFolder = DriveApp.getFolderById("xxxxxxxxxxxxxxxxxxxxx"); 
     DriveApp.getFileById(sheet.getId()).makeCopy("Test File", destFolder); 

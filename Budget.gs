@@ -73,7 +73,7 @@ class BudgetBuilder {
       let description = row.description;
       let unitPrice = row.unitPrice;
       if (unitPrice == 0.01) { // This is a sub-item, not to be added to the sum
-        description = '- ' + description;
+        description = "- " + description;
         unitPrice = "";
         totalPrice = "";
       }

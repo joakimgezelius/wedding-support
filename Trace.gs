@@ -32,8 +32,8 @@ class Trace {
 
 /*
   static showTraceSidebar() {
-    var html = HtmlService.createHtmlOutputFromFile('Page')
-      .setTitle('My custom sidebar')
+    var html = HtmlService.createHtmlOutputFromFile("Page")
+      .setTitle("My custom sidebar")
       .setWidth(300);
     SpreadsheetApp.getUi() // Or DocumentApp or SlidesApp or FormApp.
       .showSidebar(html);

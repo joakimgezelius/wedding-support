@@ -81,9 +81,9 @@ var DynamicItineraryBuilder = function(targetRangeName) {
 
 // (Subclassing wiring........
 DynamicItineraryBuilder.prototype = Object.create(StaticItineraryBuilder.prototype); // Add base class prototype  
-Object.defineProperty(DynamicItineraryBuilder.prototype, 'constructor', {
+Object.defineProperty(DynamicItineraryBuilder.prototype, "constructor", {
   value: DynamicItineraryBuilder, 
-  enumerable: false, // so that it does not appear in 'for in' loop
+  enumerable: false, // so that it does not appear in "for in" loop
   writable: true });
 //......... Subclassing wiring)
   

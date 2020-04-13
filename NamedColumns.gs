@@ -1,6 +1,6 @@
 class NamedColumns {
   constructor(rowName, columnNamesRange) {
-    if (typeof(columnNamesRange) === 'string') {
+    if (typeof(columnNamesRange) === "string") {
       columnNamesRange = Range.getByName("EventDetailsColumnIds");
     }
     this.range = columnNamesRange;
