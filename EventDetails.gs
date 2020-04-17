@@ -90,11 +90,12 @@ class EventRow {
   get isDecorTicked()     { return this.get("DecorTicked"); }
   get isSupplierTicked()  { return this.get("SupplierTicked"); }
   get isItineraryTicked() { return this.get("ItineraryTicked"); }
+  get isTitle()           { return this.category.toUpperCase() === "TITLE"; }  // Is this a title row?
+  get isSubItem()         { return this.category.toUpperCase() === "PART"; }   // Is this a sub-item?
   get who()               { return this.get("Who"); }
   get category()          { return this.get("Category"); }
   get status()            { return this.get("Status"); }
   get supplier()          { return this.get("Supplier"); }
-  get isTitle()           { return this.category.toUpperCase() === "TITLE"; }  // Is this a title row?
   get title()             { return this.get("Description"); }
   get date()              { return this.get("Date"); }
   get time()              { return this.get("Time"); }

@@ -41,23 +41,24 @@ class BudgetBuilder {
   }
 
   onEnd() {
-    trace("BudgetBuilder.onEnd - fill final title sum & autofit");
+    trace("BudgetBuilder.onEnd - fill final title sum, autofit & trim");
     this.fillTitleSum(null);
     this.targetSheet.setColumnWidth(1, 1);
     this.targetSheet.setColumnWidth(2, 500);
 //  this.targetSheet.autoResizeColumns(3, this.targetSheet.getMaxColumns());
+    this.targetRange.trim(); // delete excessive rows at the end
   }
 
   onTitle(row) {
     this.currentTitle = row.title;
     ++this.currentSection;
     trace("BudgetBuilder.onTitle " + this.currentTitle);
-    if (this.currentSection > 1) { // This is not the first title (if it is, no need for clean-up house-keeping)
-      if (this.currentTitleSum == 0) { // Section with no content - back up instead of moving on
-        this.targetRange.getPreviousRow();
+    if (this.currentSection > 1) { // This is not the first section (if it is, no need for clean-up house-keeping)
+      if (this.currentTitleSum == 0) {          // Section with no content?
+        this.targetRange.getPreviousRow();      //  - back up instead of moving on
       }
       else {
-        this.targetRange.getNextRowAndExtend(); // Leave one blank row before next section
+        this.targetRange.getNextRowAndExtend(); //  - else leave one blank row before next section
       }
     }
     let targetRow = this.targetRange.getNextRowAndExtend();
@@ -78,7 +79,7 @@ class BudgetBuilder {
       trace("BudgetBuilder.onRow " + row.description);
       let description = row.description;
       let unitPrice = row.unitPrice;
-      if (unitPrice == 0.01) { // This is a sub-item, not to be added to the sum
+      if (row.isSubItem) { // This is a sub-item, not to be added to the sum
         description = "- " + description;
         unitPrice = "";
         totalPrice = "";

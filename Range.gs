@@ -80,14 +80,14 @@ class Range {
     this.deleteExcessiveRows(2); // Delete all but the first two rows
     this.clear();
     this._currentRowOffset = 0;
-    if (callback !== null) callback(this._range);
+    if (callback !== null) this.format(callback);
   }
   
   getNextRowAndExtend() {
     let row = this.currentRow;
     ++this._currentRowOffset;
     if (this.height - this._currentRowOffset < 2) { // Extend if we're 1 row from the end
-      this._sheet.insertRowAfter(row.getRowIndex());
+      this._sheet.insertRowBefore(row.getRowIndex()+1);
       this.refresh();
     }
     return row;
@@ -98,6 +98,17 @@ class Range {
       --this._currentRowOffset;
     }
     return this.currentRow;
+  }
+
+  trim() {
+    let excess = this.height - this._currentRowOffset;
+    let rowsToKeep = Math.max(this.height - excess, 2); // Never less than two lines left
+    trace(`${this.trace} trim ${excess} lines (height: ${this.height} rowsToKeep: ${rowsToKeep})`);
+    this.deleteExcessiveRows(rowsToKeep);
+  }
+  
+  format(callback) {
+    callback(this._range);
   }
 
 }

@@ -14,20 +14,29 @@ class ClientItineraryBuilder {
 
   constructor(targetRangeName) {
     this.targetRange = Range.getByName(targetRangeName);
-    this.targetRowOffset = 0;
     trace("NEW " + this.trace);
   }
 
+  static formatRange(range) {
+    trace("ClientItineraryBuilder.formatRange");
+    /*    
+    range.setFontWeight("normal")
+    .setFontSize(10)
+    .breakApart()
+    .setBackground("#ffffff")
+    .setWrap(true);
+    */
+  };
+
   onBegin() {
     trace("ClientItineraryBuilder.onBegin - reset context " + this.trace);
-    // Delete all but the first and the last row in the target range
-    this.targetRange.deleteExcessiveRows(2);
-    this.targetRange.clear();
-    this.targetRowOffset = 0;
+    // Delete all but the first two rows in the target range
+    this.targetRange.minimizeAndClear(ClientItineraryBuilder.formatRange);
   }
   
   onEnd() {
-    trace("ClientItineraryBuilder.onEnd - no-op");
+    trace("ClientItineraryBuilder.onEnd - trim excess lines");
+    this.targetRange.trim();
   }
 
   onTitle(row) {
@@ -37,9 +46,8 @@ class ClientItineraryBuilder {
   onRow(row) {
     if (row.isItineraryTicked) { // This is an itinerary item
       trace("ClientItineraryBuilder.onRow Ticked: " + row.description);
-      let targetRow = this.getNextTargetRow();
-      //trace("StaticItineraryBuilder.onRow got target row: " + Range.trace(targetRow));
-      var column = 1;
+      let targetRow = this.targetRange.getNextRowAndExtend();
+      let column = 1;
       targetRow.getCell(1,column++).setValue(row.date);
       targetRow.getCell(1,column++).setValue(row.time);
       targetRow.getCell(1,column++).setValue(row.location);
@@ -49,14 +57,6 @@ class ClientItineraryBuilder {
     }
   }
 
-  // private method getNextTargetRow
-  //
-  getNextTargetRow() {
-    let targetRow = this.targetRange.range.offset(this.targetRowOffset++, 0, 1); // A range of 1 row height
-    targetRow.getSheet().insertRowAfter(targetRow.getRowIndex());
-    return targetRow;
-  }  
-  
   get trace() {
     return `{StaticItineraryBuilder ${this.targetRange.trace}}`;
   }

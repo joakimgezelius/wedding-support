@@ -1,4 +1,3 @@
-
 function onUpdateDecorSummary() {
   trace("onUpdateDecorSummary");
   let eventDetailsIterator = new EventDetailsIterator();
@@ -14,36 +13,60 @@ class DecorSummaryBuilder {
   
   constructor(targetRangeName) {
     this.targetRange = Range.getByName(targetRangeName);
-    this.targetRowOffset = 0;
     trace("NEW " + this.trace);
   }
 
+  static formatRange(range) {
+    trace("DecorSummaryBuilder.formatRange");
+    range.breakApart().
+    setFontWeight("normal").
+    setFontSize(10).
+    setBackground("#ffffff").
+    setWrap(true);
+  };
+
+  static formatTitle(range) {
+    range.setFontWeight("bold").
+    setFontSize(14).
+    setBackground("#f2f0ef");
+  }
+  
   onBegin() {
     trace("DecorSummaryBuilder.onBegin - reset context");
-    this.targetRowOffset = 0;
-    // Delete all but the first and the last row in the target range
-    this.targetRange.deleteExcessiveRows(2); // Keep 2 rows
-    this.targetRange.clear();
-    this.targetRange.range.breakApart().setFontWeight("normal").setFontSize(10).setBackground("#ffffff").setWrap(true);
+    // Delete all but two lines of the range, clear and set default format
+    this.targetRange.minimizeAndClear(DecorSummaryBuilder.formatRange);
+    this.currentSection = 0;
+    this.sectionItemCount = 0;
   }
   
   onEnd() {
-    trace("DecorSummaryBuilder.onEnd - no-op");
+    trace("DecorSummaryBuilder.onEnd - trim excess lines");
+    this.targetRange.trim();
   }
 
   onTitle(row) {
     trace("DecorSummaryBuilder.onTitle " + row.title);
-    if (row.isDecorTicked) { // This is a decor summary item
-      let targetRow = this.getNextTargetRow();
-      targetRow.merge();
-      targetRow.getCell(1,1).setValue(row.title).setFontWeight("bold").setFontSize(14).setBackground("#f2f0ef");
+    ++this.currentSection;
+    if (this.currentSection > 1) { // This is not the first section (if it is, no need for clean-up house-keeping)
+      if (this.sectionItemCount == 0) {         // Section with no content?
+        this.targetRange.getPreviousRow();      //  - back up instead of moving on
+      }
+      else {
+        this.targetRange.getNextRowAndExtend(); //  - else leave one blank row before next section
+      }
     }
+    this.sectionItemCount = 0;
+    let targetRow = this.targetRange.getNextRowAndExtend(); 
+    targetRow.merge();
+    targetRow.getCell(1,1).setValue(row.title);
+    DecorSummaryBuilder.formatTitle(targetRow);
   }
 
   onRow(row) {
-    trace("DecorSummaryBuilder.onRow");
+    trace("DecorSummaryBuilder.onRow " + row.title);
     if (row.isDecorTicked) { // This is a decor summary item
-      let targetRow = this.getNextTargetRow();
+      ++this.sectionItemCount;
+      let targetRow = this.targetRange.getNextRowAndExtend();
       let column = 1;
       let image = "";
       let itemStoreLocation = "";
@@ -60,15 +83,6 @@ class DecorSummaryBuilder {
       targetRow.getCell(1,column++).setValue(row.links);
       targetRow.getCell(1,column++).setValue(row.notes);
     }
-  }
-  
-  // private method getNextTargetRow
-  //
-  getNextTargetRow() {
-    let targetRow = this.targetRange.range.offset(this.targetRowOffset++, 0, 1); // A range of 1 row height
-    targetRow.getSheet().insertRowAfter(targetRow.getRowIndex());
-    targetRow.breakApart().setFontWeight("normal").setFontSize(10).setBackground("#ffffff");
-    return targetRow;
   }
   
   get trace() {
