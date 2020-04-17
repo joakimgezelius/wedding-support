@@ -31,6 +31,11 @@ function addWeddingMenu() {
                   )
       .addSeparator()
       .addItem("Update Exchange Rates", globalLibName + ".onUpdateExchangeRates")
+      .addSeparator()
+      .addSubMenu(ui.createMenu("Email")
+                  .addItem("Prepare client email draft 1", globalLibName + ".onCreateFirstEmailDraft")
+                  .addItem("Send client email 1", globalLibName + ".onSendFirstEmail")
+                  )
       .addToUi();
   trace("< Custom wedding menu added");
 }
