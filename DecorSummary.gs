@@ -1,7 +1,7 @@
 function onUpdateDecorSummary() {
   trace("onUpdateDecorSummary");
   let eventDetailsIterator = new EventDetailsIterator();
-  let decorSummaryBuilder = new DecorSummaryBuilder("DecorSummary");
+  let decorSummaryBuilder = new DecorSummaryBuilder(Range.getByName("DecorSummary", "Decor Summary"));
   eventDetailsIterator.iterate(decorSummaryBuilder);
 }
 
@@ -11,8 +11,8 @@ function onUpdateDecorSummary() {
 //
 class DecorSummaryBuilder {
   
-  constructor(targetRangeName) {
-    this.targetRange = Range.getByName(targetRangeName);
+  constructor(targetRange) {
+    this.targetRange = targetRange;
     trace("NEW " + this.trace);
   }
 

@@ -1,7 +1,7 @@
 function onUpdateClientItinerary() {
   trace("onUpdateClientItinerary");
   let eventDetailsIterator = new EventDetailsIterator();
-  let clientItineraryBuilder = new ClientItineraryBuilder("ClientItinerary", "Client Itinerary");
+  let clientItineraryBuilder = new ClientItineraryBuilder(Range.getByName("ClientItinerary", "Client Itinerary"));
   eventDetailsIterator.sort(SortType.time);
   eventDetailsIterator.iterate(clientItineraryBuilder);
 }
@@ -12,8 +12,8 @@ function onUpdateClientItinerary() {
 //
 class ClientItineraryBuilder {
 
-  constructor(targetRangeName) {
-    this.targetRange = Range.getByName(targetRangeName);
+  constructor(targetRange) {
+    this.targetRange = targetRange;
     trace("NEW " + this.trace);
   }
 

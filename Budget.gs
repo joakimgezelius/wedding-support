@@ -1,7 +1,7 @@
 function onUpdateBudget() {
   trace("onUpdateBudget");
   let eventDetailsIterator = new EventDetailsIterator();
-  let budgetBuilder = new BudgetBuilder("Budget");
+  let budgetBuilder = new BudgetBuilder(Range.getByName("Budget", "Budget"));
   eventDetailsIterator.iterate(budgetBuilder);
 }
 
@@ -9,8 +9,8 @@ function onUpdateBudget() {
 // Class BudgetBuilder
 //
 class BudgetBuilder {
-  constructor(targetRangeName) {
-    this.targetRange = Range.getByName(targetRangeName);
+  constructor(targetRange) {
+    this.targetRange = targetRange;
     this.targetSheet = this.targetRange.sheet;
     trace("NEW " + this.trace);
   }
@@ -42,7 +42,12 @@ class BudgetBuilder {
 
   onEnd() {
     trace("BudgetBuilder.onEnd - fill final title sum, autofit & trim");
-    this.fillTitleSum(null);
+    if (this.currentTitleSum == 0) {     // Last section is empty?
+      this.targetRange.getPreviousRow(); //  yes - Back up one row (last title will be trimmed away)
+    }
+    else {
+      this.fillTitleSum(null);
+    }
     this.targetSheet.setColumnWidth(1, 1);
     this.targetSheet.setColumnWidth(2, 500);
 //  this.targetSheet.autoResizeColumns(3, this.targetSheet.getMaxColumns());
