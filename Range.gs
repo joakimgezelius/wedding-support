@@ -50,8 +50,8 @@ class Range {
   get sheet()            { return this._sheet; }
   get values()           { return this._range.getValues(); }
   get height()           { return this._range.getHeight(); }
-  get row()              { return this._range.getRow(); }
-  get column()           { return this._range.getColumn(); }
+  get row()              { return this._range.getRow(); }    // Row number of the first row in the range
+  get column()           { return this._range.getColumn(); } // Column number of the first column in the range
   get currentRow()       { return this._range.offset(this._currentRowOffset, 0, 1); } // A range of 1 row height
   get currentRowOffset() { return this._currentRowOffset; }
   
@@ -83,6 +83,18 @@ class Range {
     if (callback !== null) this.format(callback);
   }
   
+  rewind() {
+    this._currentRowOffset = 0;
+  }
+  
+  getNextRow() {
+    return this.currentRow;
+  }
+
+  getNextRowValues() {
+    return this.currentRow.getValues[0];
+  }
+    
   getNextRowAndExtend() {
     let row = this.currentRow;
     ++this._currentRowOffset;

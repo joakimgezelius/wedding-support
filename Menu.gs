@@ -2,7 +2,7 @@
 
 function addWeddingMenu() {
   trace("> Adding custom wedding menu");
-  var ui = SpreadsheetApp.getUi();
+  let ui = SpreadsheetApp.getUi();
   ui.createMenu("Wedding")
       //.addItem("Create New Client Sheet", globalLibName + ".onCreateNewClient")
       //.addItem("Clear Sheet", globalLibName + ".onClearSheet")
@@ -42,7 +42,7 @@ function addWeddingMenu() {
 
 function addTestMenu() {
   trace("> Adding custom test menu");
-  var ui = SpreadsheetApp.getUi();
+  let ui = SpreadsheetApp.getUi();
   ui.createMenu("Test")
     .addItem("Update Dynamic Itinerary", "Event.onUpdateDynamicItinerary")
 /*
@@ -66,7 +66,7 @@ function addTestMenu() {
 
 function addRotaMenu() {
   trace("> Adding custom rota menu");
-  var ui = SpreadsheetApp.getUi();
+  let ui = SpreadsheetApp.getUi();
   ui.createMenu("Rota")
       .addItem("Update Rota", "Rota.onUpdateRota")
       .addSeparator()
@@ -81,7 +81,7 @@ function addRotaMenu() {
 
 function addQuoteMenu() {
   trace("> Adding custom quote menu");
-  var ui = SpreadsheetApp.getUi();
+  let ui = SpreadsheetApp.getUi();
   ui.createMenu("Quote")
       .addItem("Update Quote", globalLibName + ".onUpdateQuote")
       .addSeparator()
@@ -91,3 +91,22 @@ function addQuoteMenu() {
       .addToUi();
   trace("< Custom quote menu added");
 }
+
+function addEnqiriesMenu() {
+  trace("> Adding custom enquiries menu");
+  let ui = SpreadsheetApp.getUi();
+  ui.createMenu("Enquiries")
+      .addItem("Update Enquiries", globalLibName + ".onUpdateEnquiries")
+      .addToUi();
+  trace("< Custom enquiries menu added");
+}
+
+function addEmailMenu(emailListName) {
+  trace("> Adding custom email menu " + emailListName);
+  let ui = SpreadsheetApp.getUi();
+  let menu = ui.createMenu("Email");
+  Email.populateMenu(menu, emailListName);
+  menu.addToUi();
+  trace("< Custom email menu added");
+}
+

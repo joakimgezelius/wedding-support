@@ -21,6 +21,18 @@ function onCheckCoordinator() {
 }
 
 
+class Coordinator {
+  static get eventDetailsRange() { return Range.getByName("EventDetails", "Coordinator"); }
+  //Class CancelledCoordinatorItems() {
+  
+  
+  //constructor() {
+    //this.range = 
+  //}
+  
+}
+
+
 //=============================================================================================
 // Class EventDetailsUpdater
 //
@@ -42,10 +54,17 @@ class EventDetailsUpdater {
     trace("EventDetailsUpdater.onEnd - no-op");
   }
 
+  finalizeSectionFormatting() {
+    if (this.sectionNo > 1) {// This is not the first title row
+
+    }
+  }
+  
   onTitle(row) {
     trace("EventDetailsUpdater.onTitle " + row.title);
     this.itemNo = 0;
     ++this.sectionNo;
+    this.sectionTitleRange = row.range;
     if (row.itemNo === "" || this.forced) { // Only set item number if empty (or forced)
       row.itemNo = this.generateSectionNo();
     }

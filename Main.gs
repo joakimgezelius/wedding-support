@@ -28,3 +28,10 @@ function onQuoteSheetOpen(libName) {
   globalLibName = libName;
   addQuoteMenu();
 }
+
+function onEnqiriesSheetOpen(libName) {
+  trace(`onEnqiriesSheetOpen globalLibName=${libName}`);
+  globalLibName = libName;
+  addEnqiriesMenu();
+  addEmailMenu("EnquiryEmails");
+}

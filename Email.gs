@@ -13,6 +13,26 @@ function onSendFirstEmail() {
 }
 
 class Email {
+
+  static init(emailListName) {
+    Email.databaseSheetId = "1UqPLV5754d5I4DNCJ65ab6mo4bFQEMC6XgyJYcpoR1g";
+//  Email.databaseSheet = SpreadsheetApp.openById(Email.databaseSheetId);
+    Email.databaseRange = Range.getByName(emailListName);
+  }
+  
+  static populateMenu(menu, emailListName) {
+    trace("Email.populateMenu " + emailListName);
+    Email.init(emailListName);
+    Email.databaseRange.rewind();
+    for (var rowOffset = 0; rowOffset < Email.databaseRange.height; rowOffset++) {
+      let emailData = Email.databaseRange.getNextRowValues();
+      trace(" - " + emailData[1]);
+      menu.addItem(emailData[1], globalLibName + ".Email.init");
+//      let rowRange = this.databaseRange.range.offset(rowOffset, 0, 1);
+//      let name = new EventRow(this.data[rowOffset], rowOffset, rowRange);
+    }      
+    menu.addItem("Refresh", globalLibName + ".Email.init");
+  }
   
   constructor(name = "") {
     if (name != "") {

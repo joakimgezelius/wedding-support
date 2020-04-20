@@ -5,7 +5,10 @@ const SortType = { time: "time", supplier: "supplier" };
 
 class EventDetailsIterator {
   constructor() {
-    this.sourceRange = Range.getByName("EventDetails");
+    this.sourceRange = Coordinator.eventDetailsRange;
+    cancelledItemsTitleRange 
+    if (this.sourceRange) {
+    }
     this.rowCount = this.sourceRange.height;
     this.data = this.sourceRange.values; // NOTE: indexed from [0][0]
     trace("NEW " + this.trace);
@@ -90,8 +93,9 @@ class EventRow {
   get isDecorTicked()     { return this.get("DecorTicked"); }
   get isSupplierTicked()  { return this.get("SupplierTicked"); }
   get isItineraryTicked() { return this.get("ItineraryTicked"); }
-  get isTitle()           { return this.category.toUpperCase() === "TITLE"; }  // Is this a title row?
-  get isSubItem()         { return this.category.toUpperCase() === "PART"; }   // Is this a sub-item?
+  get isTitle()           { return this.category.toLowerCase() === "title"; }    // Is this a title row?
+  get isSubItem()         { return this.category.toLowerCase() === "part"; }     // Is this a sub-item?
+  get isCancelled()       { return this.status.toLowerCase() === "cancelled"; }  // Is this item cancelled?
   get who()               { return this.get("Who"); }
   get category()          { return this.get("Category"); }
   get status()            { return this.get("Status"); }
