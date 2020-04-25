@@ -101,6 +101,16 @@ function addEnqiriesMenu() {
   trace("< Custom enquiries menu added");
 }
 
+function addWeddingPackagesMenu() {
+  trace("> Adding custom wedding packages menu");
+  let ui = SpreadsheetApp.getUi();
+  ui.createMenu("Prices & Packages")
+      .addItem("Refresh Price List", globalLibName + ".onRefreshPriceList")
+      .addItem("Update Packages", globalLibName + ".onUpdatePackages")
+      .addToUi();
+  trace("< Custom wedding packages menu added");
+}
+
 function addEmailMenu(emailListName) {
   trace("> Adding custom email menu " + emailListName);
   let ui = SpreadsheetApp.getUi();

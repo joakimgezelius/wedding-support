@@ -35,3 +35,10 @@ function onEnqiriesSheetOpen(libName) {
   addEnqiriesMenu();
   addEmailMenu("EnquiryEmails");
 }
+
+function onWeddingPackagesSheetOpen(libName) {
+  trace(`onWeddingPackagesSheetOpen globalLibName=${libName}`);
+  globalLibName = libName;
+  addWeddingPackagesMenu();
+  //addEmailMenu("EnquiryEmails");
+}

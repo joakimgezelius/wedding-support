@@ -46,6 +46,7 @@ class Range {
   }
 
   get range()            { return this._range; }
+  get name()             { return this._name; }
   get trace()            { return this._trace; }
   get sheet()            { return this._sheet; }
   get values()           { return this._range.getValues(); }
@@ -54,13 +55,14 @@ class Range {
   get column()           { return this._range.getColumn(); } // Column number of the first column in the range
   get currentRow()       { return this._range.offset(this._currentRowOffset, 0, 1); } // A range of 1 row height
   get currentRowOffset() { return this._currentRowOffset; }
-  
-  // Dynamic Range Features
+
+  // 
+  //  Dynamic Range Features
   //
   
   refresh() { // Reload the range - e.g. if it has changed
     trace(`${this.trace} refresh`);
-    let newRange = Range.getByName(this._name); 
+    let newRange = Range.getByName(this.name); 
     this._range = newRange.range;
     this._trace = newRange.trace;
   }
@@ -88,11 +90,13 @@ class Range {
   }
   
   getNextRow() {
-    return this.currentRow;
+    let row = this.currentRow;
+    ++this._currentRowOffset;
+    return row;
   }
 
   getNextRowValues() {
-    return this.currentRow.getValues[0];
+    return this.getNextRow().getValues[0];
   }
     
   getNextRowAndExtend() {
@@ -121,6 +125,78 @@ class Range {
   
   format(callback) {
     callback(this._range);
+  }
+
+  // Named Column Fetures
+  
+  loadColumnNames() {
+    let columnNamesRange = this.range.offset(-1, 0, 1); // Get the one row above the range, we assume this row holds the column names
+    this.namedColumns = new NamedColumns(this.name, columnNamesRange);
+    return this;
+  }
+
+  getColumnOffset(columnName) {
+    return this.namedColumns.getColumnOffset(columnName);
+  }
+  
+  getColumnLetter(columnName) {
+    return this.namedColumns.getColumnLetter(columnName);
+  }
+  
+}
+
+
+//----------------------------------------------------------------------------------------------------
+// 
+// class RangeRow
+
+class RangeRow {
+
+  constructor(data, rowOffset, containerRange) {
+    this.data = data;
+    this.rowOffset = rowOffset;
+    this.containerRange = containerRange;
+  }
+
+  get(columnName, expectedType = "undefined") {
+    let value = this.data[this.containerRange.getColumnOffset(columnName)];
+    let actualType = typeof value;
+    if (actualType !== expectedType) {
+      switch (expectedType) {
+        case "string": 
+          return String(value); 
+          break;
+        case "date":
+          break;
+        case "number":
+          value = Number(value);
+          if (!Number.isNaN(value)) return value;
+      }
+      if (expectedType !== undefined && actualType !== expectedType) {
+        let rowPosition = this.containerRange.row + this.rowOffset;
+        let columnLetter = this.containerRange.getColumnLetter(columnName);
+        Error.fatal(`Unexpected value in row ${rowPosition}, column ${columnLetter} (${columnName}), found a ${actualType} (${value}), expected a ${expectedType}`);
+      }
+    }
+    return value;
+  }
+
+  getCell(columnName) {
+    let columnOffset = this.containerRange.getColumnOffset(columnName);
+    let cell = this.containerRange.range.offset(this.rowOffset, columnOffset, 1, 1);
+//  trace(`${this.containerRange.name}.getCell ${columnName} --> ${Range.trace(cell)}`);
+    return cell;
+  }
+
+  set(columnName, value) { 
+    let cell = this.getCell(columnName);
+    trace(`${this.containerRange.name}.set ${columnName} ${Range.trace(cell)} = ${value}`);
+    cell.setValue(value);
+  }
+
+  getA1Notation(columnName) { 
+    let cell = this.getCell(columnName);
+    return cell.getA1Notation();
   }
 
 }

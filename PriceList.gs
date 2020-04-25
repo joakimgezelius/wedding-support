@@ -1,21 +1,44 @@
-var PriceList = function() {
-  this.range = Range.getByName("PriceList");
-  this.rowCount = this.range.getHeight();
-  this.data = this.range.getValues();
-  trace("NEW " + this.trace());
+function onRefreshPriceList() {
+  trace("onRefreshPriceList");
+  //let priceListIterator = new EventDetailsIterator();
+//  let eventDetailsUpdater = new EventDetailsUpdater(false);
 }
 
-PriceList.prototype.update = function() {
-  this.gatherCategories();
+function onUpdatePackages() {
+  trace("onUpdatePackages");
+//  if (Dialog.confirm("Forced Coordinator Update - Confirmation Required", "Are you sure you want to force-update the coordinator? It will overwrite row numbers and formulas, make sure the sheet is sorted properly!") == true) {
+//    let eventDetailsIterator = new EventDetailsIterator();
+//    let eventDetailsUpdater = new EventDetailsUpdater(true);
+//    eventDetailsIterator.iterate(eventDetailsUpdater);
+//  }
 }
 
-PriceList.prototype.gatherCategories = function() {
-  trace("PriceList.gatherCategories");
-  for (var rowOffset = 0; rowOffset < this.rowCount; rowOffset++) {
-    var rowRange = this.range.offset(rowOffset, 0, 1);
+
+class PriceList {
+  
+  constructor() {
+    this.range = Range.getByName("PriceList");
+    this.rowCount = this.range.getHeight();
+    this.data = this.range.getValues();
+    trace("NEW " + this.trace());
   }
+
+  update() {
+    this.gatherCategories();
+  }
+
+  gatherCategories() {
+    trace("PriceList.gatherCategories");
+    for (var rowOffset = 0; rowOffset < this.rowCount; rowOffset++) {
+      var rowRange = this.range.offset(rowOffset, 0, 1);
+    }
+  }
+
+  get trace() {
+    return "{PriceList " + this.range.trace + "}";
+  }
+
 }
 
-PriceList.prototype.trace = function() {
-  return "{PriceList " + Range.trace(this.range) + "}";
-}
+
+//  eventDetailsIterator.iterate(budgetBuilder);

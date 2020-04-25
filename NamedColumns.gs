@@ -1,41 +1,49 @@
 class NamedColumns {
+
   constructor(rowName, columnNamesRange) {
-    if (typeof(columnNamesRange) === "string") {
-      columnNamesRange = Range.getByName("EventDetailsColumnIds");
-    }
-    this.range = columnNamesRange;
-    this.rowOffset = columnNamesRange.row;
-    this.columnOffset = columnNamesRange.column;
+    this.baseRowPosition = columnNamesRange.getRow();
+    this.baseColumnPosition = columnNamesRange.getColumn();
     this.rowName = rowName;
-    this.columnNumbers = {};
-    let columnNames = columnNamesRange.values[0];
+    this.columnOffsets = [];
+    this.columnLetters = [];
+    let columnNames = columnNamesRange.getValues()[0];
     let columnCount = columnNames.length;
-    trace(`NamedColumns ${this.rowName} Row Offset: ${this.rowOffset} Column Offset: ${this.columnOffset} Columns: ${columnNames}`);
-    for (var columnNumber = 0; columnNumber < columnCount; ++columnNumber) {
-      let columnName = columnNames[columnNumber];
+    trace(`NamedColumns ${this.rowName} Base Row Position: ${this.baseRowPosition} Base Column Position: ${this.baseColumnPosition} Columns: ${columnNames}`);
+    for (var columnOffset = 0; columnOffset < columnCount; ++columnOffset) {
+      let columnName = columnNames[columnOffset];
       if (columnName !== "") { // Only 
-        this.columnNumbers[columnName] = columnNumber;
-//      trace(`Column ${columnNumber}: ${columnName}`);
+        this.columnOffsets[columnName] = columnOffset;
+        let baseColumnOffset = this.baseColumnPosition - 1; // Zero-based
+        let globalColumnOffset = baseColumnOffset + columnOffset
+        let letter = globalColumnOffset > 25 /*>Z?*/ ? "A" + String.fromCharCode(65 - 26 + globalColumnOffset) : String.fromCharCode(65 /* ascii('A') */ + globalColumnOffset);
+        this.columnLetters[columnName] = letter;
+        //trace(`Column ${columnOffset}: ${columnName}`);
       }
     }
+    //console.log(`NamedColumns ${this.rowName} Columns numbers: `, this.columnOffsets);
+    //console.log(`NamedColumns ${this.rowName} Columns letters: `, this.columnLetters);
   }
   
-  getColumnNumber(columnName) {
-    if (!columnName in this.columnNumbers) {
+  getColumnOffset(columnName) {
+    if (!columnName in this.columnOffsets) {
       Error.fatal(`Unknown ${this.rowName} column: ${columnName}`);
     }
-    let columnNumber = this.columnNumbers[columnName];
-    return columnNumber;
+    return this.columnOffsets[columnName];
   }
   
-  getAbsoluteColumnNumber(columnName) {
-    return this.getColumnNumber(columnName) + this.columnOffset;
+  getAbsoluteColumnOffset(columnName) {
+    return this.getColumnOffset(columnName) + this.baseColumnPosition - 1;
+  }
+
+  getAbsoluteColumnPosition(columnName) {
+    return this.getColumnOffset(columnName) + this.baseColumnPosition;
   }
 
   getColumnLetter(columnName) {
-    let columnNumber = this.getColumnNumber(columnName);
-    let cell = this.range.range.offset(0, columnNumber, 1, 1);
-    let a1Notation = cell.getA1Notation();
-    return a1Notation;
+    if (!columnName in this.columnLetters) {
+      Error.fatal(`Unknown ${this.rowName} column: ${columnName}`);
+    }
+    return this.columnLetters[columnName];
   }
+
 }

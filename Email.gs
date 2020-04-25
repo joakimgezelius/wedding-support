@@ -26,8 +26,9 @@ class Email {
     Email.databaseRange.rewind();
     for (var rowOffset = 0; rowOffset < Email.databaseRange.height; rowOffset++) {
       let emailData = Email.databaseRange.getNextRowValues();
-      trace(" - " + emailData[1]);
-      menu.addItem(emailData[1], globalLibName + ".Email.init");
+      console.log(emailData);
+//      trace(" - " + emailData[1]);
+//      menu.addItem(emailData[1], globalLibName + ".Email.init");
 //      let rowRange = this.databaseRange.range.offset(rowOffset, 0, 1);
 //      let name = new EventRow(this.data[rowOffset], rowOffset, rowRange);
     }      

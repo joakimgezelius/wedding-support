@@ -1,3 +1,3 @@
 function onUpdateEnquiries() {
-  
+  trace("onUpdateEnquiries");
 }
