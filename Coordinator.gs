@@ -75,7 +75,6 @@ class EventDetailsUpdater {
     trace("EventDetailsUpdater.onRow " + this.itemNo);
     var currencyA1 = row.getA1Notation("Currency");
     var quantityA1 = row.getA1Notation("Quantity");
-    var budgetUnitCostA1 = row.getA1Notation("BudgetUnitCost");
     var nativeUnitCostA1 = row.getA1Notation("NativeUnitCost");
     var unitCostA1 = row.getA1Notation("UnitCost");
     var markupA1 = row.getA1Notation("Markup");
@@ -86,24 +85,15 @@ class EventDetailsUpdater {
     if (row.itemNo === "" || this.forced) { // Only set item number if empty (or forced)
       row.itemNo = this.generateItemNo();
     }
-    let nativeUnitCost = String(row.nativeUnitCost);
-    let nativeCurrencyFormat = (row.currency === "GBP") ? "£#,##0" : "€#,##0";
-    let nativeUnitCostCell = row.getCell("NativeUnitCost").setNumberFormat(nativeCurrencyFormat);
-    if (nativeUnitCost === "" || nativeUnitCost.charAt(0) === "=") { // Set native unit cost equal to budget unit cost if not set
-      row.nativeUnitCost = `=${budgetUnitCostA1}`;
-      nativeUnitCostCell.setFontColor("#aaaaaa"); // Format
-    } else {
-      nativeUnitCostCell.setFontColor("#000000"); // Black
-    }
-    
+    this.setNativeUnitCost(row);    
     row.unitCost = `=IF(OR(${currencyA1}="", ${nativeUnitCostA1}="", ${nativeUnitCostA1}=0), "", IF(${currencyA1}="GBP", ${nativeUnitCostA1}, ${nativeUnitCostA1} / EURGBP))`;
     row.totalCost = `=IF(OR(${quantityA1}="", ${quantityA1}=0, ${unitCostA1}="", ${unitCostA1}=0), "", ${quantityA1} * ${unitCostA1} * (1-${commissionPercentageA1}))`;
-    if (row.markup === "") { // Only set markup if empty
+    if (row.markup === "" || this.forced) { // Only set markup if empty
       row.markup = `=IF(OR(${unitCostA1}="", ${unitCostA1}=0, ${unitPriceA1}="", ${unitPriceA1}=0), "", (${unitPriceA1}-${unitCostA1})/${unitCostA1})`;
     }
-    if (row.unitPrice === "" || this.forced) { // Only set unit price if empty (or forced)
-      row.unitPrice = `=IF(OR(${unitCostA1}="", ${unitCostA1}=0), "", ${unitCostA1} * ( 1 + ${markupA1}))`;
-    }
+//  if (row.unitPrice === "" || this.forced) { // Only set unit price if empty (or forced)
+//    row.unitPrice = `=IF(OR(${unitCostA1}="", ${unitCostA1}=0), "", ${unitCostA1} * ( 1 + ${markupA1}))`;
+//  }
     row.totalPrice = `=IF(OR(${quantityA1}="", ${quantityA1}=0, ${unitPriceA1}="", ${unitPriceA1}=0), "", ${quantityA1} * ${unitPriceA1})`;
 //  row.commission = `=IF(OR(${commissionPercentageA1}="", ${commissionPercentageA1}=0), "", ${quantityA1} * ${unitCostA1} * ${commissionPercentageA1})`;
 //  row.quantity (=((hour(K215)*60+minute(K215))-(hour(J215)*60+minute(J215)))/60)
@@ -120,6 +110,26 @@ class EventDetailsUpdater {
       return Utilities.formatString("%s-%02d", this.generateSectionNo(), this.itemNo);
   }
 
+  setNativeUnitCost(row) {
+    let budgetUnitCostCell = row.getCell("BudgetUnitCost");
+    let budgetUnitCostA1 = budgetUnitCostCell.getA1Notation();
+    let nativeUnitCost = String(row.nativeUnitCost);
+    let nativeUnitCostCell = row.getCell("NativeUnitCost");
+    let nativeUnitCostFormula = row.getFormula("NativeUnitCost");
+    let currencyFormat = row.currencyFormat;
+    trace(`Cell: ${nativeUnitCostCell.getA1Notation()} ${nativeUnitCostFormula} ${currencyFormat}`);
+  
+    budgetUnitCostCell.setNumberFormat(currencyFormat);
+    nativeUnitCostCell.setNumberFormat(currencyFormat);
+    if (nativeUnitCost === "" || nativeUnitCostFormula !== "") { // Set native unit cost equal to budget unit cost if not set 
+      trace(`Set nativeUnitCost to =${budgetUnitCostA1}`);
+      row.nativeUnitCost = `=${budgetUnitCostA1}`;
+      nativeUnitCostCell.setFontColor("#ccccff"); // Make text grey
+    } else {
+      nativeUnitCostCell.setFontColor("#000000"); // Black
+    }
+  }
+  
   get trace() {
     return `{EventDetailsUpdater forced=${this.forced}}`;
   }

@@ -9,7 +9,8 @@ class EventDetailsIterator {
     if (this.sourceRange) {
     }
     this.rowCount = this.sourceRange.height;
-    this.data = this.sourceRange.values; // NOTE: indexed from [0][0]
+    this.values = this.sourceRange.values;     // NOTE: indexed from [0][0]
+    this.formulas = this.sourceRange.formulas; //  - " -
     trace("NEW " + this.trace);
   }
 
@@ -20,7 +21,7 @@ class EventDetailsIterator {
     trace("EventDetailsIterator.iterate " + this.trace);
     handler.onBegin();
     for (var rowOffset = 0; rowOffset < this.rowCount; rowOffset++) {
-      let row = new EventRow(this.data[rowOffset], rowOffset, this.sourceRange);
+      let row = new EventRow(this.values[rowOffset], this.formulas[rowOffset], rowOffset, this.sourceRange);
       if (row.isTitle) {
         handler.onTitle(row);
       } else {
@@ -37,7 +38,7 @@ class EventDetailsIterator {
       return eventRow1.compare(eventRow2, type);
     }
     trace(`EventDetailsIterator.sort(${type}) ${this.trace}`);
-    this.data.sort(compare);
+    this.values.sort(compare);
   }
   
   get trace() {
@@ -51,8 +52,8 @@ class EventDetailsIterator {
   
 class EventRow extends RangeRow {
   
-  constructor(data, rowOffset, containerRange) {
-    super(data, rowOffset, containerRange);
+  constructor(values, formulas, rowOffset, containerRange) {
+    super(values, formulas, rowOffset, containerRange);
   }
 
   get sectionNo()         { return this.get("ItemNo", "string").substr(0,3); }
@@ -76,11 +77,11 @@ class EventRow extends RangeRow {
   get description()       { return this.get("Description", "string"); }
   get currency()          { return this.get("Currency", "string").toUpperCase(); }
   get currencySymbol()    { return this.currency === "GBP" ? "£" : "€"; }
-  get currencyFormat()    { return `{this.currencySymbol}#,##0`; }
+  get currencyFormat()    { return `${this.currencySymbol}#,##0`; }
   get quantity()          { return this.get("Quantity", "number"); }
   get budgetUnitCost()    { return this.get("BudgetUnitCost", "number");  }
   get nativeUnitCost()    { return this.get("NativeUnitCost", "number");  }
-  get markup()            { return this.get("Markup", "number"); }
+  get markup()            { return this.get("Markup"); } // Accept ref errors
   get unitPrice()         { return this.get("UnitPrice", "number"); }
   get totalPrice()        { return this.get("TotalPrice", "number"); }
   get itemNotes()         { return this.get("ItemNotes", "string"); }

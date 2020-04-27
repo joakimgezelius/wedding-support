@@ -50,6 +50,7 @@ class Range {
   get trace()            { return this._trace; }
   get sheet()            { return this._sheet; }
   get values()           { return this._range.getValues(); }
+  get formulas()         { return this._range.getFormulas(); }
   get height()           { return this._range.getHeight(); }
   get row()              { return this._range.getRow(); }    // Row number of the first row in the range
   get column()           { return this._range.getColumn(); } // Column number of the first column in the range
@@ -152,14 +153,16 @@ class Range {
 
 class RangeRow {
 
-  constructor(data, rowOffset, containerRange) {
-    this.data = data;
+  constructor(values, formulas, rowOffset, containerRange) {
+    this.values = values;
+    this.formulas = formulas;
     this.rowOffset = rowOffset;
     this.containerRange = containerRange;
   }
 
   get(columnName, expectedType = "undefined") {
-    let value = this.data[this.containerRange.getColumnOffset(columnName)];
+    let value = this.values[this.containerRange.getColumnOffset(columnName)];
+    if (expectedType === "undefined") return value; // If we accept any type, just return the value!
     let actualType = typeof value;
     if (actualType !== expectedType) {
       switch (expectedType) {
@@ -181,6 +184,11 @@ class RangeRow {
     return value;
   }
 
+  getFormula(columnName) {
+    let formula = this.formulas[this.containerRange.getColumnOffset(columnName)];
+    return formula;
+  }
+  
   getCell(columnName) {
     let columnOffset = this.containerRange.getColumnOffset(columnName);
     let cell = this.containerRange.range.offset(this.rowOffset, columnOffset, 1, 1);
