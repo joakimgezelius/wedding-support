@@ -13,28 +13,78 @@ function onUpdatePackages() {
 //  }
 }
 
-function onPriceListExport() {
-  PriceList.onExport();
+function onPriceListClearExport() {
+  trace("onPriceListClearExport");
+  let priceListExport = new PriceListExport("Export");
+  priceListExport.clear();
 }
+
+function onPriceListClearSelectionTicks() {
+  trace("onPriceListClearSelectionTicks");
+  let priceList = new PriceList("PriceList");
+  if (Dialog.confirm("Clear Selection Ticks", 'Are you sure you want to clear all ticks in the "Selected for Quote" column?') == true) {
+    priceList.clearSelectionTicks();
+  }
+}
+
+function onPriceListExportTicked() {
+  trace("onPriceListExport");
+  let priceList = new PriceList("PriceList");
+  let priceListExport = new PriceListExport("Export");
+  priceList.iterate(priceListExport);
+}
+
+function onPriceListExportSelection() {
+  trace("onPriceListExport");
+  let priceList = new PriceList("PriceList");
+  let priceListExport = new PriceListExport("Export");
+  priceList.iterate(priceListExport);
+}
+
+
+//================================================================================================
 
 class PriceList {
   
-  constructor() {
-    this.range = Range.getByName("PriceList");
-    this.rowCount = this.range.getHeight();
-    this.data = this.range.getValues();
-    trace("NEW " + this.trace());
+  constructor(rangeName) {
+    this.range = Range.getByName(rangeName).loadColumnNames();
+    this.rowCount = this.range.height;
+    this.values = this.range.values;
+    this.formulas = this.range.formulas;
+    trace("NEW " + this.trace);
   }
   
-  static onExport() {
-    trace("onExport");
-    Dialog.notify("onExport", "onExport");
-  }
-
   update() {
     this.gatherCategories();
   }
 
+  // Method iterate
+  // Iterate over all price list rows
+  //
+  iterate(handler) {
+    trace("PriceList.iterate " + this.trace);
+    handler.onBegin();
+    for (let rowOffset = 0; rowOffset < this.rowCount; rowOffset++) {
+      let row = new PriceListRow(this.values[rowOffset], this.formulas[rowOffset], rowOffset, this.range);
+      if (row.isTitle) {
+        handler.onTitle(row);
+      } else {
+        handler.onRow(row);
+      }
+    }  
+    handler.onEnd();
+  }
+
+  clearSelectionTicks() {
+    trace("PriceList.clearSelectionTicks " + this.trace);
+    for (let rowOffset = 0; rowOffset < this.rowCount; rowOffset++) {
+      let row = new PriceListRow(this.values[rowOffset], this.formulas[rowOffset], rowOffset, this.range);
+      if (row.isSelected) {
+        row.isSelected = false;
+      }
+    }  
+  }
+  
   gatherCategories() {
     trace("PriceList.gatherCategories");
     for (var rowOffset = 0; rowOffset < this.rowCount; rowOffset++) {
@@ -46,7 +96,72 @@ class PriceList {
     return "{PriceList " + this.range.trace + "}";
   }
 
-}
+} // PriceList
 
 
-//  eventDetailsIterator.iterate(budgetBuilder);
+//================================================================================================
+
+class PriceListRow extends EventRow {
+
+  constructor(values, formulas, rowOffset, containerRange) {
+    super(values, formulas, rowOffset, containerRange);
+  }
+
+  get isSelected()      { return this.get("Selected"); } // Accept blank
+  set isSelected(value) { this.set("Selected", value); }
+  
+} // PriceListRow
+
+
+//================================================================================================
+
+class PriceListExport {
+  
+  constructor(rangeName) {
+    this.range = Range.getByName(rangeName).loadColumnNames();
+    this.values = this.range.values;
+    this.formulas = this.range.formulas;
+    trace("NEW " + this.trace);
+  }
+  
+  clear() {
+    trace("PriceListExport.clear " + this.trace);
+    this.range.minimizeAndClear();
+  }
+  
+  onBegin() {
+    trace("PriceListExport.onBegin " + this.trace);
+  }
+  
+  onEnd() {
+    trace("PriceListExport.onEnd " + this.trace);
+  }
+  
+  onTitle(row) {
+    trace("PriceListExport.onTitle - ignore");
+  }
+  
+  onRow(priceListRow) {
+    trace("PriceListExport.onRow ");
+    if (priceListRow.isSelected) {
+      let exportRowRange = this.range.getNextRowAndExtend();
+      let rowOffset = this.range.currentRowOffset
+      let exportRow = new EventRow(this.values[rowOffset], this.formulas[rowOffset], rowOffset, this.range);
+      exportRow.category             = priceListRow.category;
+      exportRow.supplier             = priceListRow.supplier;
+      exportRow.description          = priceListRow.description;
+      exportRow.currency             = priceListRow.currency;
+      exportRow.nativeUnitCost       = priceListRow.nativeUnitCost;
+      exportRow.markup               = priceListRow.markup;
+      exportRow.commissionPercentage = priceListRow.commissionPercentage;
+
+    }    
+  }
+  
+  get trace() {
+    return "{PriceListExport " + this.range.trace + "}";
+  }
+
+} // PriceListExport
+
+

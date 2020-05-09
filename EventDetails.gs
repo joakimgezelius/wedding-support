@@ -5,12 +5,12 @@ const SortType = { time: "time", supplier: "supplier" };
 
 class EventDetailsIterator {
   constructor() {
-    this.sourceRange = Coordinator.eventDetailsRange;
-    if (this.sourceRange) {
+    this.range = Coordinator.eventDetailsRange;
+    if (this.range) {
     }
-    this.rowCount = this.sourceRange.height;
-    this.values = this.sourceRange.values;     // NOTE: indexed from [0][0]
-    this.formulas = this.sourceRange.formulas; //  - " -
+    this.rowCount = this.range.height;
+    this.values = this.range.values;     // NOTE: indexed from [0][0]
+    this.formulas = this.range.formulas; //  - " -
     trace("NEW " + this.trace);
   }
 
@@ -21,7 +21,7 @@ class EventDetailsIterator {
     trace("EventDetailsIterator.iterate " + this.trace);
     handler.onBegin();
     for (var rowOffset = 0; rowOffset < this.rowCount; rowOffset++) {
-      let row = new EventRow(this.values[rowOffset], this.formulas[rowOffset], rowOffset, this.sourceRange);
+      let row = new EventRow(this.values[rowOffset], this.formulas[rowOffset], rowOffset, this.range);
       if (row.isTitle) {
         handler.onTitle(row);
       } else {
@@ -42,7 +42,7 @@ class EventDetailsIterator {
   }
   
   get trace() {
-    return `{EventDetailsIterator range=${this.sourceRange.trace} rowCount=${this.rowCount}`;
+    return `{EventDetailsIterator range=${this.range.trace} rowCount=${this.rowCount}`;
   }
 }
 
@@ -56,47 +56,53 @@ class EventRow extends RangeRow {
     super(values, formulas, rowOffset, containerRange);
   }
 
-  get sectionNo()         { return this.get("ItemNo", "string").substr(0,3); }
-  get itemNo()            { return this.get("ItemNo", "string"); }
-  get isDecorTicked()     { return this.get("DecorTicked", "boolean"); }
-  get isSupplierTicked()  { return this.get("SupplierTicked", "boolean"); }
-  get isItineraryTicked() { return this.get("ItineraryTicked", "boolean"); }
-  get isTitle()           { return this.category.toLowerCase() === "title"; }    // Is this a title row?
-  get isSubItem()         { return this.category.toLowerCase() === "part"; }     // Is this a sub-item?
-  get isCancelled()       { return this.status.toLowerCase() === "cancelled"; }  // Is this item cancelled?
-  get who()               { return this.get("Who", "string"); }
-  get category()          { return this.get("Category", "string"); }
-  get status()            { return this.get("Status", "string"); }
-  get supplier()          { return this.get("Supplier", "string"); }
-  get title()             { return this.get("Description", "string"); }
-  get date()              { return this.get("Date"); }
-  get time()              { return this.get("Time"); }
-  get startTime()         { return this.get("Time"); }
-  get endTime()           { return this.get("EndTime"); }
-  get location()          { return this.get("Location", "string"); }
-  get description()       { return this.get("Description", "string"); }
-  get currency()          { return this.get("Currency", "string").toUpperCase(); }
-  get currencySymbol()    { return this.currency === "GBP" ? "£" : "€"; }
-  get currencyFormat()    { return `${this.currencySymbol}#,##0`; }
-  get quantity()          { return this.get("Quantity"); } // Accept blank
-  get budgetUnitCost()    { return this.get("BudgetUnitCost");  } // Accept blank
-  get nativeUnitCost()    { return this.get("NativeUnitCost");  } // Accept blank
-  get markup()            { return this.get("Markup"); } // Accept ref errors
-  get unitPrice()         { return this.get("UnitPrice"); } // Accept blank
-  get totalPrice()        { return this.get("TotalPrice", "number"); }
-  get itemNotes()         { return this.get("ItemNotes", "string"); }
-  get notes()             { return this.get("ItemNotes", "string"); }
-  get clientNotes()       { return ""; } // this.get("ItemNotes", "string"); }
-  get inventoryNotes()    { return ""; } // this.get("ItemNotes", "string"); }
-  get links()             { return this.get("Links", "string"); }
+  get sectionNo()           { return this.get("ItemNo", "string").substr(0,3); }
+  get itemNo()              { return this.get("ItemNo", "string"); }
+  get isDecorTicked()       { return this.get("DecorTicked", "boolean"); }
+  get isSupplierTicked()    { return this.get("SupplierTicked", "boolean"); }
+  get isItineraryTicked()   { return this.get("ItineraryTicked", "boolean"); }
+  get isTitle()             { return this.category.toLowerCase() === "title"; }    // Is this a title row?
+  get isSubItem()           { return this.category.toLowerCase() === "part"; }     // Is this a sub-item?
+  get isCancelled()         { return this.status.toLowerCase() === "cancelled"; }  // Is this item cancelled?
+  get who()                 { return this.get("Who", "string"); }
+  get category()            { return this.get("Category", "string"); }
+  get status()              { return this.get("Status", "string"); }
+  get supplier()            { return this.get("Supplier", "string"); }
+  get title()               { return this.get("Description", "string"); }
+  get date()                { return this.get("Date"); }
+  get time()                { return this.get("Time"); }
+  get startTime()           { return this.get("Time"); }
+  get endTime()             { return this.get("EndTime"); }
+  get location()            { return this.get("Location", "string"); }
+  get description()         { return this.get("Description", "string"); }
+  get currency()            { return this.get("Currency", "string").toUpperCase(); }
+  get currencySymbol()      { return this.currency === "GBP" ? "£" : "€"; }
+  get currencyFormat()      { return `${this.currencySymbol}#,##0`; }
+  get quantity()            { return this.get("Quantity"); } // Accept blank
+  get budgetUnitCost()      { return this.get("BudgetUnitCost");  } // Accept blank
+  get nativeUnitCost()      { return this.get("NativeUnitCost");  } // Accept blank
+  get markup()              { return this.get("Markup"); } // Accept ref errors
+  get commissionPercentage(){ return this.get("CommissionPercentage"); } // Accept ref errors
+  get unitPrice()           { return this.get("UnitPrice"); } // Accept blank
+  get totalPrice()          { return this.get("TotalPrice", "number"); }
+  get itemNotes()           { return this.get("ItemNotes", "string"); }
+  get notes()               { return this.get("ItemNotes", "string"); }
+  get clientNotes()         { return ""; } // this.get("ItemNotes", "string"); }
+  get inventoryNotes()      { return ""; } // this.get("ItemNotes", "string"); }
+  get links()               { return this.get("Links", "string"); }
 
   set itemNo(value)         { this.set("ItemNo", value); }
+  set category(value)       { this.set("Category", value); }
+  set supplier(value)       { this.set("Supplier", value); }
+  set description(value)    { this.set("Description", value); }
+  set currency(value)       { this.set("Currency", value); }
   set markup(value)         { this.set("Markup", value); }
   set nativeUnitCost(value) { this.set("NativeUnitCost", value); }
   set unitCost(value)       { this.set("UnitCost", value); }
   set totalCost(value)      { this.set("TotalCost", value); }
   set unitPrice(value)      { this.set("UnitPrice", value); }
   set totalPrice(value)     { this.set("TotalPrice", value); }
+  set commissionPercentage(value) { this.set("CommissionPercentage", value); }
   set commission(value)     { this.set("Commission", value); }
 
   compare(other, type) { // To support sorting of rows
