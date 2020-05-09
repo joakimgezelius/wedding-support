@@ -10,6 +10,11 @@ class Error {
     throw(this._message);    
   }
   
+  static warning(errorMessage) {
+    let error = new Error(errorMessage);
+    trace("*** WARNING ***: " + errorMessage);
+  }
+  
   static fatal(errorMessage) {
     let error = new Error(errorMessage);
     trace("Fatal error, terminating: " + errorMessage);

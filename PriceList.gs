@@ -13,6 +13,9 @@ function onUpdatePackages() {
 //  }
 }
 
+function onPriceListExport() {
+  PriceList.onExport();
+}
 
 class PriceList {
   
@@ -21,6 +24,11 @@ class PriceList {
     this.rowCount = this.range.getHeight();
     this.data = this.range.getValues();
     trace("NEW " + this.trace());
+  }
+  
+  static onExport() {
+    trace("onExport");
+    Dialog.notify("onExport", "onExport");
   }
 
   update() {

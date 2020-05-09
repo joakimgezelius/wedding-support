@@ -73,27 +73,20 @@ class EventDetailsUpdater {
   onRow(row) {
     ++this.itemNo;
     trace("EventDetailsUpdater.onRow " + this.itemNo);
-    var currencyA1 = row.getA1Notation("Currency");
-    var quantityA1 = row.getA1Notation("Quantity");
-    var nativeUnitCostA1 = row.getA1Notation("NativeUnitCost");
-    var unitCostA1 = row.getA1Notation("UnitCost");
-    var markupA1 = row.getA1Notation("Markup");
-    var commissionPercentageA1 = row.getA1Notation("CommissionPercentage");
-    var unitPriceA1 = row.getA1Notation("UnitPrice");
-    //
-    // Set formulas:
+    let currencyA1 = row.getA1Notation("Currency");
+    let quantityA1 = row.getA1Notation("Quantity");
+    let nativeUnitCostA1 = row.getA1Notation("NativeUnitCost");
+    let unitCostA1 = row.getA1Notation("UnitCost");
+    let commissionPercentageA1 = row.getA1Notation("CommissionPercentage");
+    let unitPriceA1 = row.getA1Notation("UnitPrice");
+
     if (row.itemNo === "" || this.forced) { // Only set item number if empty (or forced)
       row.itemNo = this.generateItemNo();
     }
     this.setNativeUnitCost(row);    
     row.unitCost = `=IF(OR(${currencyA1}="", ${nativeUnitCostA1}="", ${nativeUnitCostA1}=0), "", IF(${currencyA1}="GBP", ${nativeUnitCostA1}, ${nativeUnitCostA1} / EURGBP))`;
     row.totalCost = `=IF(OR(${quantityA1}="", ${quantityA1}=0, ${unitCostA1}="", ${unitCostA1}=0), "", ${quantityA1} * ${unitCostA1} * (1-${commissionPercentageA1}))`;
-    if (row.markup === "" || this.forced) { // Only set markup if empty
-      row.markup = `=IF(OR(${unitCostA1}="", ${unitCostA1}=0, ${unitPriceA1}="", ${unitPriceA1}=0), "", (${unitPriceA1}-${unitCostA1})/${unitCostA1})`;
-    }
-//  if (row.unitPrice === "" || this.forced) { // Only set unit price if empty (or forced)
-//    row.unitPrice = `=IF(OR(${unitCostA1}="", ${unitCostA1}=0), "", ${unitCostA1} * ( 1 + ${markupA1}))`;
-//  }
+    this.setMarkupAndPrice(row);
     row.totalPrice = `=IF(OR(${quantityA1}="", ${quantityA1}=0, ${unitPriceA1}="", ${unitPriceA1}=0), "", ${quantityA1} * ${unitPriceA1})`;
 //  row.commission = `=IF(OR(${commissionPercentageA1}="", ${commissionPercentageA1}=0), "", ${quantityA1} * ${unitCostA1} * ${commissionPercentageA1})`;
 //  row.quantity (=((hour(K215)*60+minute(K215))-(hour(J215)*60+minute(J215)))/60)
@@ -117,16 +110,34 @@ class EventDetailsUpdater {
     let nativeUnitCostCell = row.getCell("NativeUnitCost");
     let nativeUnitCostFormula = row.getFormula("NativeUnitCost");
     let currencyFormat = row.currencyFormat;
-    trace(`Cell: ${nativeUnitCostCell.getA1Notation()} ${nativeUnitCostFormula} ${currencyFormat}`);
-  
+    //trace(`Cell: ${nativeUnitCostCell.getA1Notation()} ${nativeUnitCostFormula} ${currencyFormat}`);
     budgetUnitCostCell.setNumberFormat(currencyFormat);
     nativeUnitCostCell.setNumberFormat(currencyFormat);
     if (nativeUnitCost === "" || nativeUnitCostFormula !== "") { // Set native unit cost equal to budget unit cost if not set 
-      trace(`Set nativeUnitCost to =${budgetUnitCostA1}`);
+      //trace(`Set nativeUnitCost to =${budgetUnitCostA1}`);
       row.nativeUnitCost = `=${budgetUnitCostA1}`;
       nativeUnitCostCell.setFontColor("#ccccff"); // Make text grey
     } else {
+      //trace(`setNativeUnitCost: nativeUnitCost="${nativeUnitCost}" nativeUnitCostFormula="${nativeUnitCostFormula}" - make it black`);
       nativeUnitCostCell.setFontColor("#000000"); // Black
+    }
+  }
+
+  setMarkupAndPrice(row) {
+    let unitCostA1 = row.getA1Notation("UnitCost");
+    let unitPriceA1 = row.getA1Notation("UnitPrice");
+    let markupA1 = row.getA1Notation("Markup");
+    let markupFormula = row.getFormula("Markup");
+    let unitPriceFormula = row.getFormula("UnitPrice");
+    if (markupFormula !== "" && unitPriceFormula !== "") { // Formulas for both markup & unit price, flag it! Keep formula in unit price, set markup to default 30%
+      Error.warning(`Found formulas in row ${row.rowPosition}, columns Markup and UnitPrice, only one of the two can be calculated, please choose one to give a value.`);
+      row.markup = 0.3;
+    }
+    if (row.markup === "" && row.unitPrice !== "" && unitPriceFormula === "") { // Only set markup formula if it's empty, and there is a Unit Price set (which is not a formula)
+      row.markup = `=IF(OR(${unitCostA1}="", ${unitCostA1}=0, ${unitPriceA1}="", ${unitPriceA1}=0), "", (${unitPriceA1}-${unitCostA1})/${unitCostA1})`;
+    } 
+    else if (row.unitPrice === "" || this.forced) { // Only set unit price if empty (or forced)
+      row.unitPrice = `=IF(OR(${unitCostA1}="", ${unitCostA1}=0), "", ${unitCostA1} * ( 1 + ${markupA1}))`;
     }
   }
   

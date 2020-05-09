@@ -1,8 +1,10 @@
 function onTestCase1() {
   trace("onTestCase1");
-  EventRow.init();
-  let columnLetter = EventRow.columnNumbers.getColumnLetter("Who");
-  trace(`EventRow.columnNumbers.getColumnLetter("Who") --> ${columnLetter}`);
+  let spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  let sheet = spreadsheet.getSheetByName("Suppliers Price List");
+  let selection = sheet.getSelection();
+  let range = selection.getActiveRange();
+  Dialog.notify("Selection", range.getA1Notation());
 //  Error.break;
 }
 

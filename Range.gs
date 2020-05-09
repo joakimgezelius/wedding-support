@@ -52,8 +52,8 @@ class Range {
   get values()           { return this._range.getValues(); }
   get formulas()         { return this._range.getFormulas(); }
   get height()           { return this._range.getHeight(); }
-  get row()              { return this._range.getRow(); }    // Row number of the first row in the range
-  get column()           { return this._range.getColumn(); } // Column number of the first column in the range
+  get rowPosition()      { return this._range.getRow(); }    // Row number of the first row in the range
+  get columnPosition()   { return this._range.getColumn(); } // Column number of the first column in the range
   get currentRow()       { return this._range.offset(this._currentRowOffset, 0, 1); } // A range of 1 row height
   get currentRowOffset() { return this._currentRowOffset; }
 
@@ -71,7 +71,7 @@ class Range {
   deleteExcessiveRows(rowsToKeep) {
     trace(`${this.trace} deleteExcessiveRows rowsToKeep=${rowsToKeep} height=${this.height}`);
     if (this.height > rowsToKeep) {
-      let startRow = this.row + rowsToKeep;
+      let startRow = this.rowPosition + rowsToKeep;
       let rowsToDelete = this.height - rowsToKeep;
       trace(`deleteRows startRow=${startRow} rowsToDelete=${rowsToDelete}`);
       this.sheet.deleteRows(startRow, rowsToDelete);
@@ -176,9 +176,8 @@ class RangeRow {
           if (!Number.isNaN(value)) return value;
       }
       if (expectedType !== undefined && actualType !== expectedType) {
-        let rowPosition = this.containerRange.row + this.rowOffset;
         let columnLetter = this.containerRange.getColumnLetter(columnName);
-        Error.fatal(`Unexpected value in row ${rowPosition}, column ${columnLetter} (${columnName}), found a ${actualType} (${value}), expected a ${expectedType}`);
+        Error.fatal(`Unexpected value in row ${this.rowPosition}, column ${columnLetter} (${columnName}), found a ${actualType} (${value}), expected a ${expectedType}`);
       }
     }
     return value;
@@ -205,6 +204,10 @@ class RangeRow {
   getA1Notation(columnName) { 
     let cell = this.getCell(columnName);
     return cell.getA1Notation();
+  }
+
+  get rowPosition() {
+    return this.containerRange.rowPosition + this.rowOffset;
   }
 
 }

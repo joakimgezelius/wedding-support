@@ -120,3 +120,24 @@ function addEmailMenu(emailListName) {
   trace("< Custom email menu added");
 }
 
+addProductsSheetMenu
+function addProductsSheetMenu() {
+  trace("> Adding custom products menu");
+  let ui = SpreadsheetApp.getUi();
+  ui.createMenu("Products")
+      .addItem("Refresh Price List", globalLibName + ".onRefreshPriceList")
+      .addItem("Update Packages", globalLibName + ".onUpdatePackages")
+      .addSubMenu(ui.createMenu("Export")
+                  .addItem("Clear Export Area", globalLibName + ".onClearExport")
+                  .addItem("Clear Selection Ticks", globalLibName + ".onExport")
+                  .addItem("Export Ticked Items", globalLibName + ".onPriceListExport")
+                  .addItem("Export Marked Items", globalLibName + ".onPriceListExport")
+                  )
+      .addSubMenu(ui.createMenu("Helpers")
+                  .addItem("Test Case 1", globalLibName + ".onTestCase1")
+                  .addItem("Test Case 2", globalLibName + ".onTestCase2")
+                  )
+      .addToUi();
+  trace("< Custom products menu added");
+}
+
