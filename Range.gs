@@ -3,15 +3,13 @@
 //
 
 class Range {
-  constructor(range, name = "", sheetName = "") {
+  constructor(range, name = "") {
     this._range = range;
     this._name = name;
-    this._sheetName = sheetName;
-    this._sheet = this._range.getSheet();
+    this._sheet = new Sheet(range.getSheet());
+    this._sheetName = this.sheet.name;
     this._currentRowOffset = 0;
-    if (name !== "") name = name + " "; // Pad it to trace nicely
-    if (sheetName !== "") sheetName = sheetName + "!"; // Pad it to trace nicely
-    this._trace = `{Range ${sheetName}${name}${Range.trace(range)}}`;
+    this._trace = `{Range ${name} ${Range.trace(range)}}`;
     trace(`NEW ${this._trace}`);
   }
   
@@ -20,27 +18,10 @@ class Range {
     this._range.setValue("");
   }
 
-  static getByName(rangeName, sheetName = "", spreadsheet = null) {
-    spreadsheet = spreadsheet || SpreadsheetApp.getActiveSpreadsheet();
-    let sheet = null;
-    if (sheetName !== "") { // A sheet name is provided, if the named range cannot be found globally, a local named range will be attempted
-      sheet = spreadsheet.getSheetByName(sheetName);
-      trace (`getSheetByName sheet ${sheetName} -> ${sheet}`);
-    }
-    let range = spreadsheet.getRangeByName(rangeName);
-    if (range === null && sheet !== null) {
-      trace (`attempting to get named range from sheet ${sheetName}`);
-      range = sheet.getRange(rangeName);
-    }
-    if (range === null) {
-      Error.fatal(`Cannot find named range ${rangeName}`);
-    }
-
-    let newRange = new Range(range, rangeName, sheetName);
-    trace(`Range.getByName ${rangeName} --> ${newRange.trace}`);
-    return newRange;
+  static getByName(rangeName, sheetName = "") {
+    return Spreadsheet.active.getRangeByName(rangeName, sheetName);
   }
-
+  
   static trace(range) {
     return `[${range.getSheet().getName()}!${range.getA1Notation()}]`;
   }
@@ -63,7 +44,7 @@ class Range {
   
   refresh() { // Reload the range - e.g. if it has changed
     trace(`${this.trace} refresh`);
-    let newRange = Range.getByName(this.name); 
+    let newRange = this.sheet.getRangeByName(this.name); 
     this._range = newRange.range;
     this._trace = newRange.trace;
   }
@@ -104,7 +85,7 @@ class Range {
     let row = this.currentRow;
     ++this._currentRowOffset;
     if (this.height - this._currentRowOffset < 2) { // Extend if we're 1 row from the end
-      this._sheet.insertRowBefore(row.getRowIndex()+1);
+      this.sheet.insertRowBefore(row.getRowIndex()+1);
       this.refresh();
     }
     return row;

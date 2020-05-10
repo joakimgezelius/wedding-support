@@ -1,3 +1,6 @@
+PriceListSpreadsheetId = "1lunFhyOgQL1au5JmwWoLSuebPgxLwXqymzGc5FJJ-IU";
+PriceListRangeName = "PriceList";
+
 function onRefreshPriceList() {
   trace("onRefreshPriceList");
   //let priceListIterator = new EventDetailsIterator();
@@ -21,7 +24,7 @@ function onPriceListClearExport() {
 
 function onPriceListClearSelectionTicks() {
   trace("onPriceListClearSelectionTicks");
-  let priceList = new PriceList("PriceList");
+  let priceList = new PriceList();
   if (Dialog.confirm("Clear Selection Ticks", 'Are you sure you want to clear all ticks in the "Selected for Quote" column?') == true) {
     priceList.clearSelectionTicks();
   }
@@ -41,17 +44,38 @@ function onPriceListExportSelection() {
   priceList.iterate(priceListExport);
 }
 
+function onImportPriceList() {
+  trace("onImportPriceList");
+  let source = PriceList.sheet;
+  let destination = SpreadsheetApp.getActiveSpreadsheet();
+  source.copyTo(destination).activate();
+}
+
 
 //================================================================================================
 
 class PriceList {
   
-  constructor(rangeName) {
+  constructor(rangeName = PriceListRangeName) {
     this.range = Range.getByName(rangeName).loadColumnNames();
     this.rowCount = this.range.height;
     this.values = this.range.values;
     this.formulas = this.range.formulas;
     trace("NEW " + this.trace);
+  }
+  
+  static get spreadsheet() {
+    if (PriceList._spreadsheet === null) {
+      PriceList._spreadsheet = SpreadsheetApp.openById(PriceListSpreadsheetId);
+    }
+    return PriceList._spreadsheet;
+  }
+  
+  static get sheet() {
+    if (PriceList._sheet === null) {
+      PriceList._sheet = Range.getByName(PriceListRangeName, "", PriceList.spreadsheet).sheet;
+    }
+    return PriceList._sheet;
   }
   
   update() {
@@ -97,6 +121,9 @@ class PriceList {
   }
 
 } // PriceList
+
+PriceList._spreadsheet = null;
+PriceList._sheet = null;
 
 
 //================================================================================================

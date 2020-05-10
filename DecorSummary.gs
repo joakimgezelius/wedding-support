@@ -1,7 +1,10 @@
+DecorSummaryRangeName = "DecorSummary";
+DecorSummarySheetName = "Decor Summary";
+
 function onUpdateDecorSummary() {
   trace("onUpdateDecorSummary");
   let eventDetailsIterator = new EventDetailsIterator();
-  let decorSummaryBuilder = new DecorSummaryBuilder(Range.getByName("DecorSummary", "Decor Summary"));
+  let decorSummaryBuilder = new DecorSummaryBuilder(Range.getByName(DecorSummaryRangeName, DecorSummarySheetName));
   eventDetailsIterator.iterate(decorSummaryBuilder);
 }
 

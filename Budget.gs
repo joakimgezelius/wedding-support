@@ -48,8 +48,8 @@ class BudgetBuilder {
     else {
       this.fillTitleSum(null);
     }
-    this.targetSheet.setColumnWidth(1, 1);
-    this.targetSheet.setColumnWidth(2, 500);
+    this.targetSheet.sheet.setColumnWidth(1, 1);
+    this.targetSheet.sheet.setColumnWidth(2, 500);
 //  this.targetSheet.autoResizeColumns(3, this.targetSheet.getMaxColumns());
     this.targetRange.trim(); // delete excessive rows at the end
   }

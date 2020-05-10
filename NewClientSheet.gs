@@ -1,4 +1,7 @@
-function onCreateNewClient() {
+WeddingClientTemplateSpreadsheetId = "1IAAbpD9bwZThh78ohFIJDAr9ebq9IM9obA28h3lGRDA";
+
+
+function onCreateNewClientSheet() {
   var name = Dialog.prompt("Create New Client Sheet", "Please enter client sheet name:");
   if (name !== "CANCEL") {
     if (name === "") {
@@ -19,14 +22,7 @@ function onClearSheet() {
   trace("onClearSheet");
 }
 
-function getParentFolder() {
-  var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
-  var file = DriveApp.getFileById(spreadsheet.getId());
-  var folders = file.getParents();
-  var folder = folders.next();  
-  trace("getParentFolder --> " + folder.getName());
-  return folder;
-}
+
 
 function saveAsSpreadsheet2() {
   var sheet = SpreadsheetApp.getActiveSpreadsheet();
@@ -34,53 +30,4 @@ function saveAsSpreadsheet2() {
   DriveApp.getFileById(sheet.getId()).makeCopy("desired file name", destFolder);
 } //END function saveAsSpreadsheet
 
-function fileExists(name, folder) {
-  var files = folder.getFilesByName(name);
-  result = (files.hasNext()) ? true : false;
-  trace("fileExists(" + folder.getName() + ", " + name + ") --> " + result);
-  return result;
-}
 
-
-//=============================================================================================
-// Class Sheet
-//
-
-class Sheet {
-  
-  constructor(sheet) {
-    _sheet = sheet;
-    _trace = `{Sheet ${this.name}}`;
-    trace(`NEW ${this.trace}`);
-  }
-
-  autofit() {
-    trace("Sheet.autofit " + this.name);
-    sheet.autoResizeColumns(1, this.maxColumns);
-    sheet.autoResizeRows(1, this.maxRows);
-  }
-
-  static getCleared(name) {
-    let spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
-    let sheet = spreadsheet.getSheetByName(name);
-    if (sheet == null) {
-    }
-    return sheet;
-  }
-
-  static saveRangeAsSpreadsheet(){ 
-    let sheet = SpreadsheetApp.getActiveSpreadsheet();
-    let range = sheet.getRange("Sheet1!A1:B3");
-    sheet.setNamedRange("buildingNameAddress", range);
-    let TestRange = sheet.getRangeByName("buildingNameAddress").getValues(); 
-    Logger.log(TestRange); 
-    var destFolder = DriveApp.getFolderById("xxxxxxxxxxxxxxxxxxxxx"); 
-    DriveApp.getFileById(sheet.getId()).makeCopy("Test File", destFolder); 
-  }
-  
-  get sheet()      { return this._sheet; }
-  get name()       { return this._sheet.GetName(); }
-  get maxColumns() { return this._sheet.MaxColumnsgetMaxColumns(); }
-  get maxRows()    { return this._sheet.getMaxRows(); }
-  get trace()      { return this._trace; }
-}

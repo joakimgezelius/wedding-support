@@ -1,8 +1,10 @@
+EventSuppliersRangeName = "EventSuppliers";
+//EventSuppliersSheetName = "";
 
 function onUpdateSuppliers() {
   trace("onUpdateSuppliers");
   var eventDetailsIterator = new EventDetailsIterator();
-  var eventSuppliersBuilder = new EventSuppliersBuilder("EventSuppliers");
+  var eventSuppliersBuilder = new EventSuppliersBuilder(EventSuppliersRangeName);
   eventDetailsIterator.iterate(eventSuppliersBuilder);
 }
 

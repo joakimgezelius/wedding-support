@@ -18,24 +18,29 @@ function onPullClientInformation() {
 // Class Client
 
 
-var Client = function () {
-  Client.currentClient = this;
-  this.name = "UNDEFINED";
-}
+class Client {
+  
+  constructor() {
+    Client.currentClient = this;
+    this.name = "UNDEFINED";
+  }
 
+
+
+  static LookupById(clientId) {
+    var client = new Client;
+    client.id = clientId;
+    client.name = "Some Name";
+    return client;
+  }
+
+  get trace() {
+    return "{Client " + this.name + "}";
+  }
+
+}
 
 Client.databaseSheetId = "1E-dE-S1mAXSCGcnshG9mBF8h76RAF0QwABlyAIKjHbE";
 Client.databaseSheet = null;
 Client.databaseRange = null;
 Client.currentClient = null;
-
-Client.prototype.trace = function() {
-  return "{Client " + this.name + "}";
-}
-
-Client.LookupById = function(clientId) {
-  var client = new Client;
-  client.id = clientId;
-  client.name = "Some Name";
-  return client;
-}

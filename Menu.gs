@@ -4,7 +4,7 @@ function addWeddingMenu() {
   trace("> Adding custom wedding menu");
   let ui = SpreadsheetApp.getUi();
   ui.createMenu("Wedding")
-      //.addItem("Create New Client Sheet", globalLibName + ".onCreateNewClient")
+      //.addItem("Create New Client Sheet", globalLibName + ".onCreateNewClientSheet")
       //.addItem("Clear Sheet", globalLibName + ".onClearSheet")
       //.addSeparator()
       //.addItem("Pull Client Information", globalLibName + ".onPullClientInformation") // in client.gs
@@ -20,6 +20,11 @@ function addWeddingMenu() {
       //.addItem("Update Rota", globalLibName + ".onUpdateRota")
       .addSeparator()
       .addItem("Update Exchange Rates", globalLibName + ".onUpdateExchangeRates")
+      .addSeparator()
+      .addSubMenu(ui.createMenu("Prices")
+                  .addItem("Import price list", globalLibName + ".onImportPriceList")
+                  .addItem("tbd...", globalLibName + ".onImportPriceList")
+                  )
       .addSeparator()
       .addSubMenu(ui.createMenu("Email")
                   .addItem("Prepare client email draft 1", globalLibName + ".onCreateFirstEmailDraft")
@@ -97,6 +102,8 @@ function addEnqiriesMenu() {
   let ui = SpreadsheetApp.getUi();
   ui.createMenu("Enquiries")
       .addItem("Update Enquiries", globalLibName + ".onUpdateEnquiries")
+      .addItem("Create Quote/Client Sheet", globalLibName + ".onCreateNewClientSheet")
+      .addItem("Open Quote/Client Sheet", globalLibName + ".onOpenClientSheet")
       .addToUi();
   trace("< Custom enquiries menu added");
 }
