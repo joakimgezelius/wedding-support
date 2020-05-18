@@ -3,10 +3,10 @@
 //
 
 class Range {
-  constructor(range, name = "") {
-    this._range = range;
+  constructor(nativeRange, name = "") {
+    this._nativeRange = nativeRange;
     this._name = name;
-    this._sheet = new Sheet(range.getSheet());
+    this._sheet = new Sheet(nativeRange.getSheet());
     this._sheetName = this.sheet.name;
     this._currentRowOffset = 0;
     this._trace = `{Range ${name} ${Range.trace(range)}}`;
@@ -15,7 +15,7 @@ class Range {
   
   clear() {
     trace(`clear ${this.trace}`);
-    this._range.setValue("");
+    this.nativeRange.setValue("");
   }
 
   static getByName(rangeName, sheetName = "") {
@@ -26,16 +26,16 @@ class Range {
     return `[${range.getSheet().getName()}!${range.getA1Notation()}]`;
   }
 
-  get range()            { return this._range; }
+  get nativeRange()      { return this._nativeRange; }
   get name()             { return this._name; }
   get trace()            { return this._trace; }
   get sheet()            { return this._sheet; }
-  get values()           { return this._range.getValues(); }
-  get formulas()         { return this._range.getFormulas(); }
-  get height()           { return this._range.getHeight(); }
-  get rowPosition()      { return this._range.getRow(); }    // Row number of the first row in the range
-  get columnPosition()   { return this._range.getColumn(); } // Column number of the first column in the range
-  get currentRow()       { return this._range.offset(this._currentRowOffset, 0, 1); } // A range of 1 row height
+  get values()           { return this.nativeRange.getValues(); }
+  get formulas()         { return this.nativeRange.getFormulas(); }
+  get height()           { return this.nativeRange.getHeight(); }
+  get rowPosition()      { return this.nativeRange.getRow(); }    // Row number of the first row in the range
+  get columnPosition()   { return this.nativeRange.getColumn(); } // Column number of the first column in the range
+  get currentRow()       { return this.nativeRange.offset(this.currentRowOffset, 0, 1); } // A range of 1 row height
   get currentRowOffset() { return this._currentRowOffset; }
 
   // 
@@ -45,7 +45,7 @@ class Range {
   refresh() { // Reload the range - e.g. if it has changed
     trace(`${this.trace} refresh`);
     let newRange = this.sheet.getRangeByName(this.name); 
-    this._range = newRange.range;
+    this._nativeRange = newRange.nativeRange;
     this._trace = newRange.trace;
   }
   
@@ -106,13 +106,13 @@ class Range {
   }
   
   format(callback) {
-    callback(this._range);
+    callback(this.nativeRange);
   }
 
-  // Named Column Fetures
+  // Named Column Features
   
   loadColumnNames() {
-    let columnNamesRange = this.range.offset(-1, 0, 1); // Get the one row above the range, we assume this row holds the column names
+    let columnNamesRange = this.nativeRange.offset(-1, 0, 1); // Get the one row above the range, we assume this row holds the column names
     this.namedColumns = new NamedColumns(this.name, columnNamesRange);
     return this;
   }
@@ -171,7 +171,7 @@ class RangeRow {
   
   getCell(columnName) {
     let columnOffset = this.containerRange.getColumnOffset(columnName);
-    let cell = this.containerRange.range.offset(this.rowOffset, columnOffset, 1, 1);
+    let cell = this.containerRange.nativeRange.offset(this.rowOffset, columnOffset, 1, 1);
 //  trace(`${this.containerRange.name}.getCell ${columnName} --> ${Range.trace(cell)}`);
     return cell;
   }

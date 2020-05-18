@@ -19,20 +19,23 @@ class Enquiries {
 
   constructor() {
     this.range = Range.getByName(EnquiriesRangeName);
+    this.range.loadColumnNames();
     trace("NEW " + this.trace);
   }
 
   static get selected() {
     let enquiries = new Enquiries;
     let selection = enquiries.range.sheet.activeRange;
-    console.log(selection);
     if (selection === null) {
-      Error.fatal("Please select an enquiry.");
+      Error.fatal("Please select a valid enquiry.");
     }
+    let enquiryRowOffset = selection.rowPosition - enquiries.range.rowPosition;
+    trace(`Enquiries.selected ${selection.trace} --> Offset ${enquiryRowOffset}`);
     
-    trace(`Enquiries.selected ${selection.trace}`);
-
-    return new Enquiry();
+    let selectedEnquiry = new Enquiry(enquiries.range, enquiryRowOffset);
+    if (!selectedEnquiry.isValid) {
+      Error.fatal("Please select a valid enquiry.");
+    }
   }
   
   get trace() { return `{Enquiries ${this.range.trace}}`; }
@@ -40,9 +43,17 @@ class Enquiries {
 } // Enquiries
 
 
-class Enquiry {
+class Enquiry extends RangeRow {
   
-  constructor() {
+  constructor(enquiriesRange, rowOffset) {
+    super(enquiriesRange.values[rowOffset], enquiriesRange.formulas[rowOffset], rowOffset, enquiriesRange);
+    this.rowOffset = rowOffset;
+    this.name = this.get("Name");
+    if (this.name === "") {
+      this._isValid = false;
+    }
+    this._isValid = false;
+    trace("NEW " + this.trace);
   }
   
   createNewClientSheet(newName) {
@@ -53,4 +64,7 @@ class Enquiry {
   openClientSheet() {
   }
   
+  get isValid() { return this._isValid; }
+  get trace() { return `{Enquiry #${this.rowOffset} ${this.name}}`; }
+
 } // Enquiry

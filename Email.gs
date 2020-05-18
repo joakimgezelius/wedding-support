@@ -29,7 +29,7 @@ class Email {
       console.log(emailData);
 //      trace(" - " + emailData[1]);
 //      menu.addItem(emailData[1], globalLibName + ".Email.init");
-//      let rowRange = this.databaseRange.range.offset(rowOffset, 0, 1);
+//      let rowRange = this.databaseRange.nativeRange.offset(rowOffset, 0, 1);
 //      let name = new EventRow(this.data[rowOffset], rowOffset, rowRange);
     }      
     menu.addItem("Refresh", globalLibName + ".Email.init");

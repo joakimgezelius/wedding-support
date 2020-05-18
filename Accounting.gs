@@ -51,7 +51,7 @@ class AccountSummaryBuilder {
   }
 
   getNextTargetRow() {
-    let targetRow = this.targetRange.range.offset(this.targetRowOffset++, 0, 1); // A range of 1 row height
+    let targetRow = this.targetRange.nativeRange.offset(this.targetRowOffset++, 0, 1); // A range of 1 row height
     targetRow.breakApart().setFontWeight("normal").setFontSize(10).setBackground("#ffffff");
     targetRow.getSheet().insertRowAfter(targetRow.getRowIndex());
     return targetRow;

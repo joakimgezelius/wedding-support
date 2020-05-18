@@ -31,7 +31,7 @@ class BudgetBuilder {
     this.currentTitleSumCell = null;
     this.currentTitleSum = 0;
     this.targetRange.minimizeAndClear(BudgetBuilder.formatRange); // Keep 2 rows
-    let column3 = this.targetRange.range.offset(0, 2, this.targetRange.height, 1); // Select a full column
+    let column3 = this.targetRange.nativeRange.offset(0, 2, this.targetRange.height, 1); // Select a full column
     let column4 = column3.offset(0, 1);
     let column5 = column4.offset(0, 1);
     column3.setNumberFormat("0");
@@ -48,8 +48,8 @@ class BudgetBuilder {
     else {
       this.fillTitleSum(null);
     }
-    this.targetSheet.sheet.setColumnWidth(1, 1);
-    this.targetSheet.sheet.setColumnWidth(2, 500);
+    this.targetSheet.nativeSheet.setColumnWidth(1, 1);
+    this.targetSheet.nativeSheet.setColumnWidth(2, 500);
 //  this.targetSheet.autoResizeColumns(3, this.targetSheet.getMaxColumns());
     this.targetRange.trim(); // delete excessive rows at the end
   }

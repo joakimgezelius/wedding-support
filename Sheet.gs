@@ -1,15 +1,15 @@
 class Sheet {
   
-  constructor(sheet) {
-    this._sheet = sheet;
+  constructor(nativeSheet) {
+    this._nativeSheet = nativeSheet;
     this._trace = `{Sheet "${this.name}"}`;
     trace(`NEW ${this.trace}`);
   }
 
   autofit() {
     trace("Sheet.autofit " + this.trace);
-    sheet.autoResizeColumns(1, this.maxColumns);
-    sheet.autoResizeRows(1, this.maxRows);
+    this.nativeSheet.autoResizeColumns(1, this.maxColumns);
+    this.nativeSheet.autoResizeRows(1, this.maxRows);
   }
 
   /*
@@ -33,23 +33,23 @@ class Sheet {
   */
 
   getRangeByName(name) {
-    range = this.sheet.getRange(rangeName);
+    range = this.nativeSheet.getRange(rangeName);
     newRange = range === null ? null : new Range(range, name, this.name);
     trace(`${this.trace}.getRangeByName("${name}") --> ${range === null?"null (NOT FOUND)":newSheet.trace}`);
     return newRange;
   }
 
-  insertRowBefore(position)   { this._sheet.insertRowBefore(position); return this; }
-  deleteRows(position, count) { this._sheet.deleteRows(position, count); return this; }
-  copyTo(destination)         { this._sheet.copyTo(destination); return this; }
-  activate()                  { this._sheet.activate; return this; }
+  insertRowBefore(position)   { this.nativeSheet.insertRowBefore(position); return this; }
+  deleteRows(position, count) { this.nativeSheet.deleteRows(position, count); return this; }
+  copyTo(destination)         { this.nativeSheet.copyTo(destination); return this; }
+  activate()                  { this.nativeSheet.activate; return this; }
   
-  get sheet()       { return this._sheet; }
-  get name()        { return this._sheet === null ? "NULL" : this._sheet.getName(); }
-  get maxColumns()  { return this._sheet.getMaxColumns(); }
-  get maxRows()     { return this._sheet.getMaxRows(); }
-  get selection()   { return this._sheet.getSelection(); }
-  get activeRange() { return new Range(this._sheet.getActiveRange()); }
+  get nativeSheet() { return this._nativeSheet; }
+  get name()        { return this.nativeSheet === null ? "NULL" : this.nativeSheet.getName(); }
+  get maxColumns()  { return this.nativeSheet.getMaxColumns(); }
+  get maxRows()     { return this.nativeSheet.getMaxRows(); }
+  get selection()   { return this.nativeSheet.getSelection(); }
+  get activeRange() { return new Range(this.nativeSheet.getActiveRange()); }
   get trace()       { return this._trace; }
 
 } // Sheet
@@ -57,9 +57,9 @@ class Sheet {
 
 class Spreadsheet {
 
-  constructor(spreadsheet) {
-    this._spreadsheet = spreadsheet;
-    this._name = spreadsheet.getName();
+  constructor(nativeSpreadsheet) {
+    this._nativeSpreadsheet = nativeSpreadsheet;
+    this._name = nativeSpreadsheet.getName();
     this._trace = `{Spreadsheet "${this._name}"}`;
     trace("NEW " + this.trace);
   }
@@ -75,7 +75,7 @@ class Spreadsheet {
   }
   
   getRangeByName(rangeName, sheetName = "") {
-    let range = this.spreadsheet.getRangeByName(rangeName);
+    let range = this.nativeSpreadheet.getRangeByName(rangeName);
     if (range !== null) { 
       // Range found, create wrapper and return
       let newRange = new Range(range, rangeName, sheetName);
@@ -97,7 +97,7 @@ class Spreadsheet {
   }
 
   getSheetByName(name) {
-    let sheet = this.spreadsheet.getSheetByName(name);
+    let sheet = this.nativeSpreadheet.getSheetByName(name);
     let newSheet = sheet === null ? null : new Sheet(sheet);
     trace(`${this.trace}.getSheetByName("${name}") --> ${sheet === null?"null (NOT FOUND)":newSheet.trace}`);
     return newSheet;
@@ -105,15 +105,15 @@ class Spreadsheet {
   
   copy(name) {
     trace(`${this.trace}.copy(${name})`);
-    let newSpreadsheet = new Spreadsheet(this.spreadsheet.copy(name));
+    let newSpreadsheet = new Spreadsheet(this.nativeSpreadheet.copy(name));
     return newSpreadsheet;
   }
   
-  get spreadsheet()      { return this._spreadsheet; }
-  get activeSheet()      { return new Sheet(this.spreadsheet.getActiveSheet()); }
+  get nativeSpreadheet() { return this._nativeSpreadsheet; }
+  get activeSheet()      { return new Sheet(this.nativeSpreadheet.getActiveSheet()); }
   get name()             { return this._name; }
-  get id()               { return this.spreadsheet.getId(); }
-  get file()             { return new File(DriveApp.getFileById(this.spreadsheet.id)); }
+  get id()               { return this.nativeSpreadheet.getId(); }
+  get file()             { return new File(DriveApp.getFileById(this.id)); }
   get parentFolder()     { return this.file.parent; }
   get trace()            { return this._trace; }
 

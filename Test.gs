@@ -9,8 +9,5 @@ function onTestCase1() {
 }
 
 function onTestCase2() {
-  let range = Range.getByName("SupplierItinerary"); //, "Supplier Itinerary");
-  trace(range.constructor.name);
-  Dialog.notify("Test 2", range.range.constructor.name);
-  let test = new Sheet();
+  Browser.newTab("https://docs.google.com/spreadsheets/d/" + WeddingClientTemplateSpreadsheetId);
 }
