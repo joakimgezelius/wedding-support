@@ -4,8 +4,8 @@ class NamedColumns {
     this.baseRowPosition = columnNamesRange.getRow();
     this.baseColumnPosition = columnNamesRange.getColumn();
     this.rowName = rowName;
-    this.columnOffsets = [];
-    this.columnLetters = [];
+    this.columnOffsets = {};
+    this.columnLetters = {};
     let columnNames = columnNamesRange.getValues()[0];
     let columnCount = columnNames.length;
     trace(`NamedColumns ${this.rowName} Base Row Position: ${this.baseRowPosition} Base Column Position: ${this.baseColumnPosition} Columns: ${columnNames}`);
@@ -20,15 +20,17 @@ class NamedColumns {
         //trace(`Column ${columnOffset}: ${columnName}`);
       }
     }
-    //console.log(`NamedColumns ${this.rowName} Columns numbers: `, this.columnOffsets);
-    //console.log(`NamedColumns ${this.rowName} Columns letters: `, this.columnLetters);
+    //console.log(`NamedColumns ${this.rowName} Column offsets: \n`, this.columnOffsets);
+    //console.log(`NamedColumns ${this.rowName} Column letters: \n`, this.columnLetters);
   }
   
   getColumnOffset(columnName) {
-    if (!columnName in this.columnOffsets) {
+    if (!(columnName in this.columnOffsets)) {
       Error.fatal(`Unknown ${this.rowName} column: ${columnName}`);
     }
-    return this.columnOffsets[columnName];
+    let offset = this.columnOffsets[columnName];
+    //trace(`getColumnOffset(${columnName}) --> ${offset}`);
+    return offset;
   }
   
   getAbsoluteColumnOffset(columnName) {
@@ -40,10 +42,12 @@ class NamedColumns {
   }
 
   getColumnLetter(columnName) {
-    if (!columnName in this.columnLetters) {
+    if (!(columnName in this.columnLetters)) {
       Error.fatal(`Unknown ${this.rowName} column: ${columnName}`);
     }
-    return this.columnLetters[columnName];
+    let letter = this.columnLetters[columnName];
+    //trace(`getColumnLetter(${columnName}) --> ${letter}`);
+    return letter;
   }
 
 }

@@ -1,6 +1,7 @@
 class Browser {
 
   static newTab(url) {
+    trace(`Browser.newTab(${url})`);
     let js = " \
       <script> \
           window.open('" + url + "'); \

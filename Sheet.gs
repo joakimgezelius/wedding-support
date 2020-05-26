@@ -1,3 +1,6 @@
+//----------------------------------------------------------------------------------------
+// Wrapper for https://developers.google.com/apps-script/reference/spreadsheet/sheet
+//
 class Sheet {
   
   constructor(nativeSheet) {
@@ -55,6 +58,9 @@ class Sheet {
 } // Sheet
 
 
+//----------------------------------------------------------------------------------------
+// Wrapper for https://developers.google.com/apps-script/reference/spreadsheet/spreadsheet
+//
 class Spreadsheet {
 
   constructor(nativeSpreadsheet) {
@@ -114,6 +120,7 @@ class Spreadsheet {
   get name()             { return this._name; }
   get id()               { return this.nativeSpreadheet.getId(); }
   get file()             { return new File(DriveApp.getFileById(this.id)); }
+  get url()              { return this.nativeSpreadheet.getUrl(); }
   get parentFolder()     { return this.file.parent; }
   get trace()            { return this._trace; }
 

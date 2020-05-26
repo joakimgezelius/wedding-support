@@ -102,7 +102,7 @@ function addEnqiriesMenu() {
   let ui = SpreadsheetApp.getUi();
   ui.createMenu("Enquiries")
       .addItem("Update Enquiries", globalLibName + ".onUpdateEnquiries")
-      .addItem("Create Quote/Client Sheet", globalLibName + ".onCreateNewClientSheet")
+      //.addItem("Create Quote/Client Sheet", globalLibName + ".onCreateNewClientSheet")
       .addItem("Open Quote/Client Sheet", globalLibName + ".onOpenClientSheet")
       .addToUi();
   trace("< Custom enquiries menu added");

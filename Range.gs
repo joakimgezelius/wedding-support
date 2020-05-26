@@ -9,7 +9,7 @@ class Range {
     this._sheet = new Sheet(nativeRange.getSheet());
     this._sheetName = this.sheet.name;
     this._currentRowOffset = 0;
-    this._trace = `{Range ${name} ${Range.trace(range)}}`;
+    this._trace = `{Range ${name} ${Range.trace(nativeRange)}}`;
     trace(`NEW ${this._trace}`);
   }
   
@@ -112,11 +112,13 @@ class Range {
   // Named Column Features
   
   loadColumnNames() {
-    let columnNamesRange = this.nativeRange.offset(-1, 0, 1); // Get the one row above the range, we assume this row holds the column names
-    this.namedColumns = new NamedColumns(this.name, columnNamesRange);
+    if (this.namedColumns === undefined) {
+      let columnNamesRange = this.nativeRange.offset(-1, 0, 1); // Get the one row above the range, we assume this row holds the column names
+      this.namedColumns = new NamedColumns(this.name, columnNamesRange);
+    }
     return this;
   }
-
+  
   getColumnOffset(columnName) {
     return this.namedColumns.getColumnOffset(columnName);
   }
