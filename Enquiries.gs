@@ -3,6 +3,8 @@ EnquiriesFolderId = "1EtAGPReyn5ZMyXf6xboCyTncGWsvxNz_";
 
 function onUpdateEnquiries() {
   trace("onUpdateEnquiries");
+  let enquiries = new Enquiries;
+  enquiries.update();
 }
 
 // Open client sheet for the selected client, 
@@ -18,6 +20,13 @@ function onCreateNewClientSheet() {
   Enquiries.selected.createNewClientSheet();
 }
 
+function onDraftSelectedEmail() {
+  trace("onDraftSelectedEmail");
+  Enquiries.selected.draftSelectedEmail();
+}
+
+
+//================================================================================================
 
 class Enquiries {
 
@@ -29,11 +38,13 @@ class Enquiries {
   static get selected() {
     let enquiries = new Enquiries;
     let selection = enquiries.range.sheet.activeRange;
-    if (selection === null) {
+    if (enquiries.selection === null) {
       Error.fatal("Please select a valid enquiry.");
     }
     let enquiryRowOffset = selection.rowPosition - enquiries.range.rowPosition;
     trace(`Enquiries.selected ${selection.trace} --> Offset ${enquiryRowOffset}`);
+
+    let enquiryColumnOffset = selection.columnPosition - enquiries.range.rowPosition;
     
     let selectedEnquiry = new Enquiry(enquiries.range, enquiryRowOffset);
     if (!selectedEnquiry.isValid) {
@@ -42,15 +53,27 @@ class Enquiries {
     return selectedEnquiry;
   }
   
+  update() {
+    trace(`${this.trace}.update`);
+    for (var rowOffset = 0; rowOffset < this.range.height; rowOffset++) {
+      let enquiry = new Enquiry(this.range, rowOffset);
+      if (!enquiry.isValid) {
+        break;
+      }      
+    }
+  }
+  
   get trace() { return `{Enquiries ${this.range.trace}}`; }
   
 } // Enquiries
 
 
+//================================================================================================
+
 class Enquiry extends RangeRow {
   
   constructor(enquiriesRange, rowOffset) {
-    super(enquiriesRange.values[rowOffset], enquiriesRange.formulas[rowOffset], rowOffset, enquiriesRange);
+    super(enquiriesRange, rowOffset);
     this.rowOffset = rowOffset;
     this._name = this.name;
     this._isValid = (this._name !== "");
@@ -89,6 +112,16 @@ class Enquiry extends RangeRow {
     }
   }
 
+  draftSelectedEmail() {
+    trace(`draftSelectedEmail to ${this.trace}`);
+    if (!this.isValid) {
+      Error.fatal("Please select a valid enquiry.");
+    }
+    if (Dialog.confirm("Draft Email", `Draft email to ${this.name}, are you sure?`) == false) {
+      return;
+    }    
+  }
+  
   get name()           { return this.get("Name", "string"); }
   get sheetId()        { return this.get("SheetId", "string"); }
   get sheetLink()      { return this.get("SheetLink", "string"); }
@@ -100,6 +133,8 @@ class Enquiry extends RangeRow {
   
 } // Enquiry
 
+
+//================================================================================================
                
 class Prospects {
 }

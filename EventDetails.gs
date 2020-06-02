@@ -10,7 +10,6 @@ class EventDetailsIterator {
     }
     this.rowCount = this.range.height;
     this.values = this.range.values;     // NOTE: indexed from [0][0]
-    this.formulas = this.range.formulas; //  - " -
     trace("NEW " + this.trace);
   }
 
@@ -21,7 +20,7 @@ class EventDetailsIterator {
     trace("EventDetailsIterator.iterate " + this.trace);
     handler.onBegin();
     for (var rowOffset = 0; rowOffset < this.rowCount; rowOffset++) {
-      let row = new EventRow(this.values[rowOffset], this.formulas[rowOffset], rowOffset, this.range);
+      let row = new EventRow(this.range, rowOffset, this.values);
       if (row.isTitle) {
         handler.onTitle(row);
       } else {
@@ -52,8 +51,8 @@ class EventDetailsIterator {
   
 class EventRow extends RangeRow {
   
-  constructor(values, formulas, rowOffset, containerRange) {
-    super(values, formulas, rowOffset, containerRange);
+  constructor(containerRange, rowOffset, values) { // Pass values separately as range may be sorted
+    super(containerRange, rowOffset, values);
   }
 
   get sectionNo()           { return this.get("ItemNo", "string").substr(0,3); }

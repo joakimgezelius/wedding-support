@@ -59,8 +59,6 @@ class PriceList {
   constructor(rangeName = PriceListRangeName) {
     this.range = Range.getByName(rangeName).loadColumnNames();
     this.rowCount = this.range.height;
-    this.values = this.range.values;
-    this.formulas = this.range.formulas;
     trace("NEW " + this.trace);
   }
   
@@ -89,7 +87,7 @@ class PriceList {
     trace("PriceList.iterate " + this.trace);
     handler.onBegin();
     for (let rowOffset = 0; rowOffset < this.rowCount; rowOffset++) {
-      let row = new PriceListRow(this.values[rowOffset], this.formulas[rowOffset], rowOffset, this.range);
+      let row = new PriceListRow(this.range, rowOffset);
       if (row.isTitle) {
         handler.onTitle(row);
       } else {
@@ -102,7 +100,7 @@ class PriceList {
   clearSelectionTicks() {
     trace("PriceList.clearSelectionTicks " + this.trace);
     for (let rowOffset = 0; rowOffset < this.rowCount; rowOffset++) {
-      let row = new PriceListRow(this.values[rowOffset], this.formulas[rowOffset], rowOffset, this.range);
+      let row = new PriceListRow(this.range, rowOffset);
       if (row.isSelected) {
         row.isSelected = false;
       }
@@ -130,8 +128,8 @@ PriceList._sheet = null;
 
 class PriceListRow extends EventRow {
 
-  constructor(values, formulas, rowOffset, containerRange) {
-    super(values, formulas, rowOffset, containerRange);
+  constructor(containerRange, rowOffset) {
+    super(containerRange, rowOffset);
   }
 
   get isSelected()      { return this.get("Selected"); } // Accept blank
@@ -146,8 +144,6 @@ class PriceListExport {
   
   constructor(rangeName) {
     this.range = Range.getByName(rangeName).loadColumnNames();
-    this.values = this.range.values;
-    this.formulas = this.range.formulas;
     trace("NEW " + this.trace);
   }
   
@@ -173,7 +169,7 @@ class PriceListExport {
     if (priceListRow.isSelected) {
       let exportRowRange = this.range.getNextRowAndExtend();
       let rowOffset = this.range.currentRowOffset
-      let exportRow = new EventRow(this.values[rowOffset], this.formulas[rowOffset], rowOffset, this.range);
+      let exportRow = new EventRow(this.range, rowOffset);
       exportRow.category             = priceListRow.category;
       exportRow.supplier             = priceListRow.supplier;
       exportRow.description          = priceListRow.description;

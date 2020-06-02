@@ -118,12 +118,14 @@ function addWeddingPackagesMenu() {
   trace("< Custom wedding packages menu added");
 }
 
-function addEmailMenu(emailListName) {
-  trace("> Adding custom email menu " + emailListName);
+function addEmailMenu() {
+  trace("> Adding custom email menu");
   let ui = SpreadsheetApp.getUi();
-  let menu = ui.createMenu("Email");
-  Email.populateMenu(menu, emailListName);
-  menu.addToUi();
+  let menu = ui.createMenu("Email")
+  .addItem("Draft selected email", globalLibName + ".onDraftSelectedEmail")
+  .addSeparator();
+  EmailTemplateList.singleton.populateMenu(menu)
+  .addToUi();
   trace("< Custom email menu added");
 }
 

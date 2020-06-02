@@ -136,9 +136,9 @@ class Range {
 
 class RangeRow {
 
-  constructor(values, formulas, rowOffset, containerRange) {
-    this.values = values;
-    this.formulas = formulas;
+  constructor(containerRange, rowOffset, values = null) {
+    this.values = values !== null ? values[rowOffset] : containerRange.values[rowOffset];
+    this.formulas = containerRange.formulas[rowOffset];
     this.rowOffset = rowOffset;
     this.containerRange = containerRange;
   }

@@ -9,5 +9,5 @@ function onTestCase1() {
 }
 
 function onTestCase2() {
-  Browser.newTab("https://docs.google.com/spreadsheets/d/" + WeddingClientTemplateSpreadsheetId);
+  ;
 }
