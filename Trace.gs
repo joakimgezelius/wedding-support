@@ -1,9 +1,9 @@
 // Global/static trace variables
 //
-var useTrace = true;
-var traceRow = 1;
-var currentSpreadSheet = SpreadsheetApp.getActiveSpreadsheet();
-var traceArea = null;
+const useTrace = true;
+var   traceRow = 1;
+const currentSpreadSheet = SpreadsheetApp.getActiveSpreadsheet();
+var   traceArea = null;
 
 function trace(text) {
   if (useTrace == true) {

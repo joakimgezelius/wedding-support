@@ -9,7 +9,7 @@ class Range {
     this._sheet = new Sheet(nativeRange.getSheet());
     this._sheetName = this.sheet.name;
     this._currentRowOffset = 0;
-    this._trace = `{Range ${name} ${Range.trace(nativeRange)}}`;
+    this._trace = `{Range ${name} ${Range.trace(nativeRange)} `;
     trace(`NEW ${this._trace}`);
   }
   
@@ -28,7 +28,7 @@ class Range {
 
   get nativeRange()      { return this._nativeRange; }
   get name()             { return this._name; }
-  get trace()            { return this._trace; }
+  get trace()            { return this._trace + this._currentRowOffset + "}"; }
   get sheet()            { return this._sheet; }
   get values()           { return this.nativeRange.getValues(); }
   get formulas()         { return this.nativeRange.getFormulas(); }
@@ -37,7 +37,9 @@ class Range {
   get columnPosition()   { return this.nativeRange.getColumn(); } // Column number of the first column in the range
   get currentRow()       { return this.nativeRange.offset(this.currentRowOffset, 0, 1); } // A range of 1 row height
   get currentRowOffset() { return this._currentRowOffset; }
-
+  get currentRowValues() { return this.values[this._currentRowOffset]; }
+  get currentRowIsEmpty(){ return !this.currentRowValues.join(""); }
+ 
   // 
   //  Dynamic Range Features
   //
@@ -52,8 +54,8 @@ class Range {
   deleteExcessiveRows(rowsToKeep) {
     trace(`${this.trace} deleteExcessiveRows rowsToKeep=${rowsToKeep} height=${this.height}`);
     if (this.height > rowsToKeep) {
-      let startRow = this.rowPosition + rowsToKeep;
-      let rowsToDelete = this.height - rowsToKeep;
+      const startRow = this.rowPosition + rowsToKeep;
+      const rowsToDelete = this.height - rowsToKeep;
       trace(`deleteRows startRow=${startRow} rowsToDelete=${rowsToDelete}`);
       this.sheet.deleteRows(startRow, rowsToDelete);
       this.refresh(); // Reload the range as it has changed now
@@ -69,10 +71,48 @@ class Range {
   
   rewind() {
     this._currentRowOffset = 0;
+    return this._currentRowOffset;
+  }
+  
+  findFirstEmptyRow() {
+    this.rewind();
+    return findNextEmptyRow();
+  }
+  
+  findNextEmptyRow() {
+    const values = this.values;
+    while (!values[this._currentRowOffset].join("")) { // While row is not empty
+      ++this._currentRowOffset;
+      if (this._currentRowOffset >= this.height) {
+        trace(`${this.trace} findNextEmptyRow --> no more empty rows in range`);
+        error.fatal(`No more empty rows in range ${this.name}`);
+        return null;
+      }
+    }
+    trace(`${this.trace} findNextEmptyRow --> row ${this.currentRowOffset}`);
+    return this.currentRow;
+  }
+
+  // Loop through all lines from the bottom until a non-empty row is found
+  //
+  findFirstTrailingEmptyRow() {
+    const values = this.values;
+    this._currentRowOffset = this.height - 1;
+    while (!values[rowOffset].join("")) {
+      --this._currentRowOffset;
+      if (this._currentRowOffset < 0) {
+        trace(`${this.trace} findFirstTrailingEmptyRow --> no more empty rows in range`);
+        error.fatal(`No more empty rows in range ${this.name}`);
+        return null;
+      }
+    }
+    ++this._currentRowOffset;
+    trace(`${this.trace} findFirstTrailingEmptyRow --> row ${this.currentRowOffset}`);
+    return this.currentRow;
   }
   
   getNextRow() {
-    let row = this.currentRow;
+    const row = this.currentRow;
     ++this._currentRowOffset;
     return row;
   }
@@ -82,7 +122,7 @@ class Range {
   }
     
   getNextRowAndExtend() {
-    let row = this.currentRow;
+    const row = this.currentRow;
     ++this._currentRowOffset;
     if (this.height - this._currentRowOffset < 2) { // Extend if we're 1 row from the end
       this.sheet.insertRowBefore(row.getRowIndex()+1);
@@ -99,10 +139,19 @@ class Range {
   }
 
   trim() {
-    let excess = this.height - this._currentRowOffset;
-    let rowsToKeep = Math.max(this.height - excess, 2); // Never less than two lines left
+    const excess = this.height - this._currentRowOffset;
+    const rowsToKeep = Math.max(this.height - excess, 2); // Never less than two lines left
     trace(`${this.trace} trim ${excess} lines (height: ${this.height} rowsToKeep: ${rowsToKeep})`);
     this.deleteExcessiveRows(rowsToKeep);
+  }
+  
+  forEachRow(callback) {
+    const rowCount = this.height;
+    for (let offset = 0; offset < rowCount; offset++) {
+      const row = this.nativeRange.offset(offset, 0, 1);  
+      if (!callback(offset, row))
+        break;
+    }
   }
   
   format(callback) {
@@ -113,7 +162,7 @@ class Range {
   
   loadColumnNames() {
     if (this.namedColumns === undefined) {
-      let columnNamesRange = this.nativeRange.offset(-1, 0, 1); // Get the one row above the range, we assume this row holds the column names
+      const columnNamesRange = this.nativeRange.offset(-1, 0, 1); // Get the one row above the range, we assume this row holds the column names
       this.namedColumns = new NamedColumns(this.name, columnNamesRange);
     }
     return this;
@@ -167,13 +216,13 @@ class RangeRow {
   }
 
   getFormula(columnName) {
-    let formula = this.formulas[this.containerRange.getColumnOffset(columnName)];
+    const formula = this.formulas[this.containerRange.getColumnOffset(columnName)];
     return formula;
   }
   
   getCell(columnName) {
-    let columnOffset = this.containerRange.getColumnOffset(columnName);
-    let cell = this.containerRange.nativeRange.offset(this.rowOffset, columnOffset, 1, 1);
+    const columnOffset = this.containerRange.getColumnOffset(columnName);
+    const cell = this.containerRange.nativeRange.offset(this.rowOffset, columnOffset, 1, 1);
 //  trace(`${this.containerRange.name}.getCell ${columnName} --> ${Range.trace(cell)}`);
     return cell;
   }
@@ -184,8 +233,19 @@ class RangeRow {
     cell.setValue(value);
   }
 
+  copyFieldTo(destination, columnName) {
+    destination.set(columnName, this.get(columnName));
+  }
+
+  copyFieldsTo(destination, columnNames) {
+    for (var columnName in columnNames) {
+      trace(`${this.trace}.copyFieldsTo(${destination.trace}, ${columnName}) `);
+      //this.copyFieldTo(destination, columnName);
+    }
+  }
+
   getA1Notation(columnName) { 
-    let cell = this.getCell(columnName);
+    const cell = this.getCell(columnName);
     return cell.getA1Notation();
   }
 

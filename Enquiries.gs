@@ -1,10 +1,14 @@
-EnquiriesRangeName = "Enquiries";
-EnquiriesFolderId = "1EtAGPReyn5ZMyXf6xboCyTncGWsvxNz_";
+enquiriesRangeName = "Enquiries";
+enquiriesNoReplyRangeName = "EnquiriesNoReply";
+
+enquiriesFolderId = "1EtAGPReyn5ZMyXf6xboCyTncGWsvxNz_";
+
 
 function onUpdateEnquiries() {
   trace("onUpdateEnquiries");
-  let enquiries = new Enquiries;
-  enquiries.update();
+  let enquiries = new Enquiries(enquiriesRangeName);
+  let enquiriesNoReply = new Enquiries(enquiriesNoReplyRangeName);
+  enquiries.update(enquiriesNoReply);
 }
 
 // Open client sheet for the selected client, 
@@ -30,8 +34,8 @@ function onDraftSelectedEmail() {
 
 class Enquiries {
 
-  constructor() {
-    this.range = Range.getByName(EnquiriesRangeName).loadColumnNames();
+  constructor(rangeName) {
+    this.range = Range.getByName(rangeName).loadColumnNames();
     trace("NEW " + this.trace);
   }
 
@@ -53,14 +57,21 @@ class Enquiries {
     return selectedEnquiry;
   }
   
-  update() {
+  update(target) {
     trace(`${this.trace}.update`);
     for (var rowOffset = 0; rowOffset < this.range.height; rowOffset++) {
       let enquiry = new Enquiry(this.range, rowOffset);
       if (!enquiry.isValid) {
         break;
-      }      
+      }
+      target.append(enquiry);
     }
+  }
+  
+  append(enquiry) {
+    this.range.findFirstEmptyRow();
+    trace(`${this.trace}.append ${enquiry.trace}`);    
+//    let targetEnquiry = new Enquiry(this.range, .findFirstEmptyRow();
   }
   
   get trace() { return `{Enquiries ${this.range.trace}}`; }
@@ -93,6 +104,11 @@ class Enquiry extends RangeRow {
     this.sheetId = this.clientSheet.id;
     this.sheetLink = `=hyperlink("${this.clientSheet.url}";"...")`;
     Browser.newTab(this.clientSheet.url);
+  }
+  
+  copyTo(destination) {
+    const fields = ["nane", "EmailAddress", "Who"];
+    this.copyFieldsTo(destination, fields);
   }
   
   openClientSheet() {
@@ -137,4 +153,26 @@ class Enquiry extends RangeRow {
 //================================================================================================
                
 class Prospects {
+  
+  constructor() {
+    this.range = Range.getByName(EnquiriesWaitingResponseRangeName).loadColumnNames();
+    trace("NEW " + this.trace);
+  }
+
+  get trace() { return `{Prospects ${this.range.trace}}`; }
+
+}
+
+
+//================================================================================================
+
+class Prospect {
+  
+  constructor() {
+    this.range = Range.getByName(EnquiriesWaitingResponseRangeName).loadColumnNames();
+    trace("NEW " + this.trace);
+  }
+
+  get trace() { return `{Prospects ${this.range.trace}}`; }
+
 }
