@@ -76,16 +76,16 @@ class Range {
   
   findFirstEmptyRow() {
     this.rewind();
-    return findNextEmptyRow();
+    return this.findNextEmptyRow();
   }
   
   findNextEmptyRow() {
     const values = this.values;
-    while (!values[this._currentRowOffset].join("")) { // While row is not empty
+    while (values[this._currentRowOffset].join("")) { // While row is not empty
       ++this._currentRowOffset;
       if (this._currentRowOffset >= this.height) {
         trace(`${this.trace} findNextEmptyRow --> no more empty rows in range`);
-        error.fatal(`No more empty rows in range ${this.name}`);
+        Error.fatal(`No more empty rows in range ${this.name}`);
         return null;
       }
     }
@@ -98,15 +98,15 @@ class Range {
   findFirstTrailingEmptyRow() {
     const values = this.values;
     this._currentRowOffset = this.height - 1;
-    while (!values[rowOffset].join("")) {
+    while (this._currentRowOffset >= 0 && !values[this._currentRowOffset].join("")) {
       --this._currentRowOffset;
-      if (this._currentRowOffset < 0) {
-        trace(`${this.trace} findFirstTrailingEmptyRow --> no more empty rows in range`);
-        error.fatal(`No more empty rows in range ${this.name}`);
-        return null;
-      }
     }
     ++this._currentRowOffset;
+    if (this._currentRowOffset == this.height) { // We're past the end, i.e. no empty lines left
+      trace(`${this.trace} findFirstTrailingEmptyRow --> no more empty rows in range`);
+      Error.fatal(`No more empty rows in range ${this.name}`);
+      return null;
+    }
     trace(`${this.trace} findFirstTrailingEmptyRow --> row ${this.currentRowOffset}`);
     return this.currentRow;
   }
