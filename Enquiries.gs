@@ -3,7 +3,9 @@ enquiriesNoReplyRangeName = "EnquiriesNoReply";
 
 enquiriesFolderId = "1EtAGPReyn5ZMyXf6xboCyTncGWsvxNz_";
 
-
+// Go through raw list of enquiries, 
+//  - find those that are work-in-progress
+//
 function onUpdateEnquiries() {
   trace("onUpdateEnquiries");
   let enquiries = new Enquiries(enquiriesRangeName);
@@ -68,10 +70,14 @@ class Enquiries {
     }
   }
   
+  // Append an enquiry to a list 
+  //
   append(enquiry) {
-    this.range.findFirstEmptyRow();
     trace(`${this.trace}.append ${enquiry.trace}`);    
-//    let targetEnquiry = new Enquiry(this.range, .findFirstEmptyRow();
+    this.range.findFirstTrailingEmptyRow();
+//  trace(`Create target enquiry based on ${this.range.trace}, ${this.range.currentRowOffset}`);    
+    let targetEnquiry = new Enquiry(this.range, this.range.currentRowOffset);
+    enquiry.copyTo(targetEnquiry);
   }
   
   get trace() { return `{Enquiries ${this.range.trace}}`; }
@@ -86,8 +92,8 @@ class Enquiry extends RangeRow {
   constructor(enquiriesRange, rowOffset) {
     super(enquiriesRange, rowOffset);
     this.rowOffset = rowOffset;
-    this._name = this.name;
-    this._isValid = (this._name !== "");
+//  this._name = this.name;
+    this._isValid = (this.name !== "");
     trace("NEW " + this.trace);
   }
   
@@ -96,7 +102,7 @@ class Enquiry extends RangeRow {
     if (!this.isValid) {
       Error.fatal("Please select a valid enquiry.");
     };
-    let clientSheetName = `${this._name} (Prospect Client)`;
+    let clientSheetName = `${this.name} (Prospect Client)`;
     let targetFolder = Folder.getById(EnquiriesFolderId);
     let weddingClientTemplateFile = File.getById(WeddingClientTemplateSpreadsheetId);
     let clientSpreadsheetFile = weddingClientTemplateFile.makeCopy(clientSheetName, targetFolder);
@@ -107,7 +113,8 @@ class Enquiry extends RangeRow {
   }
   
   copyTo(destination) {
-    const fields = ["nane", "EmailAddress", "Who"];
+    trace(`${this.trace}.copyTo ${destination.trace}`);
+    const fields = ["Name", "EmailAddress", "Who"];
     this.copyFieldsTo(destination, fields);
   }
   

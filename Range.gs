@@ -238,10 +238,7 @@ class RangeRow {
   }
 
   copyFieldsTo(destination, columnNames) {
-    for (var columnName in columnNames) {
-      trace(`${this.trace}.copyFieldsTo(${destination.trace}, ${columnName}) `);
-      //this.copyFieldTo(destination, columnName);
-    }
+    columnNames.forEach(columnName => this.copyFieldTo(destination, columnName)); // trace(`${this.trace}.copyFieldsTo(${destination.trace}, ${columnName}) `));
   }
 
   getA1Notation(columnName) { 

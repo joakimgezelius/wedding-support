@@ -36,9 +36,9 @@ class Sheet {
   */
 
   getRangeByName(name) {
-    range = this.nativeSheet.getRange(rangeName);
-    newRange = range === null ? null : new Range(range, name, this.name);
-    trace(`${this.trace}.getRangeByName("${name}") --> ${range === null?"null (NOT FOUND)":newSheet.trace}`);
+    const range = this.nativeSheet.getRange(name);
+    const newRange = range === null ? null : new Range(range, name, this.name);
+    trace(`${this.trace}.getRangeByName("${name}") --> ${range === null?"null (NOT FOUND)":newRange.trace}`);
     return newRange;
   }
 
@@ -103,15 +103,15 @@ class Spreadsheet {
   }
 
   getSheetByName(name) {
-    let sheet = this.nativeSpreadheet.getSheetByName(name);
-    let newSheet = sheet === null ? null : new Sheet(sheet);
+    const sheet = this.nativeSpreadheet.getSheetByName(name);
+    const newSheet = sheet === null ? null : new Sheet(sheet);
     trace(`${this.trace}.getSheetByName("${name}") --> ${sheet === null?"null (NOT FOUND)":newSheet.trace}`);
     return newSheet;
   }
   
   copy(name) {
     trace(`${this.trace}.copy(${name})`);
-    let newSpreadsheet = new Spreadsheet(this.nativeSpreadheet.copy(name));
+    const newSpreadsheet = new Spreadsheet(this.nativeSpreadheet.copy(name));
     return newSpreadsheet;
   }
   
