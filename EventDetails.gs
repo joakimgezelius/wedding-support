@@ -4,17 +4,16 @@
 const SortType = { time: "time", supplier: "supplier" };
 
 class EventDetails {
+  
   constructor() {
     this.range = Coordinator.eventDetailsRange;
-    if (this.range) {
-    }
     this.rowCount = this.range.height;
-    this.values = this.range.values;     // NOTE: indexed from [0][0]
+    //this.values = this.range.values;     // NOTE: indexed from [0][0]
     trace("NEW " + this.trace);
   }
 
   // Method apply
-  // Iterate over all event rows (using Range Row Iterator)
+  // Iterate over all event rows (using Range Row Iterator), call handler methods 
   //
   apply(handler) {
     trace(`${this.trace}.apply`);
@@ -30,19 +29,21 @@ class EventDetails {
     handler.onEnd();
   }
 
+  // NOTE: Sorting the underlying array of values for the range is dangerous, as the range itself isn't sorted!
+  //
   sort(type) {
-    function compare(row1, row2) {
-      let eventRow1 = new EventRow(this.range, null, row1); // Override the values, as we are sorting the values matrix only (risky)
+    trace(`EventDetails.sort(${type}) ${this.trace}`);
+    this.range.values.sort((row1, row2) => {
+      let eventRow1 = new EventRow(this.range, null, row1); // Override the values, as we are sorting the values matrix only (risky!)
       let eventRow2 = new EventRow(this.range, null, row2);
       return eventRow1.compare(eventRow2, type);
-    }
-    trace(`EventDetails.sort(${type}) ${this.trace}`);
-    this.values.sort(compare);
+    });
   }
   
   get trace() {
     return `{EventDetails range=${this.range.trace} rowCount=${this.rowCount}`;
   }
+    
 }
 
 //=============================================================================================

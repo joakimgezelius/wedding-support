@@ -7,6 +7,7 @@ class Range {
     this._nativeRange = nativeRange;
     this._name = name;
     this._sheet = new Sheet(nativeRange.getSheet());
+    this._values = this.nativeRange.getValues();  // Note: we cache this as we need to allow the array to me sorted
     this._sheetName = this.sheet.name;
     this._currentRowOffset = 0;
     this._trace = `{Range ${name} ${Range.trace(nativeRange)} `;
@@ -44,7 +45,7 @@ class Range {
   get name()             { return this._name; }
   get trace()            { return this._trace + this._currentRowOffset + "}"; }
   get sheet()            { return this._sheet; }
-  get values()           { return this.nativeRange.getValues(); }
+  get values()           { return this._values; }
   get height()           { return this.nativeRange.getHeight(); }
   get rowPosition()      { return this.nativeRange.getRow(); }    // Row number of the first row in the range
   get columnPosition()   { return this.nativeRange.getColumn(); } // Column number of the first column in the range
@@ -191,7 +192,7 @@ class Range {
 class RangeRow {
 
   constructor(range, rowOffset = null, values = null) {
-    this.values = values === null ? range.currentRowValues : values;
+    this.values = (values === null) ? range.currentRowValues : values;
     this.namedColumns = range.namedColumns;
     this.nativeRange = range.currentRow;
     trace(`NEW EventRow on ${range.trace}`);
