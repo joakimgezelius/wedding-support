@@ -1,12 +1,12 @@
 class NamedColumns {
 
-  constructor(rowName, columnNamesRange) {
-    this.baseRowPosition = columnNamesRange.getRow();
-    this.baseColumnPosition = columnNamesRange.getColumn();
+  constructor(rowName, columnNamesNativeRange) {
+    this.baseRowPosition = columnNamesNativeRange.getRow();
+    this.baseColumnPosition = columnNamesNativeRange.getColumn();
     this.rowName = rowName;
     this.columnOffsets = {};
     this.columnLetters = {};
-    let columnNames = columnNamesRange.getValues()[0];
+    let columnNames = columnNamesNativeRange.getValues()[0];
     let columnCount = columnNames.length;
     trace(`NamedColumns ${this.rowName} Base Row Position: ${this.baseRowPosition} Base Column Position: ${this.baseColumnPosition} Columns: ${columnNames}`);
     for (var columnOffset = 0; columnOffset < columnCount; ++columnOffset) {

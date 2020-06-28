@@ -3,16 +3,11 @@ PriceListRangeName = "PriceList";
 
 function onRefreshPriceList() {
   trace("onRefreshPriceList");
-  //let priceListIterator = new EventDetailsIterator();
-//  let eventDetailsUpdater = new EventDetailsUpdater(false);
 }
 
 function onUpdatePackages() {
   trace("onUpdatePackages");
 //  if (Dialog.confirm("Forced Coordinator Update - Confirmation Required", "Are you sure you want to force-update the coordinator? It will overwrite row numbers and formulas, make sure the sheet is sorted properly!") == true) {
-//    let eventDetailsIterator = new EventDetailsIterator();
-//    let eventDetailsUpdater = new EventDetailsUpdater(true);
-//    eventDetailsIterator.iterate(eventDetailsUpdater);
 //  }
 }
 
@@ -34,14 +29,14 @@ function onPriceListExportTicked() {
   trace("onPriceListExport");
   let priceList = new PriceList("PriceList");
   let priceListExport = new PriceListExport("Export");
-  priceList.iterate(priceListExport);
+  priceList.apply(priceListExport);
 }
 
 function onPriceListExportSelection() {
   trace("onPriceListExport");
   let priceList = new PriceList("PriceList");
   let priceListExport = new PriceListExport("Export");
-  priceList.iterate(priceListExport);
+  priceList.apply(priceListExport);
 }
 
 function onImportPriceList() {
@@ -80,11 +75,11 @@ class PriceList {
     this.gatherCategories();
   }
 
-  // Method iterate
+  // Method apply
   // Iterate over all price list rows
   //
-  iterate(handler) {
-    trace("PriceList.iterate " + this.trace);
+  apply(handler) {
+    trace("PriceList.apply " + this.trace);
     handler.onBegin();
     for (let rowOffset = 0; rowOffset < this.rowCount; rowOffset++) {
       let row = new PriceListRow(this.range, rowOffset);
@@ -128,8 +123,8 @@ PriceList._sheet = null;
 
 class PriceListRow extends EventRow {
 
-  constructor(containerRange, rowOffset) {
-    super(containerRange, rowOffset);
+  constructor(range) {
+    super(range);
   }
 
   get isSelected()      { return this.get("Selected"); } // Accept blank
@@ -168,8 +163,7 @@ class PriceListExport {
     trace("PriceListExport.onRow ");
     if (priceListRow.isSelected) {
       let exportRowRange = this.range.getNextRowAndExtend();
-      let rowOffset = this.range.currentRowOffset
-      let exportRow = new EventRow(this.range, rowOffset);
+      let exportRow = new EventRow(this.range);
       exportRow.category             = priceListRow.category;
       exportRow.supplier             = priceListRow.supplier;
       exportRow.description          = priceListRow.description;

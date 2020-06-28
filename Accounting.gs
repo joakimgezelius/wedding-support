@@ -1,8 +1,8 @@
 function onUpdateAccountSummary() {
   trace("onUpdateAccountSummary");
-  let eventDetailsIterator = new EventDetailsIterator();
+  let eventDetails = new EventDetails();
   let accountSummaryBuilder = new AccountSummaryBuilder(Range.getByName("SupplierAccountSummary", "Accounting"));
-  eventDetailsIterator.iterate(accountSummaryBuilder);
+  eventDetails.apply(accountSummaryBuilder);
   
 }
 

@@ -1,8 +1,8 @@
 function onUpdateBudget() {
   trace("onUpdateBudget");
-  let eventDetailsIterator = new EventDetailsIterator();
+  let eventDetails = new EventDetails();
   let budgetBuilder = new BudgetBuilder(Range.getByName("Budget", "Budget"));
-  eventDetailsIterator.iterate(budgetBuilder);
+  eventDetails.apply(budgetBuilder);
 }
 
 //=============================================================================================

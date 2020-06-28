@@ -68,10 +68,10 @@ class EmailTemplateList {
 
 //================================================================================================
 
-class EmailTemplateRow extends EventRow {
+class EmailTemplateRow extends RangeRow {
 
-  constructor(containerRange, rowOffset) {
-    super(containerRange, rowOffset);
+  constructor(range, rowOffset = null) {
+    super(range, rowOffset);
     this._trace = `{EmailTemplateRow ${this.id} ${this.name}}`;
     trace("NEW " + this.trace);
   }

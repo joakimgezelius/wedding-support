@@ -3,9 +3,9 @@ EventSuppliersRangeName = "EventSuppliers";
 
 function onUpdateSuppliers() {
   trace("onUpdateSuppliers");
-  var eventDetailsIterator = new EventDetailsIterator();
-  var eventSuppliersBuilder = new EventSuppliersBuilder(EventSuppliersRangeName);
-  eventDetailsIterator.iterate(eventSuppliersBuilder);
+  let eventDetails = new EventDetails();
+  let eventSuppliersBuilder = new EventSuppliersBuilder(EventSuppliersRangeName);
+  eventDetails.apply(eventSuppliersBuilder);
 }
 
 

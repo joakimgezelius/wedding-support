@@ -1,23 +1,35 @@
+const CleanUpType = { markup: "markup", id: "id" };
+
 function onUpdateCoordinator() {
   trace("onUpdateCoordinator");
-  let eventDetailsIterator = new EventDetailsIterator();
+  let eventDetails = new EventDetails();
   let eventDetailsUpdater = new EventDetailsUpdater(false);
+  eventDetails.forEach(eventDetailsUpdater);
 }
 
 function onUpdateCoordinatorForced() {
   trace("onUpdateCoordinatorForced");
   if (Dialog.confirm("Forced Coordinator Update - Confirmation Required", "Are you sure you want to force-update the coordinator? It will overwrite row numbers and formulas, make sure the sheet is sorted properly!") == true) {
-    let eventDetailsIterator = new EventDetailsIterator();
+    let eventDetails = new EventDetails();
     let eventDetailsUpdater = new EventDetailsUpdater(true);
-    eventDetailsIterator.iterate(eventDetailsUpdater);
+    eventDetails.forEach(eventDetailsUpdater);
+  }
+}
+
+function onReverseMarkupCalculations(){
+  trace("onReverseMarkupCalculations");
+  if (Dialog.confirm("Reverse Mark-up Calculations - Confirmation Required", "Are you sure you want to reverse the mark-up calculations? It will overwrite mark-up formulas and client unit prices") == true) {
+    let eventDetails = new EventDetails();
+    let eventDetailsCleaner = new EventDetailsCleaner(CleanUpType.markup);
+    eventDetails.forEach(eventDetailsCleaner);
   }
 }
 
 function onCheckCoordinator() {
   trace("onCheckCoordinator");
-  let eventDetailsIterator = new EventDetailsIterator();
+  let eventDetails = new EventDetails();
   let eventDetailsChecker = new EventDetailsChecker();
-  eventDetailsIterator.iterate(eventDetailsChecker);
+  eventDetails.forEach(eventDetailsChecker);
 }
 
 
@@ -108,17 +120,16 @@ class EventDetailsUpdater {
     let budgetUnitCostA1 = budgetUnitCostCell.getA1Notation();
     let nativeUnitCost = String(row.nativeUnitCost);
     let nativeUnitCostCell = row.getCell("NativeUnitCost");
-    let nativeUnitCostFormula = row.getFormula("NativeUnitCost");
     let currencyFormat = row.currencyFormat;
-    //trace(`Cell: ${nativeUnitCostCell.getA1Notation()} ${nativeUnitCostFormula} ${currencyFormat}`);
+    //trace(`Cell: ${nativeUnitCostCell.getA1Notation()} ${currencyFormat}`);
     budgetUnitCostCell.setNumberFormat(currencyFormat);
     nativeUnitCostCell.setNumberFormat(currencyFormat);
-    if (nativeUnitCost === "" || nativeUnitCostFormula !== "") { // Set native unit cost equal to budget unit cost if not set 
+    if (nativeUnitCost === "") { // Set native unit cost equal to budget unit cost if not set 
       //trace(`Set nativeUnitCost to =${budgetUnitCostA1}`);
       row.nativeUnitCost = `=${budgetUnitCostA1}`;
       nativeUnitCostCell.setFontColor("#ccccff"); // Make text grey
     } else {
-      //trace(`setNativeUnitCost: nativeUnitCost="${nativeUnitCost}" nativeUnitCostFormula="${nativeUnitCostFormula}" - make it black`);
+      //trace(`setNativeUnitCost: nativeUnitCost="${nativeUnitCost} - make it black`);
       nativeUnitCostCell.setFontColor("#000000"); // Black
     }
   }
@@ -127,22 +138,60 @@ class EventDetailsUpdater {
     let unitCostA1 = row.getA1Notation("UnitCost");
     let unitPriceA1 = row.getA1Notation("UnitPrice");
     let markupA1 = row.getA1Notation("Markup");
-    let markupFormula = row.getFormula("Markup");
-    let unitPriceFormula = row.getFormula("UnitPrice");
-    if (markupFormula !== "" && unitPriceFormula !== "") { // Formulas for both markup & unit price, flag it! Keep formula in unit price, set markup to default 30%
-      Error.warning(`Found formulas in row ${row.rowPosition}, columns Markup and UnitPrice, only one of the two can be calculated, please choose one to give a value.`);
-      row.markup = 0.3;
-    }
-    if (row.markup === "" && row.unitPrice !== "" && unitPriceFormula === "") { // Only set markup formula if it's empty, and there is a Unit Price set (which is not a formula)
-      row.markup = `=IF(OR(${unitCostA1}="", ${unitCostA1}=0, ${unitPriceA1}="", ${unitPriceA1}=0), "", (${unitPriceA1}-${unitCostA1})/${unitCostA1})`;
-    } 
-    else if (row.unitPrice === "" || this.forced) { // Only set unit price if empty (or forced)
+    if (row.unitPrice === "" || this.forced) { // Only set unit price if empty (or forced)
       row.unitPrice = `=IF(OR(${unitCostA1}="", ${unitCostA1}=0), "", ${unitCostA1} * ( 1 + ${markupA1}))`;
     }
   }
   
   get trace() {
     return `{EventDetailsUpdater forced=${this.forced}}`;
+  }
+}
+
+
+//=============================================================================================
+// Class EventDetailsCleaner
+//
+
+class EventDetailsCleaner {
+  constructor(type) {
+    this.type = type;
+    trace("NEW " + this.trace);
+  }
+
+  onBegin() {
+    this.itemNo = 0;
+    this.sectionNo = 0;
+    this.eurGbpRate = Range.getByName("EURGBP").value;
+    trace("EventDetailsCleaner.onBegin - EURGBP=" + this.eurGbpRate);
+  }
+  
+  onEnd() {
+    trace("EventDetailsCleaner.onEnd - no-op");
+  }
+
+  onTitle(row) {
+    trace("EventDetailsCleaner.onTitle " + row.title);
+  }
+
+  onRow(row) {
+    trace("EventDetailsCleaner.onRow " + row.description);
+    switch (this.type) {
+      case CleanUpType.markup:
+        let markup = row.markup;
+        row.markup = markup;
+        trace(`EventDetailsCleaner.onRow, set mark-up: ${markup}`);
+        let unitCostA1 = row.getA1Notation("UnitCost");
+        let markupA1 = row.getA1Notation("Markup");
+        let unitPrice = `=IF(OR(${unitCostA1}="", ${unitCostA1}=0), "", ${unitCostA1} * ( 1 + ${markupA1}))`;
+        row.unitPrice = unitPrice;
+        trace(`EventDetailsCleaner.onRow, set unit price: ${unitPrice}`);
+        break;
+    }
+  }
+
+  get trace() {
+    return `{EventDetailsCleaner type=${this.type}}`;
   }
 }
 

@@ -1,9 +1,9 @@
 //=============================================================================================
-// Class EventDetailsIterator
+// Class EventDetails
 //
 const SortType = { time: "time", supplier: "supplier" };
 
-class EventDetailsIterator {
+class EventDetails {
   constructor() {
     this.range = Coordinator.eventDetailsRange;
     if (this.range) {
@@ -13,35 +13,35 @@ class EventDetailsIterator {
     trace("NEW " + this.trace);
   }
 
-  // Method iterate
-  // Iterate over all event rows
+  // Method apply
+  // Iterate over all event rows (using Range Row Iterator)
   //
-  iterate(handler) {
-    trace("EventDetailsIterator.iterate " + this.trace);
+  apply(handler) {
+    trace(`${this.trace}.apply`);
     handler.onBegin();
-    for (var rowOffset = 0; rowOffset < this.rowCount; rowOffset++) {
-      let row = new EventRow(this.range, rowOffset, this.values);
+    this.range.forEachRow((range) => {
+      const row = new EventRow(range);
       if (row.isTitle) {
         handler.onTitle(row);
       } else {
         handler.onRow(row);
       }
-    }  
+    });
     handler.onEnd();
   }
-                      
+
   sort(type) {
     function compare(row1, row2) {
-      let eventRow1 = new EventRow(row1);
-      let eventRow2 = new EventRow(row2);
+      let eventRow1 = new EventRow(this.range, null, row1); // Override the values, as we are sorting the values matrix only (risky)
+      let eventRow2 = new EventRow(this.range, null, row2);
       return eventRow1.compare(eventRow2, type);
     }
-    trace(`EventDetailsIterator.sort(${type}) ${this.trace}`);
+    trace(`EventDetails.sort(${type}) ${this.trace}`);
     this.values.sort(compare);
   }
   
   get trace() {
-    return `{EventDetailsIterator range=${this.range.trace} rowCount=${this.rowCount}`;
+    return `{EventDetails range=${this.range.trace} rowCount=${this.rowCount}`;
   }
 }
 
@@ -51,8 +51,8 @@ class EventDetailsIterator {
   
 class EventRow extends RangeRow {
   
-  constructor(containerRange, rowOffset, values) { // Pass values separately as range may be sorted
-    super(containerRange, rowOffset, values);
+  constructor(range, rowOffset = null, values = null) {
+    super(range, rowOffset, values);
   }
 
   get sectionNo()           { return this.get("ItemNo", "string").substr(0,3); }

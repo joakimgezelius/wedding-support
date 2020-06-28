@@ -1,10 +1,10 @@
 
 function onUpdateRota() {
   trace("onUpdateRota");
-  var eventDetailsIterator = new EventDetailsIterator();
-  var eventRotaBuilder = new EventRotaBuilder("EventRota");  
-  eventDetailsIterator.sort(SortType.time);
-  eventDetailsIterator.iterate(eventRotaBuilder);
+  let eventDetails = new EventDetails();
+  let eventRotaBuilder = new EventRotaBuilder("EventRota");  
+  eventDetails.sort(SortType.time);
+  eventDetails.apply(eventRotaBuilder);
 }
 
 

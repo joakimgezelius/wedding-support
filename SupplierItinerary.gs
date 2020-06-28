@@ -1,9 +1,9 @@
 function onUpdateSupplierItinerary() {
   trace("onUpdateSupplierItinerary");
-  let eventDetailsIterator = new EventDetailsIterator();
+  let eventDetails = new EventDetails();
   let itineraryBuilder = new SupplierItineraryBuilder(Range.getByName("SupplierItinerary", "Supplier Itinerary"));
-  eventDetailsIterator.sort(SortType.supplier);
-  eventDetailsIterator.iterate(itineraryBuilder);
+  eventDetails.sort(SortType.supplier);
+  eventDetails.apply(itineraryBuilder);
 }
 
 

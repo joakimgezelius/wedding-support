@@ -3,10 +3,10 @@ ClientItinerarySheetName = "Client Itinerary";
 
 function onUpdateClientItinerary() {
   trace("onUpdateClientItinerary");
-  let eventDetailsIterator = new EventDetailsIterator();
+  let eventDetails = new EventDetails();
   let clientItineraryBuilder = new ClientItineraryBuilder(Range.getByName(ClientItineraryRangeName, ClientItinerarySheetName));
-  eventDetailsIterator.sort(SortType.time);
-  eventDetailsIterator.iterate(clientItineraryBuilder);
+  eventDetails.sort(SortType.time);
+  eventDetails.apply(clientItineraryBuilder);
 }
 
 

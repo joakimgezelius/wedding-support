@@ -52,7 +52,7 @@ class Enquiries {
 
     let enquiryColumnOffset = selection.columnPosition - enquiries.range.rowPosition;
     
-    let selectedEnquiry = new Enquiry(enquiries.range, enquiryRowOffset);
+    let selectedEnquiry = new Enquiry(); // Fix this!!
     if (!selectedEnquiry.isValid) {
       Error.fatal("Please select a valid enquiry.");
     }
@@ -62,7 +62,7 @@ class Enquiries {
   update(target) {
     trace(`${this.trace}.update`);
     for (var rowOffset = 0; rowOffset < this.range.height; rowOffset++) {
-      let enquiry = new Enquiry(this.range, rowOffset);
+      let enquiry = new Enquiry(); // Fix this!!
       if (!enquiry.isValid) {
         break;
       }
@@ -76,7 +76,7 @@ class Enquiries {
     trace(`${this.trace}.append ${enquiry.trace}`);    
     this.range.findFirstTrailingEmptyRow();
 //  trace(`Create target enquiry based on ${this.range.trace}, ${this.range.currentRowOffset}`);    
-    let targetEnquiry = new Enquiry(this.range, this.range.currentRowOffset);
+    let targetEnquiry = new Enquiry(); // Fix this!!
     enquiry.copyTo(targetEnquiry);
   }
   
@@ -89,9 +89,9 @@ class Enquiries {
 
 class Enquiry extends RangeRow {
   
-  constructor(enquiriesRange, rowOffset) {
-    super(enquiriesRange, rowOffset);
-    this.rowOffset = rowOffset;
+  constructor(range, rowOffset = null) {
+    super(range, rowOffset);
+    Error.fatal("Not Impelmented");
 //  this._name = this.name;
     this._isValid = (this.name !== "");
     trace("NEW " + this.trace);

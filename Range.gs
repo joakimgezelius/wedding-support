@@ -26,20 +26,34 @@ class Range {
     return `[${range.getSheet().getName()}!${range.getA1Notation()}]`;
   }
 
+  getNativeRowRange(rowOffset) {
+    return this.nativeRange.offset(rowOffset, 0, 1); // A range of 1 row height
+  }
+
+  forEachRow(callback, context = null) {
+    trace(`${this.trace} forEachRow`);    
+    const rowCount = this.height;
+    for (let rowOffset = 0; rowOffset < rowCount; rowOffset++) {
+      this._currentRowOffset = rowOffset;
+      let goOn = callback(this, context);
+//    if (!goOn) break;
+    }
+  }  
+    
   get nativeRange()      { return this._nativeRange; }
   get name()             { return this._name; }
   get trace()            { return this._trace + this._currentRowOffset + "}"; }
   get sheet()            { return this._sheet; }
   get values()           { return this.nativeRange.getValues(); }
-  get formulas()         { return this.nativeRange.getFormulas(); }
   get height()           { return this.nativeRange.getHeight(); }
   get rowPosition()      { return this.nativeRange.getRow(); }    // Row number of the first row in the range
   get columnPosition()   { return this.nativeRange.getColumn(); } // Column number of the first column in the range
-  get currentRow()       { return this.nativeRange.offset(this.currentRowOffset, 0, 1); } // A range of 1 row height
+  get currentRow()       { return this.nativeRange.offset(this._currentRowOffset, 0, 1); } // A range of 1 row height
   get currentRowOffset() { return this._currentRowOffset; }
   get currentRowValues() { return this.values[this._currentRowOffset]; }
   get currentRowIsEmpty(){ return !this.currentRowValues.join(""); }
- 
+
+    
   // 
   //  Dynamic Range Features
   //
@@ -145,15 +159,6 @@ class Range {
     this.deleteExcessiveRows(rowsToKeep);
   }
   
-  forEachRow(callback) {
-    const rowCount = this.height;
-    for (let offset = 0; offset < rowCount; offset++) {
-      const row = this.nativeRange.offset(offset, 0, 1);  
-      if (!callback(offset, row))
-        break;
-    }
-  }
-  
   format(callback) {
     callback(this.nativeRange);
   }
@@ -162,8 +167,8 @@ class Range {
   
   loadColumnNames() {
     if (this.namedColumns === undefined) {
-      const columnNamesRange = this.nativeRange.offset(-1, 0, 1); // Get the one row above the range, we assume this row holds the column names
-      this.namedColumns = new NamedColumns(this.name, columnNamesRange);
+      const columnNamesNativeRange = this.nativeRange.offset(-1, 0, 1); // Get the one row above the range, we assume this row holds the column names
+      this.namedColumns = new NamedColumns(this.name, columnNamesNativeRange);
     }
     return this;
   }
@@ -185,15 +190,15 @@ class Range {
 
 class RangeRow {
 
-  constructor(containerRange, rowOffset, values = null) {
-    this.values = values !== null ? values[rowOffset] : containerRange.values[rowOffset];
-    this.formulas = containerRange.formulas[rowOffset];
-    this.rowOffset = rowOffset;
-    this.containerRange = containerRange;
+  constructor(range, rowOffset = null, values = null) {
+    this.values = values === null ? range.currentRowValues : values;
+    this.namedColumns = range.namedColumns;
+    this.nativeRange = range.currentRow;
+    trace(`NEW EventRow on ${range.trace}`);
   }
 
   get(columnName, expectedType = "undefined") {
-    let value = this.values[this.containerRange.getColumnOffset(columnName)];
+    let value = this.values[this.namedColumns.getColumnOffset(columnName)];
     if (expectedType === "undefined") return value; // If we accept any type, just return the value!
     let actualType = typeof value;
     if (actualType !== expectedType) {
@@ -208,28 +213,23 @@ class RangeRow {
           if (!Number.isNaN(value)) return value;
       }
       if (expectedType !== undefined && actualType !== expectedType) {
-        let columnLetter = this.containerRange.getColumnLetter(columnName);
+        let columnLetter = this.namedColumns.getColumnLetter(columnName);
         Error.fatal(`Unexpected value in row ${this.rowPosition}, column ${columnLetter} (${columnName}), found a ${actualType} (${value}), expected a ${expectedType}`);
       }
     }
     return value;
   }
 
-  getFormula(columnName) {
-    const formula = this.formulas[this.containerRange.getColumnOffset(columnName)];
-    return formula;
-  }
-  
   getCell(columnName) {
-    const columnOffset = this.containerRange.getColumnOffset(columnName);
-    const cell = this.containerRange.nativeRange.offset(this.rowOffset, columnOffset, 1, 1);
-//  trace(`${this.containerRange.name}.getCell ${columnName} --> ${Range.trace(cell)}`);
+    const columnOffset = this.namedColumns.getColumnOffset(columnName);
+    const cell = this.nativeRange.offset(0, columnOffset, 1, 1);
+//  trace(`RangeRow.getCell ${columnName} --> ${Range.trace(cell)}`);
     return cell;
   }
 
   set(columnName, value) { 
     let cell = this.getCell(columnName);
-    trace(`${this.containerRange.name}.set ${columnName} ${Range.trace(cell)} = ${value}`);
+    trace(`RangeRow.set ${columnName} ${Range.trace(cell)} = ${value}`);
     cell.setValue(value);
   }
 
@@ -238,16 +238,12 @@ class RangeRow {
   }
 
   copyFieldsTo(destination, columnNames) {
-    columnNames.forEach(columnName => this.copyFieldTo(destination, columnName)); // trace(`${this.trace}.copyFieldsTo(${destination.trace}, ${columnName}) `));
+    columnNames.forEach(columnName => this.copyFieldTo(destination, columnName)); 
   }
 
   getA1Notation(columnName) { 
     const cell = this.getCell(columnName);
     return cell.getA1Notation();
-  }
-
-  get rowPosition() {
-    return this.containerRange.rowPosition + this.rowOffset;
   }
 
 }

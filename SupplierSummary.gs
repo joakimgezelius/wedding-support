@@ -1,9 +1,9 @@
 
 function onUpdateSupplierSummary() {
   trace("onUpdateSupplierSummary");
-  var eventDetailsIterator = new EventDetailsIterator();
-  var supplierSummaryBuilder = new SupplierSummaryBuilder("SupplierSummary");
-  eventDetailsIterator.iterate(supplierSummaryBuilder);
+  let eventDetails = new EventDetails();
+  let supplierSummaryBuilder = new SupplierSummaryBuilder("SupplierSummary");
+  eventDetails.apply(supplierSummaryBuilder);
 }
 
 //=============================================================================================

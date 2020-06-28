@@ -3,9 +3,9 @@ DecorSummarySheetName = "Decor Summary";
 
 function onUpdateDecorSummary() {
   trace("onUpdateDecorSummary");
-  let eventDetailsIterator = new EventDetailsIterator();
+  let eventDetails = new EventDetails();
   let decorSummaryBuilder = new DecorSummaryBuilder(Range.getByName(DecorSummaryRangeName, DecorSummarySheetName));
-  eventDetailsIterator.iterate(decorSummaryBuilder);
+  eventDetails.apply(decorSummaryBuilder);
 }
 
 

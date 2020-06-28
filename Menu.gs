@@ -37,6 +37,7 @@ function addWeddingMenu() {
 //                  )
       .addSeparator()
       .addSubMenu(ui.createMenu("Helpers")
+                  .addItem("Reverse Mark-up Calculations", globalLibName + ".onReverseMarkupCalculations")
                   .addItem("Set Colour", globalLibName + ".onSetColour")
                   .addItem("Test Case 1", globalLibName + ".onTestCase1")
                   .addItem("Test Case 2", globalLibName + ".onTestCase2")
