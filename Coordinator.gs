@@ -4,7 +4,7 @@ function onUpdateCoordinator() {
   trace("onUpdateCoordinator");
   let eventDetails = new EventDetails();
   let eventDetailsUpdater = new EventDetailsUpdater(false);
-  eventDetails.forEach(eventDetailsUpdater);
+  eventDetails.apply(eventDetailsUpdater);
 }
 
 function onUpdateCoordinatorForced() {
@@ -12,7 +12,7 @@ function onUpdateCoordinatorForced() {
   if (Dialog.confirm("Forced Coordinator Update - Confirmation Required", "Are you sure you want to force-update the coordinator? It will overwrite row numbers and formulas, make sure the sheet is sorted properly!") == true) {
     let eventDetails = new EventDetails();
     let eventDetailsUpdater = new EventDetailsUpdater(true);
-    eventDetails.forEach(eventDetailsUpdater);
+    eventDetails.apply(eventDetailsUpdater);
   }
 }
 
@@ -21,7 +21,7 @@ function onReverseMarkupCalculations(){
   if (Dialog.confirm("Reverse Mark-up Calculations - Confirmation Required", "Are you sure you want to reverse the mark-up calculations? It will overwrite mark-up formulas and client unit prices") == true) {
     let eventDetails = new EventDetails();
     let eventDetailsCleaner = new EventDetailsCleaner(CleanUpType.markup);
-    eventDetails.forEach(eventDetailsCleaner);
+    eventDetails.apply(eventDetailsCleaner);
   }
 }
 
@@ -29,7 +29,7 @@ function onCheckCoordinator() {
   trace("onCheckCoordinator");
   let eventDetails = new EventDetails();
   let eventDetailsChecker = new EventDetailsChecker();
-  eventDetails.forEach(eventDetailsChecker);
+  eventDetails.apply(eventDetailsChecker);
 }
 
 

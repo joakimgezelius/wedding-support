@@ -63,6 +63,7 @@ class Range {
     trace(`${this.trace} refresh`);
     let newRange = this.sheet.getRangeByName(this.name); 
     this._nativeRange = newRange.nativeRange;
+    this._values = this.nativeRange.getValues();
     this._trace = newRange.trace;
   }
   
