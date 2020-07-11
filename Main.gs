@@ -47,5 +47,4 @@ function onProductsSheetOpen(libName) {
   trace(`onProductsSheetOpen globalLibName=${libName}`);
   globalLibName = libName;
   addProductsSheetMenu();
-  //addEmailMenu("EnquiryEmails");
 }
