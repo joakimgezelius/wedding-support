@@ -3,6 +3,9 @@
 //
 //  ScriptID: 1CiKOqQNFxdyAR5PZ7GaJDnGyZfrh-b-rJIlyCFAI2ABvu8yV1pCmm3ER
 //  SDC key:  ef0d427283541f50
+//
+//  ScriptID (Jithin): 1mXJiRin063xGwitgWu-0-rUepMTe_GTO1A-oJ5vJnTtIlZLZPnVhpd76
+//  SDC key (Jithin):  ef5995e935b5a81f
 
 globalLibName = "Undefined";
 
@@ -40,11 +43,11 @@ function onWeddingPackagesSheetOpen(libName) {
   trace(`onWeddingPackagesSheetOpen globalLibName=${libName}`);
   globalLibName = libName;
   addWeddingPackagesMenu();
-  //addEmailMenu("EnquiryEmails");
 }
 
 function onProductsSheetOpen(libName) {
   trace(`onProductsSheetOpen globalLibName=${libName}`);
   globalLibName = libName;
   addProductsSheetMenu();
+  //
 }
