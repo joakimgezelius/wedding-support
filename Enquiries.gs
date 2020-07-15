@@ -1,5 +1,4 @@
 enquiriesRangeName = "Enquiries";
-enquiriesNoReplyRangeName = "EnquiriesNoReply";
 
 enquiriesFolderId = "1EtAGPReyn5ZMyXf6xboCyTncGWsvxNz_";
 
@@ -8,9 +7,8 @@ enquiriesFolderId = "1EtAGPReyn5ZMyXf6xboCyTncGWsvxNz_";
 //
 function onUpdateEnquiries() {
   trace("onUpdateEnquiries");
-  let enquiries = new Enquiries(enquiriesRangeName);
-  let enquiriesNoReply = new Enquiries(enquiriesNoReplyRangeName);
-  enquiries.update(enquiriesNoReply);
+  let enquiries = new Enquiries;
+  //enquiries.update(enquiriesNoReply);
 }
 
 // Open client sheet for the selected client, 
@@ -18,17 +16,20 @@ function onUpdateEnquiries() {
 //
 function onOpenClientSheet() {
   trace("onOpenClientSheet");
-  Enquiries.selected.openClientSheet();
+  let enquiries = new Enquiries;
+  enquiries.selected.openClientSheet();
 }
 
 function onCreateNewClientSheet() {
   trace("onCreateNewClientSheet");
-  Enquiries.selected.createNewClientSheet();
+  let enquiries = new Enquiries;
+  enquiries.selected.createNewClientSheet();
 }
 
 function onDraftSelectedEmail() {
   trace("onDraftSelectedEmail");
-  Enquiries.selected.draftSelectedEmail();
+  let enquiries = new Enquiries;
+  enquiries.selected.draftSelectedEmail();
 }
 
 
@@ -36,23 +37,19 @@ function onDraftSelectedEmail() {
 
 class Enquiries {
 
-  constructor(rangeName) {
+  constructor(rangeName = null) {
+    rangeName = (rangeName === null) ? enquiriesRangeName : rangeName;
     this.range = Range.getByName(rangeName).loadColumnNames();
     trace("NEW " + this.trace);
   }
 
-  static get selected() {
-    let enquiries = new Enquiries;
-    let selection = enquiries.range.sheet.activeRange;
-    if (enquiries.selection === null) {
+  get selected() {
+    let selection = this.range.findSelectedRow();
+    if (selection === null) {
       Error.fatal("Please select a valid enquiry.");
     }
-    let enquiryRowOffset = selection.rowPosition - enquiries.range.rowPosition;
-    trace(`Enquiries.selected ${selection.trace} --> Offset ${enquiryRowOffset}`);
-
-    let enquiryColumnOffset = selection.columnPosition - enquiries.range.rowPosition;
-    
-    let selectedEnquiry = new Enquiry(); // Fix this!!
+    // Range is now positioned to selection
+    let selectedEnquiry = new Enquiry(this.range);
     if (!selectedEnquiry.isValid) {
       Error.fatal("Please select a valid enquiry.");
     }
@@ -91,8 +88,8 @@ class Enquiry extends RangeRow {
   
   constructor(range) {
     super(range);
-    Error.fatal("Not Impelmented");
-//  this._name = this.name;
+    this._name = this.name;
+    this._rowOffset = range.currentRowOffset;
     this._isValid = (this.name !== "");
     trace("NEW " + this.trace);
   }
@@ -123,6 +120,7 @@ class Enquiry extends RangeRow {
     if (!this.isValid) {
       Error.fatal("Please select a valid enquiry.");
     }
+    return;
     let sheetId = this.sheetId;
     if (sheetId === "") {
       if (Dialog.confirm("No client sheet found", `There is no client sheet recorded for prospect ${this.name}, create one now?`) == false) {
@@ -151,8 +149,9 @@ class Enquiry extends RangeRow {
   set sheetId(value)   { this.set("SheetId", value); }
   set sheetLink(value) { this.set("SheetLink", value); }
   get isValid()        { return this._isValid; }
+  get rowOffset()      { return this._rowOffset; }
 
-  get trace() { return `{Enquiry #${this.rowOffset} ${this.name} ${this.isValid ? "(valid)" : "(invalid)"}}`; }
+  get trace() { return `{Enquiry #${this.rowOffset} ${this._name} ${this.isValid ? "(valid)" : "(invalid)"}}`; }
   
 } // Enquiry
 

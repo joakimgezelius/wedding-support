@@ -10,6 +10,7 @@ class Range {
     this._values = this.nativeRange.getValues();  // Note: we cache this as we need to allow the array to me sorted
     this._sheetName = this.sheet.name;
     this._currentRowOffset = 0;
+    this._currentColumnOffset = 0;
     this._trace = `{Range ${name} ${Range.trace(nativeRange)} `;
     trace(`NEW ${this._trace}`);
   }
@@ -35,27 +36,28 @@ class Range {
   //  - call back passing "this", callee picks up current row...
   //
   forEachRow(callback, context = null) {
-    trace(`${this.trace} forEachRow`);    
+    trace(`${this.trace} forEachRow`);
     const rowCount = this.height;
     for (let rowOffset = 0; rowOffset < rowCount; rowOffset++) {
       this._currentRowOffset = rowOffset;
       let goOn = callback(this, context);
 //    if (!goOn) break;
     }
-  }  
+  }
     
-  get nativeRange()      { return this._nativeRange; }
-  get name()             { return this._name; }
-  get trace()            { return this._trace + this._currentRowOffset + "}"; }
-  get sheet()            { return this._sheet; }
-  get values()           { return this._values; }
-  get height()           { return this.nativeRange.getHeight(); }
-  get rowPosition()      { return this.nativeRange.getRow(); }    // Row number of the first row in the range
-  get columnPosition()   { return this.nativeRange.getColumn(); } // Column number of the first column in the range
-  get currentRow()       { return this.getNativeRowRange(this._currentRowOffset); } // A range of 1 row height
-  get currentRowOffset() { return this._currentRowOffset; }
-  get currentRowValues() { return this.values[this._currentRowOffset]; }
-  get currentRowIsEmpty(){ return !this.currentRowValues.join(""); }
+  get nativeRange()         { return this._nativeRange; }
+  get name()                { return this._name; }
+  get trace()               { return this._trace + this._currentRowOffset + "}"; }
+  get sheet()               { return this._sheet; }
+  get values()              { return this._values; }
+  get height()              { return this.nativeRange.getHeight(); }
+  get rowPosition()         { return this.nativeRange.getRow(); }    // Row number of the first row in the range
+  get columnPosition()      { return this.nativeRange.getColumn(); } // Column number of the first column in the range
+  get currentRow()          { return this.getNativeRowRange(this._currentRowOffset); } // A range of 1 row height
+  get currentRowOffset()    { return this._currentRowOffset; }
+  get currentRowValues()    { return this.values[this._currentRowOffset]; }
+  get currentRowIsEmpty()   { return !this.currentRowValues.join(""); }
+  get currentColumnOffset() { return this._currentColumnOffset; }
 
     
   // 
@@ -69,6 +71,29 @@ class Range {
     this._values = this.nativeRange.getValues();
     this._trace = newRange.trace;
   }
+
+  findSelectedRow() {
+    let selection = this.sheet.activeRange;
+    if (selection === null) { // Nothing is selected
+      trace(`${this.trace} getSelectedRow, nothing selected`);
+      return null;
+    }
+    let rowOffset = selection.rowPosition - this.rowPosition;
+    if (rowOffset < 0 || rowOffset >= this.height) {  // Selected row is outside of range
+      trace(`${this.trace} getSelectedRow, selection outside of range (row: ${selection.rowPosition})`);
+      return null;
+    }
+    this._currentRowOffset = rowOffset;
+    this._currentColumnOffset = selection.columnPosition - this.columnPosition;
+    trace(`${this.trace} getSelectedRow --> row ${rowOffset}`);
+    return this.currentRow;
+  }
+
+  findSelectedColumnOffset() {
+    findSelectedRow();
+    // TODO: ensure selection is within range
+    return this.currentColumnOffset;
+  }
   
   deleteExcessiveRows(rowsToKeep) {
     trace(`${this.trace} deleteExcessiveRows rowsToKeep=${rowsToKeep} height=${this.height}`);
@@ -80,19 +105,19 @@ class Range {
       this.refresh(); // Reload the range as it has changed now
     }
   }
-  
+
   minimizeAndClear(callback = null) {
     this.deleteExcessiveRows(2); // Delete all but the first two rows
     this.clear();
     this._currentRowOffset = 0;
     if (callback !== null) this.format(callback);
   }
-  
+
   rewind() {
     this._currentRowOffset = 0;
     return this._currentRowOffset;
   }
-  
+
   findFirstEmptyRow() {
     this.rewind();
     return this.findNextEmptyRow();
