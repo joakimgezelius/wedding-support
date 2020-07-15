@@ -89,8 +89,8 @@ class Enquiries {
 
 class Enquiry extends RangeRow {
   
-  constructor(range, rowOffset = null) {
-    super(range, rowOffset);
+  constructor(range) {
+    super(range);
     Error.fatal("Not Impelmented");
 //  this._name = this.name;
     this._isValid = (this.name !== "");

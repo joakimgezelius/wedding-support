@@ -30,7 +30,10 @@ class Range {
   getNativeRowRange(rowOffset) {
     return this.nativeRange.offset(rowOffset, 0, 1); // A range of 1 row height
   }
-
+    
+  // Iterate over all rows in the range by moving the currentRowOffset forward
+  //  - call back passing "this", callee picks up current row...
+  //
   forEachRow(callback, context = null) {
     trace(`${this.trace} forEachRow`);    
     const rowCount = this.height;
@@ -49,7 +52,7 @@ class Range {
   get height()           { return this.nativeRange.getHeight(); }
   get rowPosition()      { return this.nativeRange.getRow(); }    // Row number of the first row in the range
   get columnPosition()   { return this.nativeRange.getColumn(); } // Column number of the first column in the range
-  get currentRow()       { return this.nativeRange.offset(this._currentRowOffset, 0, 1); } // A range of 1 row height
+  get currentRow()       { return this.getNativeRowRange(this._currentRowOffset); } // A range of 1 row height
   get currentRowOffset() { return this._currentRowOffset; }
   get currentRowValues() { return this.values[this._currentRowOffset]; }
   get currentRowIsEmpty(){ return !this.currentRowValues.join(""); }
@@ -192,11 +195,11 @@ class Range {
 
 class RangeRow {
 
-  constructor(range, rowOffset = null, values = null) {
+  constructor(range, values = null) {
     this.values = (values === null) ? range.currentRowValues : values;
     this.namedColumns = range.namedColumns;
     this.nativeRange = range.currentRow;
-    trace(`NEW EventRow on ${range.trace}`);
+    trace(`NEW RangeRow on ${range.trace}`);
   }
 
   get(columnName, expectedType = "undefined") {

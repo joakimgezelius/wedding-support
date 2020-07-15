@@ -30,10 +30,10 @@ class EmailTemplateList {
 //  this.databaseSheet = SpreadsheetApp.openById(Email.databaseSheetId);
     this.emailTemplates = [];
     this.listRange = Range.getByName(emailTemplateListName).loadColumnNames();
-    for (let rowOffset = 0; rowOffset < this.listRange.height; rowOffset++) {
-      let row = new EmailTemplateRow(this.listRange, rowOffset);
+    this.listRange.forEachRow((range) => {
+      let row = new EmailTemplateRow(range);
       this.emailTemplates[row.id] = row;
-    }
+    });
     trace("NEW " + this.trace);
   }
   
@@ -70,8 +70,8 @@ class EmailTemplateList {
 
 class EmailTemplateRow extends RangeRow {
 
-  constructor(range, rowOffset = null) {
-    super(range, rowOffset);
+  constructor(range) {
+    super(range);
     this._trace = `{EmailTemplateRow ${this.id} ${this.name}}`;
     trace("NEW " + this.trace);
   }

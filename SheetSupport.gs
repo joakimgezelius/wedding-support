@@ -60,3 +60,7 @@ function onSetColour() {
   cell.setBackground(cell.getValue());
   trace("onSetColour " + cell.getValue());
 }
+
+function CLIENTDATA(key) {
+  return key + "Z";
+}

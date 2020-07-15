@@ -53,7 +53,6 @@ class PriceList {
   
   constructor(rangeName = PriceListRangeName) {
     this.range = Range.getByName(rangeName).loadColumnNames();
-    this.rowCount = this.range.height;
     trace("NEW " + this.trace);
   }
   
@@ -81,32 +80,32 @@ class PriceList {
   apply(handler) {
     trace("PriceList.apply " + this.trace);
     handler.onBegin();
-    for (let rowOffset = 0; rowOffset < this.rowCount; rowOffset++) {
-      let row = new PriceListRow(this.range, rowOffset);
+    this.range.forEachRow((range) => {
+      const row = new PriceListRow(range);
       if (row.isTitle) {
         handler.onTitle(row);
       } else {
         handler.onRow(row);
       }
-    }  
+    });
     handler.onEnd();
   }
 
   clearSelectionTicks() {
     trace("PriceList.clearSelectionTicks " + this.trace);
-    for (let rowOffset = 0; rowOffset < this.rowCount; rowOffset++) {
-      let row = new PriceListRow(this.range, rowOffset);
+    this.range.forEachRow((range) => {
+      let row = new PriceListRow(range);
       if (row.isSelected) {
         row.isSelected = false;
       }
-    }  
+    });
   }
   
   gatherCategories() {
     trace("PriceList.gatherCategories");
-    for (var rowOffset = 0; rowOffset < this.rowCount; rowOffset++) {
-      var rowRange = this.range.offset(rowOffset, 0, 1);
-    }
+    this.range.forEachRow((range) => {
+      let row = new PriceListRow(range);
+    });
   }
 
   get trace() {

@@ -34,8 +34,8 @@ class EventDetails {
   sort(type) {
     trace(`EventDetails.sort(${type}) ${this.trace}`);
     this.range.values.sort((row1, row2) => {
-      let eventRow1 = new EventRow(this.range, null, row1); // Override the values, as we are sorting the values matrix only (risky!)
-      let eventRow2 = new EventRow(this.range, null, row2);
+      let eventRow1 = new EventRow(this.range, row1); // Override the values, as we are sorting the values matrix only (risky!)
+      let eventRow2 = new EventRow(this.range, row2);
       return eventRow1.compare(eventRow2, type);
     });
   }
@@ -52,8 +52,8 @@ class EventDetails {
   
 class EventRow extends RangeRow {
   
-  constructor(range, rowOffset = null, values = null) {
-    super(range, rowOffset, values);
+  constructor(range, values = null) {
+    super(range, values);
   }
 
   get sectionNo()           { return this.get("ItemNo", "string").substr(0,3); }
