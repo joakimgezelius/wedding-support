@@ -224,6 +224,7 @@ class RangeRow {
     this.values = (values === null) ? range.currentRowValues : values;
     this.namedColumns = range.namedColumns;
     this.nativeRange = range.currentRow;
+    this.rowPosition = range.rowPosition + range.currentRowOffset;
     trace(`NEW RangeRow on ${range.trace}`);
   }
 

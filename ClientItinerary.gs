@@ -53,6 +53,7 @@ class ClientItineraryBuilder {
       let column = 1;
       targetRow.getCell(1,column++).setValue(row.date);
       targetRow.getCell(1,column++).setValue(row.time);
+      column++; // Gap in the sheet
       targetRow.getCell(1,column++).setValue(row.location);
       targetRow.getCell(1,column++).setValue(row.description);
     } else {
