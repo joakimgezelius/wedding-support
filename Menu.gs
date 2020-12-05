@@ -16,6 +16,7 @@ function addWeddingMenu() {
       .addItem("Update Client Itinerary", globalLibName + ".onUpdateClientItinerary") // In itinerary.gs
       .addItem("Update Decor Sumamry", globalLibName + ".onUpdateDecorSummary")
       .addItem("Update Account Summary", globalLibName + ".onUpdateAccountSummary")
+      .addItem("Update Supplier Costing", globalLibName + ".onUpdateSupplierCosting")
       .addItem("Update Supplier Itinerary", globalLibName + ".onUpdateSupplierItinerary")
       //.addItem("Update Rota", globalLibName + ".onUpdateRota")
       .addSeparator()
