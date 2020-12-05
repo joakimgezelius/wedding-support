@@ -81,6 +81,8 @@ class EventRow extends RangeRow {
   get quantity()            { return this.get("Quantity"); } // Accept blank
   get budgetUnitCost()      { return this.get("BudgetUnitCost");  } // Accept blank
   get nativeUnitCost()      { return this.get("NativeUnitCost");  } // Accept blank
+  get unitCost()            { return this.get("UnitCost");  } // Accept blank
+  get totalCost()           { return this.get("TotalCost");  } // Accept blank
   get markup()              { return this.get("Markup"); } // Accept ref errors
   get commissionPercentage(){ return this.get("CommissionPercentage"); } // Accept ref errors
   get unitPrice()           { return this.get("UnitPrice"); } // Accept blank
@@ -107,7 +109,7 @@ class EventRow extends RangeRow {
 
   compare(other, type) { // To support sorting of rows
     let result = 0;
-    if (type === SortType.supplier) { // complare suppliers
+    if (type === SortType.supplier) { // compare suppliers
       result = this.compareSupplier(other);
     }
     if (result !== 0) return result;
