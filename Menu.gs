@@ -3,7 +3,7 @@
 function addWeddingMenu() {
   trace("> Adding custom wedding menu");
   let ui = SpreadsheetApp.getUi();
-  ui.createMenu("Wedding")
+  ui.createMenu("Event")
       //.addItem("Create New Client Sheet", globalLibName + ".onCreateNewClientSheet")
       //.addItem("Clear Sheet", globalLibName + ".onClearSheet")
       //.addSeparator()

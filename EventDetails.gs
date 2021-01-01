@@ -77,7 +77,7 @@ class EventRow extends RangeRow {
   get description()         { return this.get("Description", "string"); }
   get currency()            { return this.get("Currency", "string").toUpperCase(); }
   get currencySymbol()      { return this.currency === "GBP" ? "£" : "€"; }
-  get currencyFormat()      { return `${this.currencySymbol}#,##0`; }
+  get currencyFormat()      { return `${this.currencySymbol}#,##0.00`; }
   get quantity()            { return this.get("Quantity"); } // Accept blank
   get budgetUnitCost()      { return this.get("BudgetUnitCost");  } // Accept blank
   get nativeUnitCost()      { return this.get("NativeUnitCost");  } // Accept blank
@@ -100,6 +100,7 @@ class EventRow extends RangeRow {
   set currency(value)       { this.set("Currency", value); }
   set markup(value)         { this.set("Markup", value); }
   set nativeUnitCost(value) { this.set("NativeUnitCost", value); }
+  set nativeUnitCostWithVAT(value) { this.set("NativeUnitCostWithVAT", value); }
   set unitCost(value)       { this.set("UnitCost", value); }
   set totalCost(value)      { this.set("TotalCost", value); }
   set unitPrice(value)      { this.set("UnitPrice", value); }

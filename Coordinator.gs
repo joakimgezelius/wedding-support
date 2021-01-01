@@ -85,22 +85,26 @@ class EventDetailsUpdater {
   onRow(row) {
     ++this.itemNo;
     trace("EventDetailsUpdater.onRow " + this.itemNo);
-    let currencyA1 = row.getA1Notation("Currency");
-    let quantityA1 = row.getA1Notation("Quantity");
-    let nativeUnitCostA1 = row.getA1Notation("NativeUnitCost");
-    let unitCostA1 = row.getA1Notation("UnitCost");
-    let commissionPercentageA1 = row.getA1Notation("CommissionPercentage");
-    let unitPriceA1 = row.getA1Notation("UnitPrice");
+    let a1_currency = row.getA1Notation("Currency");
+    let a1_quantity = row.getA1Notation("Quantity");
+    let a1_nativeUnitCost = row.getA1Notation("NativeUnitCost");
+    let a1_vat = row.getA1Notation("VAT");
+    let a1_nativeUnitCostWithVAT = row.getA1Notation("NativeUnitCostWithVAT");
+    let a1_unitCost = row.getA1Notation("UnitCost");
+    let a1_commissionPercentage = row.getA1Notation("CommissionPercentage");
+    let a1_unitPrice = row.getA1Notation("UnitPrice");
 
     if (row.itemNo === "" || this.forced) { // Only set item number if empty (or forced)
       row.itemNo = this.generateItemNo();
     }
-    this.setNativeUnitCost(row);    
-    row.unitCost = `=IF(OR(${currencyA1}="", ${nativeUnitCostA1}="", ${nativeUnitCostA1}=0), "", IF(${currencyA1}="GBP", ${nativeUnitCostA1}, ${nativeUnitCostA1} / EURGBP))`;
-    row.totalCost = `=IF(OR(${quantityA1}="", ${quantityA1}=0, ${unitCostA1}="", ${unitCostA1}=0), "", ${quantityA1} * ${unitCostA1} * (1-${commissionPercentageA1}))`;
+    this.setNativeUnitCost(row);
+    row.nativeUnitCostWithVAT = `=IF(OR(${a1_currency}="", ${a1_nativeUnitCost}="", ${a1_nativeUnitCost}=0), "", ${a1_nativeUnitCost}*(1+${a1_vat}))`;
+    row.getCell("NativeUnitCostWithVAT").setNumberFormat(row.currencyFormat);
+    row.unitCost = `=IF(OR(${a1_currency}="", ${a1_nativeUnitCostWithVAT}="", ${a1_nativeUnitCostWithVAT}=0), "", IF(${a1_currency}="GBP", ${a1_nativeUnitCostWithVAT}, ${a1_nativeUnitCostWithVAT} / EURGBP))`;
+    row.totalCost = `=IF(OR(${a1_quantity}="", ${a1_quantity}=0, ${a1_unitCost}="", ${a1_unitCost}=0), "", ${a1_quantity} * ${a1_unitCost} * (1-${a1_commissionPercentage}))`;
     this.setMarkupAndPrice(row);
-    row.totalPrice = `=IF(OR(${quantityA1}="", ${quantityA1}=0, ${unitPriceA1}="", ${unitPriceA1}=0), "", ${quantityA1} * ${unitPriceA1})`;
-//  row.commission = `=IF(OR(${commissionPercentageA1}="", ${commissionPercentageA1}=0), "", ${quantityA1} * ${unitCostA1} * ${commissionPercentageA1})`;
+    row.totalPrice = `=IF(OR(${a1_quantity}="", ${a1_quantity}=0, ${a1_unitPrice}="", ${a1_unitPrice}=0), "", ${a1_quantity} * ${a1_unitPrice})`;
+//  row.commission = `=IF(OR(${a1_commissionPercentage}="", ${a1_commissionPercentage}=0), "", ${a1_quantity} * ${a1_unitCost} * ${a1_commissionPercentage})`;
 //  row.quantity (=((hour(K215)*60+minute(K215))-(hour(J215)*60+minute(J215)))/60)
   }
 
@@ -117,7 +121,7 @@ class EventDetailsUpdater {
 
   setNativeUnitCost(row) {
     let budgetUnitCostCell = row.getCell("BudgetUnitCost");
-    let budgetUnitCostA1 = budgetUnitCostCell.getA1Notation();
+    let a1_budgetUnitCost = budgetUnitCostCell.getA1Notation();
     let nativeUnitCost = String(row.nativeUnitCost);
     let nativeUnitCostCell = row.getCell("NativeUnitCost");
     let currencyFormat = row.currencyFormat;
@@ -126,7 +130,7 @@ class EventDetailsUpdater {
     nativeUnitCostCell.setNumberFormat(currencyFormat);
     if (nativeUnitCost === "") { // Set native unit cost equal to budget unit cost if not set 
       //trace(`Set nativeUnitCost to =${budgetUnitCostA1}`);
-      row.nativeUnitCost = `=${budgetUnitCostA1}`;
+      row.nativeUnitCost = `=${a1_budgetUnitCost}`;
       nativeUnitCostCell.setFontColor("#ccccff"); // Make text grey
     } else {
       //trace(`setNativeUnitCost: nativeUnitCost="${nativeUnitCost} - make it black`);
@@ -135,11 +139,11 @@ class EventDetailsUpdater {
   }
 
   setMarkupAndPrice(row) {
-    let unitCostA1 = row.getA1Notation("UnitCost");
-    let unitPriceA1 = row.getA1Notation("UnitPrice");
-    let markupA1 = row.getA1Notation("Markup");
+    let a1_unitCost = row.getA1Notation("UnitCost");
+    let a1_unitPrice = row.getA1Notation("UnitPrice");
+    let a1_markup = row.getA1Notation("Markup");
     if (row.unitPrice === "" || this.forced) { // Only set unit price if empty (or forced)
-      row.unitPrice = `=IF(OR(${unitCostA1}="", ${unitCostA1}=0), "", ${unitCostA1} * ( 1 + ${markupA1}))`;
+      row.unitPrice = `=IF(OR(${a1_unitCost}="", ${a1_unitCost}=0), "", ${a1_unitCost} * ( 1 + ${a1_markup}))`;
     }
   }
   
