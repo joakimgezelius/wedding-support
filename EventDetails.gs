@@ -60,7 +60,7 @@ class EventRow extends RangeRow {
   get itemNo()              { return this.get("ItemNo", "string"); }
   get isDecorTicked()       { return this.get("DecorTicked", "boolean"); }
   get isSupplierTicked()    { return this.get("SupplierTicked", "boolean"); }
-  get isItineraryTicked()   { return this.get("ItineraryTicked"); } // Accept blank
+  get isItineraryTicked()   { return this.get("ItineraryTicked", "boolean"); }
   get isTitle()             { return this.category.toLowerCase() === "title"; }    // Is this a title row?
   get isSubItem()           { return this.category.toLowerCase() === "part"; }     // Is this a sub-item?
   get isCancelled()         { return this.status.toLowerCase() === "cancelled"; }  // Is this item cancelled?

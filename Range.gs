@@ -239,6 +239,8 @@ class RangeRow {
           break;
         case "date":
           break;
+        case "boolean":
+          return Boolean(value);
         case "number":
           value = Number(value);
           if (!Number.isNaN(value)) return value;
