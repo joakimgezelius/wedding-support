@@ -63,6 +63,7 @@ class EventRow extends RangeRow {
   get isItineraryTicked()   { return this.get("ItineraryTicked", "boolean"); }
   get isTitle()             { return this.category.toLowerCase() === "title"; }    // Is this a title row?
   get isSubItem()           { return this.category.toLowerCase() === "part"; }     // Is this a sub-item?
+  get isInStock()           { return this.category.toLowerCase() === "in stock"; }   // Is this item in stock?
   get isCancelled()         { return this.status.toLowerCase() === "cancelled"; }  // Is this item cancelled?
   get who()                 { return this.get("Who", "string"); }
   get category()            { return this.get("Category", "string"); }
@@ -82,7 +83,8 @@ class EventRow extends RangeRow {
   get budgetUnitCost()      { return this.get("BudgetUnitCost");  } // Accept blank
   get nativeUnitCost()      { return this.get("NativeUnitCost");  } // Accept blank
   get unitCost()            { return this.get("UnitCost");  } // Accept blank
-  get totalCost()           { return this.get("TotalCost");  } // Accept blank
+  get totalGrossCost()      { return this.get("TotalGrossCost");  } // Accept blank
+  get totalNettCost()       { return this.get("TotalCost");  } // Accept blank
   get markup()              { return this.get("Markup"); } // Accept ref errors
   get commissionPercentage(){ return this.get("CommissionPercentage"); } // Accept ref errors
   get unitPrice()           { return this.get("UnitPrice"); } // Accept blank
@@ -102,7 +104,8 @@ class EventRow extends RangeRow {
   set nativeUnitCost(value) { this.set("NativeUnitCost", value); }
   set nativeUnitCostWithVAT(value) { this.set("NativeUnitCostWithVAT", value); }
   set unitCost(value)       { this.set("UnitCost", value); }
-  set totalCost(value)      { this.set("TotalCost", value); }
+  set totalGrossCost(value) { this.set("TotalGrossCost", value); }
+  set totalNettCost(value)  { this.set("TotalCost", value); }
   set unitPrice(value)      { this.set("UnitPrice", value); }
   set totalPrice(value)     { this.set("TotalPrice", value); }
   set commissionPercentage(value) { this.set("CommissionPercentage", value); }

@@ -29,8 +29,10 @@ class SupplierCostingBuilder {
     trace("SupplierCostingBuilder.onBegin - reset context");
     this.currentSection = 0;
     this.currentSupplier = "(none)";
-    this.currentSupplierSumCell = null;
-    this.currentSupplierSum = 0;
+    this.currentSupplierGrossSumCell = null;
+    this.currentSupplierGrossSum = 0;
+    this.currentSupplierNettSumCell = null;
+    this.currentSupplierNettSum = 0;
     this.targetRange.minimizeAndClear(SupplierCostingBuilder.formatRange); // Keep 2 rows
     let column3 = this.targetRange.nativeRange.offset(0, 2, this.targetRange.height, 1); // Select a full column
     let column4 = column3.offset(0, 1);
@@ -43,11 +45,11 @@ class SupplierCostingBuilder {
 
   onEnd() {
     trace("SupplierCostingBuilder.onEnd - fill final supplier sum, autofit & trim");
-    if (this.currentSupplierSum == 0) {     // Last section is empty?
+    if (this.currentSupplierGrossSum == 0) {     // Last section is empty?
       this.targetRange.getPreviousRow(); //  yes - Back up one row (last title will be trimmed away)
     }
     else {
-      this.fillSupplierSum(null);
+      this.fillSupplierSums(null);
     }
 //  this.targetSheet.nativeSheet.setColumnWidth(1, 100);
 //  this.targetSheet.nativeSheet.setColumnWidth(2, 500);
@@ -64,7 +66,7 @@ class SupplierCostingBuilder {
     ++this.currentSection;
     trace("SupplierCostingBuilder.newSupplierSection " + this.suppler);
     if (this.currentSection > 1) { // This is not the first section (if it is, no need for clean-up house-keeping)
-      if (this.currentSupplierSum == 0) {       // Section with no content?
+      if (this.currentSupplierGrossSum == 0) {       // Section with no content?
         this.targetRange.getPreviousRow();      //  - back up instead of moving on
       }
       else {
@@ -77,15 +79,16 @@ class SupplierCostingBuilder {
     targetRow.getCell(1,column++).setValue(this.currentSupplier);
     ++column;
     ++column;
-    this.fillSupplierSum(targetRow.getCell(1,column++));
+    this.fillSupplierSums(targetRow.getCell(1,column++), targetRow.getCell(1,column++));
     targetRow.setFontWeight("bold");
     targetRow.setFontSize(12);
     targetRow.setBackground("#f3f3f3");
   }
 
   onRow(row) {
-    var totalCost = row.totalCost;
-    if (Math.abs(totalCost) > 0) { // This is an item for the invoice
+    var totalGrossCost = row.totalGrossCost;
+    var totalNettCost = row.totalNettCost;
+    if (Math.abs(totalNettCost) > 0) { // This is an item for the invoice
       trace("SupplierCostingBuilder.onRow " + row.description);
       if (row.supplier !== this.currentSupplier) {
         this.newSupplierSection(row);
@@ -95,10 +98,11 @@ class SupplierCostingBuilder {
       if (row.isSubItem) { // This is a sub-item, not to be added to the sum
         description = "- " + description;
         unitCost = "";
-        totalCost = "";
+        totalNettCost = "";
       }
       else { // This is a top-level item, add to the sum
-        this.currentSupplierSum += totalCost;
+        this.currentSupplierGrossSum += totalGrossCost;
+        this.currentSupplierNettSum += totalNettCost;
       }
       let targetRow = this.targetRange.getNextRowAndExtend();
       let column = 1;
@@ -107,7 +111,8 @@ class SupplierCostingBuilder {
       targetRow.getCell(1,column++).setValue(description);
       targetRow.getCell(1,column++).setValue(row.quantity);
       targetRow.getCell(1,column++).setValue(unitCost).setNumberFormat("£#,##0.00");
-      targetRow.getCell(1,column++).setValue(totalCost).setNumberFormat("£#,##0.00");
+      targetRow.getCell(1,column++).setValue(totalGrossCost).setNumberFormat("£#,##0.00");
+      targetRow.getCell(1,column++).setValue(totalNettCost).setNumberFormat("£#,##0.00");
       targetRow.setFontWeight("normal");
       targetRow.setFontSize(10);
       targetRow.setBackground("#ffffff"); // White
@@ -116,12 +121,15 @@ class SupplierCostingBuilder {
     }
   }
 
-  fillSupplierSum(nextSupplierSumCell) {
-    if (this.currentSupplierSumCell != null) {
-      this.currentSupplierSumCell.setValue(this.currentSupplierSum).setNumberFormat("£#,##0.00");
-      this.currentSupplierSum = 0;
+  fillSupplierSums(nextSupplierGrossSumCell, nextSupplierNettSumCell) {
+    if (this.currentSupplierGrossSumCell != null) { // This is not the first section
+      this.currentSupplierGrossSumCell.setValue(this.currentSupplierGrossSum).setNumberFormat("£#,##0.00");
+      this.currentSupplierGrossSum = 0;
+      this.currentSupplierNettSumCell.setValue(this.currentSupplierNettSum).setNumberFormat("£#,##0.00");
+      this.currentSupplierNettSum = 0;
     }
-    this.currentSupplierSumCell = nextSupplierSumCell;
+    this.currentSupplierGrossSumCell = nextSupplierGrossSumCell;
+    this.currentSupplierNettSumCell = nextSupplierNettSumCell;
   }
 
   get trace() {

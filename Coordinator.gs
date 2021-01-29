@@ -73,7 +73,7 @@ class EventDetailsUpdater {
   }
   
   onTitle(row) {
-    trace("EventDetailsUpdater.onTitle " + row.title);
+    trace("EventDetailsUpdater.onTitle " + row.itemNo + " " + row.title);
     this.itemNo = 0;
     ++this.sectionNo;
     this.sectionTitleRange = row.range;
@@ -84,7 +84,7 @@ class EventDetailsUpdater {
 
   onRow(row) {
     ++this.itemNo;
-    trace("EventDetailsUpdater.onRow " + this.itemNo);
+    trace("EventDetailsUpdater.onRow " + row.itemNo);
     let a1_currency = row.getA1Notation("Currency");
     let a1_quantity = row.getA1Notation("Quantity");
     let a1_nativeUnitCost = row.getA1Notation("NativeUnitCost");
@@ -92,6 +92,7 @@ class EventDetailsUpdater {
     let a1_nativeUnitCostWithVAT = row.getA1Notation("NativeUnitCostWithVAT");
     let a1_unitCost = row.getA1Notation("UnitCost");
     let a1_commissionPercentage = row.getA1Notation("CommissionPercentage");
+    let a1_markup = row.getA1Notation("Markup");
     let a1_unitPrice = row.getA1Notation("UnitPrice");
 
     if (row.itemNo === "" || this.forced) { // Only set item number if empty (or forced)
@@ -101,11 +102,17 @@ class EventDetailsUpdater {
     row.nativeUnitCostWithVAT = `=IF(OR(${a1_currency}="", ${a1_nativeUnitCost}="", ${a1_nativeUnitCost}=0), "", ${a1_nativeUnitCost}*(1+${a1_vat}))`;
     row.getCell("NativeUnitCostWithVAT").setNumberFormat(row.currencyFormat);
     row.unitCost = `=IF(OR(${a1_currency}="", ${a1_nativeUnitCostWithVAT}="", ${a1_nativeUnitCostWithVAT}=0), "", IF(${a1_currency}="GBP", ${a1_nativeUnitCostWithVAT}, ${a1_nativeUnitCostWithVAT} / EURGBP))`;
-    row.totalCost = `=IF(OR(${a1_quantity}="", ${a1_quantity}=0, ${a1_unitCost}="", ${a1_unitCost}=0), "", ${a1_quantity} * ${a1_unitCost} * (1-${a1_commissionPercentage}))`;
-    this.setMarkupAndPrice(row);
+    row.totalGrossCost = `=IF(OR(${a1_quantity}="", ${a1_quantity}=0, ${a1_unitCost}="", ${a1_unitCost}=0), "", ${a1_quantity} * ${a1_unitCost})`;
+    row.totalNettCost = `=IF(OR(${a1_quantity}="", ${a1_quantity}=0, ${a1_unitCost}="", ${a1_unitCost}=0), "", ${a1_quantity} * ${a1_unitCost} * (1-${a1_commissionPercentage}))`;
+    row.unitPrice = `=IF(OR(${a1_unitCost}="", ${a1_unitCost}=0), "", ${a1_unitCost} * ( 1 + ${a1_markup}))`;
     row.totalPrice = `=IF(OR(${a1_quantity}="", ${a1_quantity}=0, ${a1_unitPrice}="", ${a1_unitPrice}=0), "", ${a1_quantity} * ${a1_unitPrice})`;
 //  row.commission = `=IF(OR(${a1_commissionPercentage}="", ${a1_commissionPercentage}=0), "", ${a1_quantity} * ${a1_unitCost} * ${a1_commissionPercentage})`;
 //  row.quantity (=((hour(K215)*60+minute(K215))-(hour(J215)*60+minute(J215)))/60)
+    if (row.isInStock && this.forced) { // Set mark-up and commission for in-stock items
+      trace("- Set In Stock commision & mark-up on " + this.itemNo);
+      row.commissionPercentage = 0.5;
+      row.markup = 0;
+    }
   }
 
   generateSectionNo() {
@@ -138,15 +145,6 @@ class EventDetailsUpdater {
     }
   }
 
-  setMarkupAndPrice(row) {
-    let a1_unitCost = row.getA1Notation("UnitCost");
-    let a1_unitPrice = row.getA1Notation("UnitPrice");
-    let a1_markup = row.getA1Notation("Markup");
-    if (row.unitPrice === "" || this.forced) { // Only set unit price if empty (or forced)
-      row.unitPrice = `=IF(OR(${a1_unitCost}="", ${a1_unitCost}=0), "", ${a1_unitCost} * ( 1 + ${a1_markup}))`;
-    }
-  }
-  
   get trace() {
     return `{EventDetailsUpdater forced=${this.forced}}`;
   }
