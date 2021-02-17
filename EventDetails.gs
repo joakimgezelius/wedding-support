@@ -77,10 +77,10 @@ class EventRow extends RangeRow {
   get endTime()             { return this.get("EndTime"); }
   get location()            { return this.get("Location", "string"); }
   get description()         { return this.get("Description", "string"); }
+  get quantity()            { return this.get("Quantity"); } // Accept blank
   get currency()            { return this.get("Currency", "string").toUpperCase(); }
   get currencySymbol()      { return this.currency === "GBP" ? "£" : "€"; }
   get currencyFormat()      { return `${this.currencySymbol}#,##0.00`; }
-  get quantity()            { return this.get("Quantity"); } // Accept blank
   get budgetUnitCost()      { return this.get("BudgetUnitCost");  } // Accept blank
   get nativeUnitCost()      { return this.get("NativeUnitCost");  } // Accept blank
   get unitCost()            { return this.get("UnitCost");  } // Accept blank
@@ -100,6 +100,7 @@ class EventRow extends RangeRow {
   set category(value)       { this.set("Category", value); }
   set supplier(value)       { this.set("Supplier", value); }
   set description(value)    { this.set("Description", value); }
+  set quantity(value)       { this.set("Quantity", value); }
   set currency(value)       { this.set("Currency", value); }
   set markup(value)         { this.set("Markup", value); }
   set nativeUnitCost(value) { this.set("NativeUnitCost", value); }

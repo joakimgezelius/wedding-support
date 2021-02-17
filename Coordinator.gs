@@ -94,6 +94,8 @@ class EventDetailsUpdater {
     let a1_commissionPercentage = row.getA1Notation("CommissionPercentage");
     let a1_markup = row.getA1Notation("Markup");
     let a1_unitPrice = row.getA1Notation("UnitPrice");
+    let a1_startTime = row.getA1Notation("Time");
+    let a1_endTime = row.getA1Notation("EndTime");
 
     if (row.itemNo === "" || this.forced) { // Only set item number if empty (or forced)
       row.itemNo = this.generateItemNo();
@@ -107,7 +109,9 @@ class EventDetailsUpdater {
     row.unitPrice = `=IF(OR(${a1_unitCost}="", ${a1_unitCost}=0), "", ${a1_unitCost} * ( 1 + ${a1_markup}))`;
     row.totalPrice = `=IF(OR(${a1_quantity}="", ${a1_quantity}=0, ${a1_unitPrice}="", ${a1_unitPrice}=0), "", ${a1_quantity} * ${a1_unitPrice})`;
 //  row.commission = `=IF(OR(${a1_commissionPercentage}="", ${a1_commissionPercentage}=0), "", ${a1_quantity} * ${a1_unitCost} * ${a1_commissionPercentage})`;
-//  row.quantity (=((hour(K215)*60+minute(K215))-(hour(J215)*60+minute(J215)))/60)
+    if (row.isStaffTicked && (row.quantity === "")) { // Calculate quantity if staff and time fields are filled 
+      row.quantity = `=IF(OR(${a1_startTime}="", ${a1_endTime}=""), "", ((hour(${a1_endTime})*60+minute(${a1_endTime}))-(hour(${a1_startTime})*60+minute(${a1_startTime})))/60)`;
+    }
     if (row.isInStock && this.forced) { // Set mark-up and commission for in-stock items
       trace("- Set In Stock commision & mark-up on " + this.itemNo);
       row.commissionPercentage = 0.5;
