@@ -1,7 +1,7 @@
 //=============================================================================================
 // Class EventDetails
 //
-const SortType = { time: "time", supplier: "supplier" };
+const SortType = { time: "time", supplier: "supplier", staff: "staff" };
 
 class EventDetails {
   
@@ -60,6 +60,7 @@ class EventRow extends RangeRow {
   get itemNo()              { return this.get("ItemNo", "string"); }
   get isDecorTicked()       { return this.get("DecorTicked", "boolean"); }
   get isSupplierTicked()    { return this.get("SupplierTicked", "boolean"); }
+  get isStaffTicked()       { return this.get("StaffTicked", "boolean"); }
   get isItineraryTicked()   { return this.get("ItineraryTicked", "boolean"); }
   get isTitle()             { return this.category.toLowerCase() === "title"; }    // Is this a title row?
   get isSubItem()           { return this.category.toLowerCase() === "part"; }     // Is this a sub-item?
@@ -116,8 +117,11 @@ class EventRow extends RangeRow {
     if (type === SortType.supplier) { // compare suppliers
       result = this.compareSupplier(other);
     }
+    else if (type === SortType.staff) { // compare staff
+      result = this.compareStaff(other);
+    }
     if (result !== 0) return result;
-    // supplier is the same, now compare dates
+    // supplier or staff is the same, now compare dates
     result = this.compareDate(other);
     if (result !== 0) return result;
     // Same date, now compare times
@@ -128,6 +132,12 @@ class EventRow extends RangeRow {
   compareSupplier(other) {
     let myValue = this.supplier;
     let otherValue = other.supplier;
+    return myValue < otherValue ? -1 : (myValue > otherValue ? 1 : 0);
+  }
+
+  compareStaff(other) {
+    let myValue = this.who;
+    let otherValue = other.who;
     return myValue < otherValue ? -1 : (myValue > otherValue ? 1 : 0);
   }
 
