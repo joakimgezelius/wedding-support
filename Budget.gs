@@ -79,8 +79,13 @@ class BudgetBuilder {
   }
 
   onRow(row) {
-    var totalPrice = row.totalPrice;
-    if (Math.abs(totalPrice) > 0) { // This is an item for the invoice
+    const totalPrice = row.totalPrice;
+    const category = row.category; 
+    if (Math.abs(totalPrice) > 0 && 
+        category != "Labour" && 
+        category != "Transport" &&
+        category != "Styling"
+    ) { // This is an item for the invoice
       trace("BudgetBuilder.onRow " + row.description);
       let description = row.description;
       let unitPrice = row.unitPrice;
