@@ -1,9 +1,10 @@
 function onUpdateStaffItinerary() {
   trace("onUpdateStaffItinerary");
-  let eventDetails = new EventDetails();
-  let itineraryBuilder = new StaffItineraryBuilder(Range.getByName("StaffItinerary", "Staff Itinerary"));
-  eventDetails.sort(SortType.staff);
-  eventDetails.apply(itineraryBuilder);
+  // Disabled feature
+  //let eventDetails = new EventDetails();
+  //let itineraryBuilder = new StaffItineraryBuilder(Range.getByName("StaffItinerary", "Staff Itinerary"));
+  //eventDetails.sort(SortType.staff);
+  //eventDetails.apply(itineraryBuilder);
 }
 
 

@@ -18,7 +18,7 @@ function addWeddingMenu() {
       .addItem("Update Account Summary", globalLibName + ".onUpdateAccountSummary")
       .addItem("Update Supplier Costing", globalLibName + ".onUpdateSupplierCosting")
       .addItem("Update Supplier Itinerary", globalLibName + ".onUpdateSupplierItinerary")
-      .addItem("Update Staff Itinerary", globalLibName + ".onUpdateStaffItinerary")
+      //.addItem("Update Staff Itinerary", globalLibName + ".onUpdateStaffItinerary")
       //.addItem("Update Rota", globalLibName + ".onUpdateRota")
       .addSeparator()
       .addItem("Update Exchange Rates", globalLibName + ".onUpdateExchangeRates")
