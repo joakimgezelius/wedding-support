@@ -29,8 +29,10 @@ class SupplierCostingBuilder {
     trace("SupplierCostingBuilder.onBegin - reset context");
     this.currentSection = 0;
     this.currentSupplier = "(none)";
-    this.currentSupplierGrossSumCell = null;
-    this.currentSupplierGrossSum = 0;
+    this.currentSupplierGrossEurSumCell = null;
+    this.currentSupplierGrossEurSum = 0;
+    this.currentSupplierGrossGbpSumCell = null;
+    this.currentSupplierGrossGbpSum = 0;
     this.currentSupplierNettSumCell = null;
     this.currentSupplierNettSum = 0;
     this.targetRange.minimizeAndClear(SupplierCostingBuilder.formatRange); // Keep 2 rows
@@ -45,11 +47,11 @@ class SupplierCostingBuilder {
 
   onEnd() {
     trace("SupplierCostingBuilder.onEnd - fill final supplier sum, autofit & trim");
-    if (this.currentSupplierGrossSum == 0) {     // Last section is empty?
+    if (this.currentSupplierNettSum == 0) {     // Last section is empty?
       this.targetRange.getPreviousRow(); //  yes - Back up one row (last title will be trimmed away)
     }
     else {
-      this.fillSupplierSums(null);
+      this.fillSupplierSums(null, null, null);
     }
 //  this.targetSheet.nativeSheet.setColumnWidth(1, 100);
 //  this.targetSheet.nativeSheet.setColumnWidth(2, 500);
@@ -79,40 +81,41 @@ class SupplierCostingBuilder {
     targetRow.getCell(1,column++).setValue(this.currentSupplier);
     ++column;
     ++column;
-    this.fillSupplierSums(targetRow.getCell(1,column++), targetRow.getCell(1,column++));
+    this.fillSupplierSums(targetRow.getCell(1,column++), targetRow.getCell(1,column++), targetRow.getCell(1,column++));
     targetRow.setFontWeight("bold");
     targetRow.setFontSize(12);
     targetRow.setBackground("#f3f3f3");
   }
 
   onRow(row) {
-    var totalGrossCost = row.totalGrossCost;
+    var totalNativeGrossCost = row.totalNativeGrossCost;
     var totalNettCost = row.totalNettCost;
-    if (Math.abs(totalNettCost) > 0) { // This is an item for the invoice
+    var paymentMethod = row.paymentMethod;
+    if (!row.isSubItem && Math.abs(row.nativeUnitCost) > 0.01 && row.quantity > 0) { // This not a sub-item (marked as such or with no price)
       trace("SupplierCostingBuilder.onRow " + row.description);
       if (row.supplier !== this.currentSupplier) {
         this.newSupplierSection(row);
       }
       let description = row.description;
-      let unitCost = row.unitCost;
-      if (row.isSubItem) { // This is a sub-item, not to be added to the sum
-        description = "- " + description;
-        unitCost = "";
-        totalNettCost = "";
-      }
-      else { // This is a top-level item, add to the sum
-        this.currentSupplierGrossSum += totalGrossCost;
-        this.currentSupplierNettSum += totalNettCost;
-      }
+      this.currentSupplierNettSum += totalNettCost;
       let targetRow = this.targetRange.getNextRowAndExtend();
       let column = 1;
       targetRow.getCell(1,column++).setValue(row.supplier);
-//      targetRow.getCell(1,column++).setValue(this.currentTitle);
+//    targetRow.getCell(1,column++).setValue(this.currentTitle);
       targetRow.getCell(1,column++).setValue(description);
       targetRow.getCell(1,column++).setValue(row.quantity);
-      targetRow.getCell(1,column++).setValue(unitCost).setNumberFormat("£#,##0.00");
-      targetRow.getCell(1,column++).setValue(totalGrossCost).setNumberFormat("£#,##0.00");
+      targetRow.getCell(1,column++).setValue(row.nativeUnitCost).setNumberFormat(row.currencyFormat);
+      if (row.currency === "GBP") {
+        this.currentSupplierGrossGbpSum += totalNativeGrossCost;
+        ++column; // Skip EUR column
+        targetRow.getCell(1,column++).setValue(totalNativeGrossCost).setNumberFormat("£#,##0.00");
+      } else {
+        this.currentSupplierGrossEurSum += totalNativeGrossCost;
+        targetRow.getCell(1,column++).setValue(totalNativeGrossCost).setNumberFormat("€#,##0.00");
+        ++column; // Skip GBP column
+      }
       targetRow.getCell(1,column++).setValue(totalNettCost).setNumberFormat("£#,##0.00");
+      targetRow.getCell(1,column++).setValue(paymentMethod);   
       targetRow.setFontWeight("normal");
       targetRow.setFontSize(10);
       targetRow.setBackground("#ffffff"); // White
@@ -121,14 +124,21 @@ class SupplierCostingBuilder {
     }
   }
 
-  fillSupplierSums(nextSupplierGrossSumCell, nextSupplierNettSumCell) {
-    if (this.currentSupplierGrossSumCell != null) { // This is not the first section
-      this.currentSupplierGrossSumCell.setValue(this.currentSupplierGrossSum).setNumberFormat("£#,##0.00");
-      this.currentSupplierGrossSum = 0;
+  fillSupplierSums(nextSupplierGrossEurSumCell, nextSupplierGrossGbpSumCell, nextSupplierNettSumCell) {
+    if (this.currentSupplierGrossEurSumCell != null) { // This is not the first section
+      if (this.currentSupplierGrossEurSum != 0) {
+        this.currentSupplierGrossEurSumCell.setValue(this.currentSupplierGrossEurSum).setNumberFormat("€#,##0.00");
+        this.currentSupplierGrossEurSum = 0;
+      }
+      if (this.currentSupplierGrossGbpSum != 0) {
+        this.currentSupplierGrossGbpSumCell.setValue(this.currentSupplierGrossGbpSum).setNumberFormat("£#,##0.00");
+        this.currentSupplierGrossGbpSum = 0;
+      }
       this.currentSupplierNettSumCell.setValue(this.currentSupplierNettSum).setNumberFormat("£#,##0.00");
       this.currentSupplierNettSum = 0;
     }
-    this.currentSupplierGrossSumCell = nextSupplierGrossSumCell;
+    this.currentSupplierGrossEurSumCell = nextSupplierGrossEurSumCell;
+    this.currentSupplierGrossGbpSumCell = nextSupplierGrossGbpSumCell;
     this.currentSupplierNettSumCell = nextSupplierNettSumCell;
   }
 

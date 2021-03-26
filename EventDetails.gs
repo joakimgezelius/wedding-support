@@ -84,6 +84,7 @@ class EventRow extends RangeRow {
   get budgetUnitCost()      { return this.get("BudgetUnitCost");  } // Accept blank
   get nativeUnitCost()      { return this.get("NativeUnitCost");  } // Accept blank
   get unitCost()            { return this.get("UnitCost");  } // Accept blank
+  get totalNativeGrossCost(){ return this.quantity * this.nativeUnitCost; }
   get totalGrossCost()      { return this.get("TotalGrossCost");  } // Accept blank
   get totalNettCost()       { return this.get("TotalCost");  } // Accept blank
   get markup()              { return this.get("Markup"); } // Accept ref errors
@@ -94,6 +95,7 @@ class EventRow extends RangeRow {
   get notes()               { return this.get("ItemNotes", "string"); }
   get clientNotes()         { return ""; } // this.get("ItemNotes", "string"); }
   get inventoryNotes()      { return ""; } // this.get("ItemNotes", "string"); }
+  get paymentMethod()       { return this.get("PaymentMethod", "string"); }
   get links()               { return this.get("Links", "string"); }
 
   set itemNo(value)         { this.set("ItemNo", value); }
