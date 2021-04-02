@@ -28,6 +28,8 @@ function addWeddingMenu() {
                   .addItem("tbd...", globalLibName + ".onImportPriceList")
                   )
       .addSeparator()
+      .addItem("Apply Format Template", globalLibName + ".onApplyFormat")    // In SheetFormat.gs
+      .addItem("Format Coordinator", globalLibName + ".onFormatCoordinator")
       .addSubMenu(ui.createMenu("Email")
                   .addItem("Prepare client email draft 1", globalLibName + ".onCreateFirstEmailDraft")
                   .addItem("Send client email 1", globalLibName + ".onSendFirstEmail")

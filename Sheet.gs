@@ -53,6 +53,7 @@ class Sheet {
   get maxRows()     { return this.nativeSheet.getMaxRows(); }
   get selection()   { return this.nativeSheet.getSelection(); }
   get activeRange() { return new Range(this.nativeSheet.getActiveRange()); }
+  get fullRange()   { return new Range(this.nativeSheet.getRange(1, 1, this.maxRows, this.maxColumns)); }
   get trace()       { return this._trace; }
 
 } // Sheet
@@ -75,9 +76,11 @@ class Spreadsheet {
   }
 
   static openById(id) {
-    trace(`Spreadsheet.openById(${id})`);
+    trace(`> Spreadsheet.openById(${id})`);
     let newSpreadsheet = SpreadsheetApp.openById(id);
-    return new Spreadsheet(newSpreadsheet);
+    let spreadsheet = new Spreadsheet(newSpreadsheet);
+    trace(`< Spreadsheet.openById(${id}) --> ${spreadsheet.trace}`);
+    return spreadsheet;
   }
   
   getRangeByName(rangeName, sheetName = "") {
