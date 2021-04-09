@@ -36,6 +36,7 @@ class Sheet {
   */
 
   getRangeByName(name) {
+    // https://developers.google.com/apps-script/reference/spreadsheet/sheet#getRange(String)
     const range = this.nativeSheet.getRange(name);
     const newRange = range === null ? null : new Range(range, name, this.name);
     trace(`${this.trace}.getRangeByName("${name}") --> ${range === null?"null (NOT FOUND)":newRange.trace}`);

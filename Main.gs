@@ -22,7 +22,7 @@ function onWeddingSheetOpen(libName) { // onWeddingSheetOpen("WedLib");
 function onRotaSheetOpen(libName) {
   trace(`onRotaSheetOpen globalLibName=${libName}`);
   globalLibName = libName;
-  addRotaMenu();
+  addRotaMenu(); // in Menu.gs
 }
 
 function onQuoteSheetOpen(libName) {

@@ -1,10 +1,7 @@
-// var ui = SpreadsheetApp.getUi();
-
 function addWeddingMenu() {
   trace("> Adding custom wedding menu");
   let ui = SpreadsheetApp.getUi();
-  ui.createMenu("Shaikh")
-      //.addItem("Create New Client Sheet", globalLibName + ".onCreateNewClientSheet")
+  ui.createMenu("Shaikh")      
       //.addItem("Clear Sheet", globalLibName + ".onClearSheet")
       //.addSeparator()
       //.addItem("Pull Client Information", globalLibName + ".onPullClientInformation") // in client.gs
@@ -28,13 +25,15 @@ function addWeddingMenu() {
                   .addItem("tbd...", globalLibName + ".onImportPriceList")
                   )
       .addSeparator()
+      //.addItem("Create New Client Sheet", globalLibName + ".onCreateNewClientSheet")
       .addItem("Apply Format Template", globalLibName + ".onApplyFormat")    // In SheetFormat.gs
       .addItem("Format Coordinator", globalLibName + ".onFormatCoordinator")
+      .addSeparator()
       .addSubMenu(ui.createMenu("Email")
                   .addItem("Prepare client email draft 1", globalLibName + ".onCreateFirstEmailDraft")
                   .addItem("Send client email 1", globalLibName + ".onSendFirstEmail")
                   )
-//      .addSubMenu(ui.createMenu("Tasks")
+//    .addSubMenu(ui.createMenu("Tasks")
 //                  .addItem("Small Wedding", globalLibName + ".onShowSmallWeddingTasks")
 //                  .addItem("Big Wedding", globalLibName + ".onShowBigWeddingTasks")
 //                  .addItem("Show All", globalLibName + ".onShowAllTasks")
@@ -77,8 +76,8 @@ function addTestMenu() {
 function addRotaMenu() {
   trace("> Adding custom rota menu");
   let ui = SpreadsheetApp.getUi();
-  ui.createMenu("Rota")
-      .addItem("Update Rota", "Rota.onUpdateRota")
+  ui.createMenu("Shaikh's Rota Menu")
+      .addItem("Update Rota", globalLibName + ".onUpdateRota")
       .addSeparator()
       .addItem("Activity Colour Coding", globalLibName + ".onActivityColouring")
       .addItem("Supplier Colour Coding", globalLibName + ".onSupplierColouring")

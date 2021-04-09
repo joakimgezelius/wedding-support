@@ -12,7 +12,7 @@ function onCreateNewClientSheet() {
     trace("Create duplicate spreadsheet '" + name + "' in folder '" + folder.getName() + "'");
     var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
     if (fileExists(name, folder)) {
-      throw("Spreadsheet already exists");
+      throw("Spreadsheet already exists!");
     }
     DriveApp.getFileById(spreadsheet.getId()).makeCopy(name, folder);
   }

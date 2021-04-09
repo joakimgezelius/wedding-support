@@ -1,20 +1,17 @@
 TemplateSpreadsheetId = "1uBFQrefEIyegbogwe8u0r_QYCcD9CxlWh5BMzwBH3bs"; // This is hard-coded to the "2021 Wedding Template" for now
 
 function onApplyFormat() {
-  //SpreadsheetApp.getUi().alert("Script is loading");
 
   // Identify the template (hard coded reference is OK for now)
   let templateSpreadsheet = Spreadsheet.openById(TemplateSpreadsheetId);
 
   // Get handle to current sheet (tab in spreadsheet)
   let activeSheet = Spreadsheet.active.activeSheet;
-  //let mySS = SpreadsheetApp.getActiveSpreadsheet();
-  //let sheet = mySS.getActiveSheet();
-  //let mainSheet = mySS.getSheetByName("Coordination");
   
-  // Get handle to same sheet in the template, get it by looking for the same tab name
-  // Iterate over the columns in the current sheet, for each column: {
+  // Get handle to same sheet in the template, get it by looking for the same tab name  
   let templateSheet = templateSpreadsheet.getSheetByName(activeSheet.name);
+
+  // Iterate over the columns in the current sheet, for each column
   for (let column=1; column <= activeSheet.maxColumns; ++column) {
     trace(`Formatting column ${column}`);
     // Get the column width from the template
@@ -23,9 +20,21 @@ function onApplyFormat() {
     // Apply the found column width to the current sheet
     // https://developers.google.com/apps-script/reference/spreadsheet/sheet#setColumnWidth(Integer,Integer)
     activeSheet.nativeSheet.setColumnWidth(column, width);
-    trace(`set column with to ${width}`);
+    trace(`set column width to ${width}`);
+  }
+  
+  // Iterate over the rows in the current sheet
+  for (let row=1; row<= activeSheet.maxRows; ++row) {
+    // https://developers.google.com/apps-script/reference/spreadsheet/range#getFontFamily()
+    let range = activeSheet.fullRange;
+    range.nativeRange.setFontFamily("Verdana");
+    Logger.log(range.nativeRange.getFontFamily());
+
+    //https://developers.google.com/apps-script/reference/spreadsheet/range#getfontsize
+   
   }
 }
+
 
 function onFormatCoordinator() {
   trace("onFormatCoordinator");
