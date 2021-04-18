@@ -3,16 +3,37 @@ ClientItinerarySheetName = "Client Itinerary";
 
 function onUpdateClientItinerary() {
   trace("onUpdateClientItinerary");
+  // Create an EventDetails instance, to iterate over the items in the Corodinator sheet
   let eventDetails = new EventDetails();
-  let clientItineraryBuilder = new ClientItineraryBuilder(Range.getByName(ClientItineraryRangeName, ClientItinerarySheetName));
   eventDetails.sort(SortType.time);
+
+  // Populate the local Client Itinerary, by applying a ClientItineraryBuilder (defined below) based on the local named range
+  let clientItineraryBuilder = new ClientItineraryBuilder(Range.getByName(ClientItineraryRangeName, ClientItinerarySheetName));
   eventDetails.apply(clientItineraryBuilder);
-}
+
+  // 1. Locate named range SharedClientItineraryLink, to pick up the link to the external/shared Client Itinerary spreadsheet
+  let sharedClientItineraryLinkCell = Range.getByName("SharedClientItineraryLink", ClientItinerarySheetName);
+  //check for an error if there any link is missing then alert
+  if (sharedClientItineraryLinkCell == null) {
+    Error.fatal("Could not find Named Range SharedClientItineraryLink");
+  }
+
+  // Open shared/external Client Itinerary spreadsheet by using the link in the cell SharedClientItineraryLink
+  let sharedClientItineraryLink = sharedClientItineraryLinkCell.nativeRange.getRichTextValue().getLinkUrl();
+  let sharedClientItinerarySheet = Spreadsheet.openByUrl(sharedClientItineraryLink);
+
+  // Locate the ClientItinerary range in the external/shared client itinerary
+  let sharedClientItineraryRange = sharedClientItinerarySheet.getRangeByName(ClientItineraryRangeName, ClientItinerarySheetName)
+
+  // apply the builder, just as for the local client itinerary
+  let sharedClientItineraryBuilder = new ClientItineraryBuilder(sharedClientItineraryRange);     
+  eventDetails.apply(sharedClientItineraryBuilder);
+} 
 
 
 //=============================================================================================
 // Class ClientItineraryBuilder
-//
+//=============================================================================================
 class ClientItineraryBuilder {
 
   constructor(targetRange) {

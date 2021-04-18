@@ -78,9 +78,19 @@ class Spreadsheet {
 
   static openById(id) {
     trace(`> Spreadsheet.openById(${id})`);
+    // https://developers.google.com/apps-script/reference/spreadsheet/spreadsheet-app#openById(String)
     let newSpreadsheet = SpreadsheetApp.openById(id);
     let spreadsheet = new Spreadsheet(newSpreadsheet);
     trace(`< Spreadsheet.openById(${id}) --> ${spreadsheet.trace}`);
+    return spreadsheet;
+  }
+
+  static openByUrl(url) {
+    trace(`> Spreadsheet.openByUrl(${url})`);
+    // https://developers.google.com/apps-script/reference/spreadsheet/spreadsheet-app#openByUrl(String)
+    let newSpreadsheet = SpreadsheetApp.openByUrl(url);
+    let spreadsheet = new Spreadsheet(newSpreadsheet);
+    trace(`< Spreadsheet.openByUrl(${url}) --> ${spreadsheet.trace}`);
     return spreadsheet;
   }
   
