@@ -1,4 +1,4 @@
-ClientItineraryRangeName = "ClientItinerary";
+ClientItineraryRangeName = "ClientItinerary";   
 ClientItinerarySheetName = "Client Itinerary";
 
 function onUpdateClientItinerary() {
@@ -11,22 +11,22 @@ function onUpdateClientItinerary() {
   let clientItineraryBuilder = new ClientItineraryBuilder(Range.getByName(ClientItineraryRangeName, ClientItinerarySheetName));
   eventDetails.apply(clientItineraryBuilder);
 
-  // 1. Locate named range SharedClientItineraryLink, to pick up the link to the external/shared Client Itinerary spreadsheet
+  // 1. Locate named range SharedClientItineraryLink, to pick up the link to the external/shared itinerary sheet
   let sharedClientItineraryLinkCell = Range.getByName("SharedClientItineraryLink", ClientItinerarySheetName);
-  //check for an error if there any link is missing then alert
+  // check for an error if there any link is missing then alert
   if (sharedClientItineraryLinkCell == null) {
     Error.fatal("Could not find Named Range SharedClientItineraryLink");
   }
 
-  // Open shared/external Client Itinerary spreadsheet by using the link in the cell SharedClientItineraryLink
+  // 2. Open sheet by using the link in the cell found above (SharedClientItineraryLink)
   let sharedClientItineraryLink = sharedClientItineraryLinkCell.nativeRange.getRichTextValue().getLinkUrl();
-  let sharedClientItinerarySheet = Spreadsheet.openByUrl(sharedClientItineraryLink);
+  let sharedClientItinerarySheet = Spreadsheet.openByUrl(sharedClientItineraryLink); 
 
-  // Locate the ClientItinerary range in the external/shared client itinerary
-  let sharedClientItineraryRange = sharedClientItinerarySheet.getRangeByName(ClientItineraryRangeName, ClientItinerarySheetName)
+  // 3. Locate the ClientItinerary range in the external/shared, just like the code above
+  let sharedClientItineraryRange = sharedClientItinerarySheet.getRangeByName(ClientItineraryRangeName, ClientItinerarySheetName);
 
-  // apply the builder, just as for the local client itinerary
-  let sharedClientItineraryBuilder = new ClientItineraryBuilder(sharedClientItineraryRange);     
+  // 4. apply the builder, just as for the local client itinerary
+  let sharedClientItineraryBuilder = new ClientItineraryBuilder(sharedClientItineraryRange);  
   eventDetails.apply(sharedClientItineraryBuilder);
 } 
 
