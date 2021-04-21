@@ -78,6 +78,9 @@ function addRotaMenu() {
   let ui = SpreadsheetApp.getUi();
   ui.createMenu("Rota")
       .addItem("Update Rota", globalLibName + ".onUpdateRota")
+      .addItem("Update Transportation", globalLibName + ".onUpdateTransportation")
+      .addItem("Update Things-to-Buy", globalLibName + ".onUpdateThingsToBuy")
+      .addItem("Update Things-in-Store", globalLibName + ".onUpdateThingsInStore")
       .addSeparator()
       .addItem("Activity Colour Coding", globalLibName + ".onActivityColouring")
       .addItem("Supplier Colour Coding", globalLibName + ".onSupplierColouring")
