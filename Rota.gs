@@ -1,17 +1,76 @@
+// For the Menu Update Rota
+
 function onUpdateRota() {
   trace("onUpdateRota");
-  let aciveSheet = Spreadsheet.active.activeSheet;
-  // Pick up range of client sheet references (D7:Dnn)
-  let clientSheetListRange = aciveSheet.getRangeByName("ClientSheetList");
-  let dataset = "";
-  clientSheetListRange.values.forEach(row => { // Add to dataset if not blank
-    dataset = dataset + (row[0] != "" ? (dataset != "" ? ";" : "") + `importrange("${row[0]}", "Staff Itinerary!StaffItinerary")` : "") 
-  });
-  trace(dataset);
-  let formula = `=QUERY({${dataset}}, "SELECT * WHERE Col1 IS NOT NULL ORDER BY Col4,Col5,Col6",0)`;
-  let cell = aciveSheet.getRangeByName("ImportedActivitiesQuery");
+  let clientSheetList = new ClientSheetList;  
+  let dataset = clientSheetList.generateRotaDataset("Staff Itinerary!StaffItinerary", "SELECT * WHERE Col1 IS NOT NULL ORDER BY Col4,Col5,Col6", 0);
+  let formula = `=${dataset}`;
   // https://developers.google.com/apps-script/reference/spreadsheet/range#setValue(Object)
-  cell.nativeRange.setValue(formula);
+  Range.getByName("ImportedActivitiesQuery").nativeRange.setValue(formula);
+}
+
+// For the Menu Update Things-to-Buy
+
+function onUpdateThingsToBuy() {
+  trace("onUpdateThingsToBuy");
+  let clientSheetList = new ClientSheetList;
+  let dataset = clientSheetList.generateDataset("EventDetails", "SELECT Col1,Col6,Col7,Col8,Col9,Col10,Col16 WHERE Col6='Stock to Buy'", 1);
+  let formula = `=QUERY(${dataset}, "SELECT * WHERE Col1<>'#01'", 0)`;
+  // https://developers.google.com/apps-script/reference/spreadsheet/range#setValue(Object)
+  Range.getByName("ImportedThingstoBuyQuery").nativeRange.setValue(formula);
+}
+
+// For the Menu Update Things-in-Store
+
+function onUpdateThingsInStore() {
+  trace("onUpdateThingsInStore");
+  let clientSheetList = new ClientSheetList;
+  let dataset = clientSheetList.generateDataset("EventDetails", "SELECT Col1,Col6,Col7,Col8,Col9,Col10,Col16 WHERE Col6='In Stock'", 1);
+  let formula = `=QUERY(${dataset}, "SELECT * WHERE Col1<>'#01'", 0)`;
+  // https://developers.google.com/apps-script/reference/spreadsheet/range#setValue(Object)
+  Range.getByName("ImportedThingsinStoreQuery").nativeRange.setValue(formula);
+}
+
+// For the Menu Update Transportation
+
+/*function onUpdateTransportation(){
+  trace("onUpdateTransportation");
+  //
+}*/
+
+const ClientSheetListRangeName = "ClientSheetList";
+
+class ClientSheetList {
+
+  constructor(rangeName = ClientSheetListRangeName) {
+    this.clientSheetListRange = Range.getByName(rangeName);
+    trace("NEW " + this.trace);
+  }
+  
+  generateDataset(rangeName, query, headers) {
+    let dataset = "";
+    this.clientSheetListRange.values.forEach(row => { // Add to dataset if not blank
+      dataset = dataset + (row[0] != "" ? (dataset != "" ? ";" : "") + `QUERY(importrange("${row[0]}", "EventDetails"), "${query}", ${headers})`: "")
+    });
+    dataset = `{${dataset}}`;
+    trace(`ClientSheetList.generateDataset() -> ${dataset}`);
+    return dataset;
+  }
+
+  generateRotaDataset(rangeName, query, headers) {
+    let dataset = "";
+    this.clientSheetListRange.values.forEach(row=> {
+      dataset = dataset + (row[0] != "" ? (dataset != "" ? ";" : "") + `QUERY(importrange("${row[0]}", "Staff Itinerary!StaffItinerary"), "${query}", ${headers})` : "")
+    });
+    dataset = `{${dataset}}`;
+    trace(`ClientSheetList.generateDataset() -> ${dataset}`);
+    return dataset;
+  }
+
+  get trace() {
+    return `{ClientSheetList ${this.clientSheetListRange.trace}}`;
+  }
+
 }
 
 //=============================================================================================
