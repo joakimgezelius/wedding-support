@@ -1,5 +1,4 @@
-ClientItineraryRangeName = "ClientItinerary";
-ClientItinerarySheetName = "Client Itinerary";
+const ClientItinerarySheetName = "Client Itinerary";
 
 function onUpdateClientItinerary() {
   trace("onUpdateClientItinerary");
@@ -11,9 +10,9 @@ function onUpdateClientItinerary() {
   let clientItineraryBuilder = new ClientItineraryBuilder(Range.getByName(ClientItineraryRangeName, ClientItinerarySheetName));
   eventDetails.apply(clientItineraryBuilder);
 
-  // 1. Locate named range SharedClientItineraryLink, to pick up the link to the external/shared Client Itinerary spreadsheet
+  // Locate named range SharedClientItineraryLink, to pick up the link to the external/shared Client Itinerary spreadsheet
   let sharedClientItineraryLinkCell = Range.getByName("SharedClientItineraryLink", ClientItinerarySheetName);
-  //check for an error if there any link is missing then alert
+  // If named range isn't found then alert and abort
   if (sharedClientItineraryLinkCell == null) {
     Error.fatal("Could not find Named Range SharedClientItineraryLink");
   }
@@ -25,7 +24,7 @@ function onUpdateClientItinerary() {
   // Locate the ClientItinerary range in the external/shared client itinerary
   let sharedClientItineraryRange = sharedClientItinerarySheet.getRangeByName(ClientItineraryRangeName, ClientItinerarySheetName)
 
-  // apply the builder, just as for the local client itinerary
+  // Apply the builder, just as for the local client itinerary
   let sharedClientItineraryBuilder = new ClientItineraryBuilder(sharedClientItineraryRange);     
   eventDetails.apply(sharedClientItineraryBuilder);
 } 
