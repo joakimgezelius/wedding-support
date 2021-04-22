@@ -1,7 +1,7 @@
 function addWeddingMenu() {
   trace("> Adding custom wedding menu");
   let ui = SpreadsheetApp.getUi();
-  ui.createMenu("Event")      
+  ui.createMenu("Shaikh")      
       //.addItem("Clear Sheet", globalLibName + ".onClearSheet")
       //.addSeparator()
       //.addItem("Pull Client Information", globalLibName + ".onPullClientInformation") // in client.gs
@@ -76,7 +76,7 @@ function addTestMenu() {
 function addRotaMenu() {
   trace("> Adding custom rota menu");
   let ui = SpreadsheetApp.getUi();
-  ui.createMenu("Rota")
+  ui.createMenu("Shaikh's Rota Menu")
       .addItem("Update Rota", globalLibName + ".onUpdateRota")
       .addItem("Update Transportation", globalLibName + ".onUpdateTransportation")
       .addItem("Update Things-to-Buy", globalLibName + ".onUpdateThingsToBuy")

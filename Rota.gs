@@ -3,7 +3,7 @@
 function onUpdateRota() {
   trace("onUpdateRota");
   let clientSheetList = new ClientSheetList;  
-  let dataset = clientSheetList.generateRotaDataset("Staff Itinerary!StaffItinerary", "SELECT * WHERE Col1 IS NOT NULL ORDER BY Col4,Col5,Col6", 0);
+  let dataset = clientSheetList.generateDataset("Staff Itinerary!StaffItinerary", "SELECT * WHERE Col1 IS NOT NULL ORDER BY Col4,Col5,Col6", 0);
   let formula = `=${dataset}`;
   // https://developers.google.com/apps-script/reference/spreadsheet/range#setValue(Object)
   Range.getByName("ImportedActivitiesQuery").nativeRange.setValue(formula);
@@ -14,8 +14,8 @@ function onUpdateRota() {
 function onUpdateThingsToBuy() {
   trace("onUpdateThingsToBuy");
   let clientSheetList = new ClientSheetList;
-  let dataset = clientSheetList.generateDataset("EventDetails", "SELECT Col1,Col6,Col7,Col8,Col9,Col10,Col16 WHERE Col6='Stock to Buy'", 1);
-  let formula = `=QUERY(${dataset}, "SELECT * WHERE Col1<>'#01'", 0)`;
+  let dataset = clientSheetList.generateDataset("EventDetails", "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col9,Col10,Col16 WHERE Col6='Stock to Buy'", 1);
+  let formula = `=QUERY(${dataset}, "SELECT * WHERE Col2<>'#01'", 0)`;
   // https://developers.google.com/apps-script/reference/spreadsheet/range#setValue(Object)
   Range.getByName("ImportedThingstoBuyQuery").nativeRange.setValue(formula);
 }
@@ -25,18 +25,22 @@ function onUpdateThingsToBuy() {
 function onUpdateThingsInStore() {
   trace("onUpdateThingsInStore");
   let clientSheetList = new ClientSheetList;
-  let dataset = clientSheetList.generateDataset("EventDetails", "SELECT Col1,Col6,Col7,Col8,Col9,Col10,Col16 WHERE Col6='In Stock'", 1);
-  let formula = `=QUERY(${dataset}, "SELECT * WHERE Col1<>'#01'", 0)`;
+  let dataset = clientSheetList.generateDataset("EventDetails", "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col9,Col10,Col16 WHERE Col6='In Stock'", 1);
+  let formula = `=QUERY(${dataset}, "SELECT * WHERE Col2<>'#01'", 0)`;
   // https://developers.google.com/apps-script/reference/spreadsheet/range#setValue(Object)
   Range.getByName("ImportedThingsinStoreQuery").nativeRange.setValue(formula);
 }
 
 // For the Menu Update Transportation
 
-/*function onUpdateTransportation(){
+function onUpdateTransportation(){
   trace("onUpdateTransportation");
-  //
-}*/
+  let clientSheetList = new ClientSheetList;
+  let dataset = clientSheetList.generateDataset("EventDetails", "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col9,Col10,Col16 WHERE Col6='Transport'", 1);
+  let formula = `=QUERY(${dataset}, "SELECT * WHERE Col2<>'#01'", 0)`;
+  // https://developers.google.com/apps-script/reference/spreadsheet/range#setValue(Object)
+  Range.getByName("ImportedTransportationQuery").nativeRange.setValue(formula);
+}
 
 const ClientSheetListRangeName = "ClientSheetList";
 
@@ -50,17 +54,7 @@ class ClientSheetList {
   generateDataset(rangeName, query, headers) {
     let dataset = "";
     this.clientSheetListRange.values.forEach(row => { // Add to dataset if not blank
-      dataset = dataset + (row[0] != "" ? (dataset != "" ? ";" : "") + `QUERY(importrange("${row[0]}", "EventDetails"), "${query}", ${headers})`: "")
-    });
-    dataset = `{${dataset}}`;
-    trace(`ClientSheetList.generateDataset() -> ${dataset}`);
-    return dataset;
-  }
-
-  generateRotaDataset(rangeName, query, headers) {
-    let dataset = "";
-    this.clientSheetListRange.values.forEach(row=> {
-      dataset = dataset + (row[0] != "" ? (dataset != "" ? ";" : "") + `QUERY(importrange("${row[0]}", "Staff Itinerary!StaffItinerary"), "${query}", ${headers})` : "")
+      dataset = dataset + (row[0] != "" ? (dataset != "" ? ";" : "") + `QUERY(importrange("${row[0]}", "${rangeName}"), "${query.replace('${eventName}',row[1])}", ${headers})`: "")
     });
     dataset = `{${dataset}}`;
     trace(`ClientSheetList.generateDataset() -> ${dataset}`);
