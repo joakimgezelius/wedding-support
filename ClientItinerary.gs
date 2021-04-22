@@ -1,3 +1,4 @@
+const ClientItineraryRangeName = "ClientItinerary";
 const ClientItinerarySheetName = "Client Itinerary";
 
 function onUpdateClientItinerary() {
