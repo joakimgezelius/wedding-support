@@ -3,6 +3,7 @@ const ClientItinerarySheetName = "Client Itinerary";
 
 function onUpdateClientItinerary() {
   trace("onUpdateClientItinerary");
+  var ui = SpreadsheetApp.getUi();
   // Create an EventDetails instance, to iterate over the items in the Corodinator sheet
   let eventDetails = new EventDetails();
   eventDetails.sort(SortType.time);
@@ -15,7 +16,8 @@ function onUpdateClientItinerary() {
   let sharedClientItineraryLinkCell = Range.getByName("SharedClientItineraryLink", ClientItinerarySheetName);
   // If named range isn't found then alert and abort
   if (sharedClientItineraryLinkCell == null) {
-    Error.fatal("Could not find Named Range SharedClientItineraryLink");
+    //Error.fatal("Could not find Named Range SharedClientItineraryLink");
+    ui.alert("Could not find shared client itinerary!");
   }
 
   // Open shared/external Client Itinerary spreadsheet by using the link in the cell SharedClientItineraryLink
