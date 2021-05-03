@@ -27,11 +27,12 @@ function onApplyFormat() {
   for (let row=1; row<= activeSheet.maxRows; ++row) {
     // https://developers.google.com/apps-script/reference/spreadsheet/range#getFontFamily()
     let range = activeSheet.fullRange;
-    range.nativeRange.setFontFamily("Verdana");
-    Logger.log(range.nativeRange.getFontFamily());
-
-    //https://developers.google.com/apps-script/reference/spreadsheet/range#getfontsize
-   
+    Logger.log(range.nativeRange.getFontFamily()); 
+    range.nativeRange.setFontFamily("Verdana");   
+    // https://developers.google.com/apps-script/reference/spreadsheet/range#getfontsize   
+    Logger.log(range.nativeRange.getFontSize());   
+    // https://developers.google.com/apps-script/reference/spreadsheet/range#setfontsizesize
+    range.nativeRange.setFontSize(9);
   }
 }
 

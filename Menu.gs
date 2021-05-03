@@ -107,10 +107,16 @@ function addQuoteMenu() {
 function addEnqiriesMenu() {
   trace("> Adding custom enquiries menu");
   let ui = SpreadsheetApp.getUi();
-  ui.createMenu("Enquiries")
+  ui.createMenu("Shaikh's Enquiries")
       .addItem("Update Enquiries", globalLibName + ".onUpdateEnquiries")
       //.addItem("Create Quote/Client Sheet", globalLibName + ".onCreateNewClientSheet")
       .addItem("Open Quote/Client Sheet", globalLibName + ".onOpenClientSheet")
+      .addSeparator()
+      .addSubMenu(ui.createMenu("Test")
+        .addItem("Test Case 1", globalLibName + ".onTestCase1")
+        .addItem("Test Case 2", globalLibName + ".onTestCase2")
+        .addItem("Test Case 3", globalLibName + ".onTestCase3")
+      )
       .addToUi();
   trace("< Custom enquiries menu added");
 }

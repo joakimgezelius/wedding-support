@@ -31,7 +31,7 @@ class Sheet {
     let TestRange = sheet.getRangeByName("buildingNameAddress").getValues(); 
     Logger.log(TestRange); 
     var destFolder = DriveApp.getFolderById("xxxxxxxxxxxxxxxxxxxxx"); 
-    DriveApp.getFileById(sheet.getId()).makeCopy("Test File", destFolder); 
+    DriveApp.getFileById(sheet.getId()).copyTo(destFolder, "Test File"); 
   }
   */
 

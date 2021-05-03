@@ -1,6 +1,5 @@
-enquiriesRangeName = "Enquiries";
-
-enquiriesFolderId = "1EtAGPReyn5ZMyXf6xboCyTncGWsvxNz_";
+const enquiriesRangeName = "Enquiries";
+const enquiriesFolderId = "1EtAGPReyn5ZMyXf6xboCyTncGWsvxNz_";
 
 // Go through raw list of enquiries, 
 //  - find those that are work-in-progress
@@ -8,6 +7,8 @@ enquiriesFolderId = "1EtAGPReyn5ZMyXf6xboCyTncGWsvxNz_";
 function onUpdateEnquiries() {
   trace("onUpdateEnquiries");
   let enquiries = new Enquiries;
+
+  let enquiriesRange = Range.getByName(enquiriesRangeName, "W & E master");
   //enquiries.update(enquiriesNoReply);
 }
 
@@ -100,9 +101,9 @@ class Enquiry extends RangeRow {
       Error.fatal("Please select a valid enquiry.");
     };
     let clientSheetName = `${this.name} (Prospect Client)`;
-    let targetFolder = Folder.getById(EnquiriesFolderId);
-    let weddingClientTemplateFile = File.getById(WeddingClientTemplateSpreadsheetId);
-    let clientSpreadsheetFile = weddingClientTemplateFile.makeCopy(clientSheetName, targetFolder);
+    let targetFolder = Folder.getById(enquiriesFolderId);
+    let weddingClientTemplateFile = File.getById(weddingClientTemplateSpreadsheetId);
+    let clientSpreadsheetFile = weddingClientTemplateFile.copyTo(targetFolder, clientSheetName);
     this.clientSheet = Spreadsheet.openById(clientSpreadsheetFile.id);
     this.sheetId = this.clientSheet.id;
     this.sheetLink = `=hyperlink("${this.clientSheet.url}";"...")`;

@@ -1,4 +1,4 @@
-WeddingClientTemplateSpreadsheetId = "1IAAbpD9bwZThh78ohFIJDAr9ebq9IM9obA28h3lGRDA";
+const weddingClientTemplateSpreadsheetId = "1IAAbpD9bwZThh78ohFIJDAr9ebq9IM9obA28h3lGRDA";
 
 
 function onCreateNewClientSheet() {
@@ -14,20 +14,18 @@ function onCreateNewClientSheet() {
     if (fileExists(name, folder)) {
       throw("Spreadsheet already exists!");
     }
-    DriveApp.getFileById(spreadsheet.getId()).makeCopy(name, folder);
+    DriveApp.getFileById(spreadsheet.getId()).copyTo(folder, name);
   }
 }
+
 
 function onClearSheet() {
   trace("onClearSheet");
 }
 
 
-
 function saveAsSpreadsheet2() {
   var sheet = SpreadsheetApp.getActiveSpreadsheet();
   var destFolder = DriveApp.getFolderById("xxxxxxxxxxxxxxxxx");
-  DriveApp.getFileById(sheet.getId()).makeCopy("desired file name", destFolder);
-} //END function saveAsSpreadsheet
-
-
+  DriveApp.getFileById(sheet.getId()).copyTo("desired file name", destFolder);
+}
