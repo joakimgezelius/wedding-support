@@ -1,7 +1,7 @@
 function addWeddingMenu() {
   trace("> Adding custom wedding menu");
   let ui = SpreadsheetApp.getUi();
-  ui.createMenu("Shaikh")      
+  ui.createMenu("Event" + globalLibMenuTag)      
       //.addItem("Clear Sheet", globalLibName + ".onClearSheet")
       //.addSeparator()
       //.addItem("Pull Client Information", globalLibName + ".onPullClientInformation") // in client.gs
@@ -52,7 +52,7 @@ function addWeddingMenu() {
 function addTestMenu() {
   trace("> Adding custom test menu");
   let ui = SpreadsheetApp.getUi();
-  ui.createMenu("Test")
+  ui.createMenu("Test" + globalLibMenuTag)
     .addItem("Update Dynamic Itinerary", "Event.onUpdateDynamicItinerary")
 /*
     .addSubMenu(ui.createMenu("Testing")
@@ -76,7 +76,7 @@ function addTestMenu() {
 function addRotaMenu() {
   trace("> Adding custom rota menu");
   let ui = SpreadsheetApp.getUi();
-  ui.createMenu("Shaikh's Rota Menu")
+  ui.createMenu("Rota" + globalLibMenuTag)
       .addItem("Update Rota", globalLibName + ".onUpdateRota")
       .addItem("Update Transportation", globalLibName + ".onUpdateTransportation")
       .addItem("Update Things-to-Buy", globalLibName + ".onUpdateThingsToBuy")
@@ -97,7 +97,7 @@ function addRotaMenu() {
 function addQuoteMenu() {
   trace("> Adding custom quote menu");
   let ui = SpreadsheetApp.getUi();
-  ui.createMenu("Quote")
+  ui.createMenu("Quote" + globalLibMenuTag)
       .addItem("Update Quote", globalLibName + ".onUpdateQuote")
       .addSeparator()
       .addItem("Create Estimate Summary", globalLibName + ".onCreateEstimateSummary")
@@ -110,7 +110,7 @@ function addQuoteMenu() {
 function addEnqiriesMenu() {
   trace("> Adding custom enquiries menu");
   let ui = SpreadsheetApp.getUi();
-  ui.createMenu("Shaikh's Enquiries")
+  ui.createMenu("Enquiries" + globalLibMenuTag)
       .addItem("Update Enquiries", globalLibName + ".onUpdateEnquiries")
       //.addItem("Create Quote/Client Sheet", globalLibName + ".onCreateNewClientSheet")
       .addItem("Open Quote/Client Sheet", globalLibName + ".onOpenClientSheet")
@@ -128,7 +128,7 @@ function addEnqiriesMenu() {
 function addWeddingPackagesMenu() {
   trace("> Adding custom wedding packages menu");
   let ui = SpreadsheetApp.getUi();
-  ui.createMenu("Prices & Packages")
+  ui.createMenu("Prices & Packages" + globalLibMenuTag)
       .addItem("Refresh Price List", globalLibName + ".onRefreshPriceList")
       .addItem("Update Packages", globalLibName + ".onUpdatePackages")
       .addToUi();
@@ -138,7 +138,7 @@ function addWeddingPackagesMenu() {
 function addEmailMenu() {
   trace("> Adding custom email menu");
   let ui = SpreadsheetApp.getUi();
-  let menu = ui.createMenu("Email")
+  let menu = ui.createMenu("Email" + globalLibMenuTag)
   .addItem("Draft selected email", globalLibName + ".onDraftSelectedEmail")
   .addSeparator();
   EmailTemplateList.singleton.populateMenu(menu)
@@ -150,7 +150,7 @@ addProductsSheetMenu
 function addProductsSheetMenu() {
   trace("> Adding custom products menu");
   let ui = SpreadsheetApp.getUi();
-  ui.createMenu("Products")
+  ui.createMenu("Products" + globalLibMenuTag)
       .addItem("Refresh Price List", globalLibName + ".onRefreshPriceList")
       .addItem("Update Packages", globalLibName + ".onUpdatePackages")
       .addSubMenu(ui.createMenu("Export")

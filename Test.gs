@@ -12,12 +12,9 @@
 
 function onTestCase1() {
   trace("onTestCase1");
-  let enquiries = new Enquiries;
-  let date = enquiries.selected.date;
-  trace("Date: " + Utilities.formatDate(date, "UTC", "yyyy-MM-dd"));
-  //let srcFolderId = "10XxkUmEccJ73aKaznSZITiqx2BvaBPJz";    //  Client Template/Office Use
-  //let dstFolderId = "19y3-Zou_RAWHZKaZ_5W_FJXql_Pz-gdd";    //  W & E's
-  //weddingEventsFolder.recursiveWalk();
+  let srcFolderId = "10XxkUmEccJ73aKaznSZITiqx2BvaBPJz";    //  Client Template/Office Use
+  let dstFolderId = "19y3-Zou_RAWHZKaZ_5W_FJXql_Pz-gdd";    //  W & E's
+  weddingEventsFolder.recursiveWalk();
 }
 
 function onTestCase2() {

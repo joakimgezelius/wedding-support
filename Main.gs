@@ -7,6 +7,7 @@
 //  ScriptID (Shaikh): 1uWdnau49TWbINbe_I4eY_JJDswE_J2hQiEB-iKu35-DpdIJf0-EdOn6P
 
 globalLibName = "Undefined";
+globalLibMenuTag = "";
 
 function onOpen() { // For backward compatibility
   trace(`onOpen globalLibName=${globalLibName}`);
