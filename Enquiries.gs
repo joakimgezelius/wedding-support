@@ -1,14 +1,13 @@
-const enquiriesRangeName = "Enquiries";
-const enquiriesFolderId = "1EtAGPReyn5ZMyXf6xboCyTncGWsvxNz_";
+const EnquiriesRangeName = "Enquiries";
+const TemplateClientSheetRangeName = "TemplateClientSheet";
+const ParamsSheetName = "Params";
 
 // Go through raw list of enquiries, 
 //  - find those that are work-in-progress
 //
 function onUpdateEnquiries() {
   trace("onUpdateEnquiries");
-  let enquiries = new Enquiries;
-
-  let enquiriesRange = Range.getByName(enquiriesRangeName, "W & E master");
+  //let enquiries = new Enquiries;  
   //enquiries.update(enquiriesNoReply);
 }
 
@@ -33,13 +32,21 @@ function onDraftSelectedEmail() {
   enquiries.selected.draftSelectedEmail();
 }
 
+// To Prepare Client Document Structure
+
+function onPrepareClientStructure() {
+  trace("onPrepareClientStructure");
+  let enquiries = new Enquiries;
+  enquiries.selected.prepareClientStructure();
+}
+
 
 //================================================================================================
 
 class Enquiries {
 
   constructor(rangeName = null) {
-    rangeName = (rangeName === null) ? enquiriesRangeName : rangeName;
+    rangeName = (rangeName === null) ? EnquiriesRangeName : rangeName;
     this.range = Range.getByName(rangeName).loadColumnNames();
     trace("NEW " + this.trace);
   }
@@ -77,7 +84,7 @@ class Enquiries {
     let targetEnquiry = new Enquiry(); // Fix this!!
     enquiry.copyTo(targetEnquiry);
   }
-  
+
   get trace() { return `{Enquiries ${this.range.trace}}`; }
   
 } // Enquiries
@@ -101,7 +108,7 @@ class Enquiry extends RangeRow {
       Error.fatal("Please select a valid enquiry.");
     };
     let clientSheetName = `${this.name} (Prospect Client)`;
-    let targetFolder = Folder.getById(enquiriesFolderId);
+//  let targetFolder = Folder.getById(enquiriesFolderId);
     let weddingClientTemplateFile = File.getById(weddingClientTemplateSpreadsheetId);
     let clientSpreadsheetFile = weddingClientTemplateFile.copyTo(targetFolder, clientSheetName);
     this.clientSheet = Spreadsheet.openById(clientSpreadsheetFile.id);
@@ -109,13 +116,38 @@ class Enquiry extends RangeRow {
     this.sheetLink = `=hyperlink("${this.clientSheet.url}";"...")`;
     Browser.newTab(this.clientSheet.url);
   }
-  
+
+  prepareClientStructure() {
+    trace(`prepareClientStructure for ${this.trace}`);
+    let sourceFolderId = "1lIUlRJFAxoVsOy_Tdmga9ZqzTWZGDDxr";        // Source - Client Template
+    let destinationFolderId = "19y3-Zou_RAWHZKaZ_5W_FJXql_Pz-gdd";   // Destination - W & E's
+    let sourceFolder = Folder.getById(sourceFolderId);
+    let destinationFolder = Folder.getById(destinationFolderId);    
+    if (destinationFolder.folderExists(this.fileName) == true) {
+      Dialog.notify("Client folder already exists","Please check the Weddings & Events Folder for more details.");      
+    } else {
+      sourceFolder.copyTo(destinationFolder, this.fileName);      
+      let templateClientSheetLinkCell = Range.getByName("TemplateClientSheet", ParamsSheetName);
+      let templateClientSheetLink = templateClientSheetLinkCell.nativeRange.getRichTextValue().getLinkUrl();
+      trace(`Found SheetLink: ${templateClientSheetLink}`);
+      let templateSheetFile = File.getByUrl(templateClientSheetLink);
+      trace(`Found File: ${templateSheetFile.name}`);
+      let templateSheetDestination    
+      if ( templateSheetDestination ) {
+        Dialog.notify("Office Use found","Can Copy Here!");
+        //templateSheetFile.copyTo( ,this.fileName);  
+      } else {
+        Dialog.notify("Folder not found","Office Use Folder does not exist.");
+      }
+    }
+  }
+
   copyTo(destination) {
     trace(`${this.trace}.copyTo ${destination.trace}`);
     const fields = ["Name", "EmailAddress", "Who"];
     this.copyFieldsTo(destination, fields);
   }
-  
+
   openClientSheet() {
     trace(`openClientSheet of ${this.trace}`);
     if (!this.isValid) {
@@ -142,20 +174,25 @@ class Enquiry extends RangeRow {
     if (Dialog.confirm("Draft Email", `Draft email to ${this.name}, are you sure?`) == false) {
       return;
     }    
-  }
+  }  
   
-  get name()           { return this.get("Name", "string"); }
-  get sheetId()        { return this.get("SheetId", "string"); }
-  get sheetLink()      { return this.get("SheetLink", "string"); }
-  set sheetId(value)   { this.set("SheetId", value); }
-  set sheetLink(value) { this.set("SheetLink", value); }
-  get isValid()        { return this._isValid; }
-  get rowOffset()      { return this._rowOffset; }
+  get name()            { return this.get("Name", "string"); }
+  get date()            { return this.get("EventDate"); }
+  get fileName()        { return `${Utilities.formatDate(this.date, "GMT+1", "yyyy-MM-dd")} ${this.name}`; }
+  get sheetId()         { return this.get("SheetId", "string"); }
+  get sheetLink()       { return this.get("SheetLink", "string"); }  
+  get folderId()        { return this.get("FolderId", "string"); }
+  get folderLink()      { return this.get("FolderLink", "string"); }
+  get isValid()         { return this._isValid; }
+  get rowOffset()       { return this._rowOffset; }
+  set sheetId(value)    { this.set("SheetId", value); }
+  set sheetLink(value)  { this.set("SheetLink", value); }
+  set folderId(value)   { this.set("FolderId", value); }
+  set folderLink(value) { this.set("FolderLink", value); }
 
   get trace() { return `{Enquiry #${this.rowOffset} ${this._name} ${this.isValid ? "(valid)" : "(invalid)"}}`; }
   
 } // Enquiry
-
 
 //================================================================================================
                

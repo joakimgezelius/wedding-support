@@ -42,6 +42,28 @@ function onUpdateTransportation(){
   Range.getByName("ImportedTransportationQuery").nativeRange.setValue(formula);
 }
 
+// For the Menu Update Consumable
+
+function onUpdateConsumable(){
+  trace("onUpdateConsumable");
+  let clientSheetList = new ClientSheetList;
+  let dataset = clientSheetList.generateDataset("EventDetails", "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col9,Col10,Col16 WHERE Col6='Consumable'", 1);
+  let formula = `=QUERY(${dataset}, "SELECT * WHERE Col2<>'#01'", 0)`;
+  // https://developers.google.com/apps-script/reference/spreadsheet/range#setValue(Object)
+  Range.getByName("ImportedConsumableQuery").nativeRange.setValue(formula);
+}
+
+// For the Menu Update Shop
+
+function onUpdateShop(){
+  trace("onUpdateShop");
+  let clientSheetList = new ClientSheetList;
+  let dataset = clientSheetList.generateDataset("EventDetails", "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col9,Col10,Col16 WHERE Col6='Shop'", 1);
+  let formula = `=QUERY(${dataset}, "SELECT * WHERE Col2<>'#01'", 0)`;
+  // https://developers.google.com/apps-script/reference/spreadsheet/range#setValue(Object)
+  Range.getByName("ImportedShopQuery").nativeRange.setValue(formula);
+}
+
 const ClientSheetListRangeName = "ClientSheetList";
 
 class ClientSheetList {

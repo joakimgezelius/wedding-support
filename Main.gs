@@ -35,7 +35,6 @@ function onEnqiriesSheetOpen(libName) {
   trace(`onEnqiriesSheetOpen globalLibName=${libName}`);
   globalLibName = libName;
   addEnqiriesMenu();
-  addEmailMenu();
 }
 
 function onWeddingPackagesSheetOpen(libName) {

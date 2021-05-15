@@ -93,7 +93,7 @@ class Spreadsheet {
     trace(`< Spreadsheet.openByUrl(${url}) --> ${spreadsheet.trace}`);
     return spreadsheet;
   }
-  
+
   getRangeByName(rangeName, sheetName = "") {
     let range = this.nativeSpreadheet.getRangeByName(rangeName);
     if (range !== null) { 

@@ -29,3 +29,20 @@ function saveAsSpreadsheet2() {
   var destFolder = DriveApp.getFolderById("xxxxxxxxxxxxxxxxx");
   DriveApp.getFileById(sheet.getId()).copyTo("desired file name", destFolder);
 }
+
+//===============================================================================================
+
+/*const TemplateClientSheetRangeName = "TemplateClientSheet";
+
+class TemplateClientSheet {
+
+  constructor(rangeName = TemplateClientSheetRangeName) {
+    this.templateClientSheetRange = Range.getByName(rangeName);
+    trace("NEW " + this.trace);
+  }
+
+  get trace() {
+    return `{TemplateClientSheet ${this.templateClientSheetRange.trace}}`;
+  }
+
+}*/
