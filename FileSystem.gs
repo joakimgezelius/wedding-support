@@ -7,14 +7,7 @@ class Folder {
     this._nativeFolder = nativeFolder;
     this._trace = `{Folder ${this.id} "${this.name}"}`;
     trace(`NEW ${this.trace}`);
-  }
-  
-  fileExists(name) {
-    var files = this.nativeFolder.getFilesByName(name);
-    result = (files.hasNext()) ? true : false;
-    trace(`fileExists(${name}) in ${this.trace} --> ${result}`);
-    return result;
-  }
+  } 
 
   static getById(folderId) {
     trace(`> Folder.getById(${folderId})`);
@@ -24,6 +17,30 @@ class Folder {
     return folder;
   }  
 
+  static getByUrl(url) {        
+    trace(`> Folder.getByUrl(${url})`);
+    let folderId = File.getIdFromUrl(url);
+    let folder = Folder.getById(folderId);
+    trace(`< Folder.getByUrl(${url}) --> ${folder.trace}`);
+    return folder;
+  }
+
+  fileExists(name) {
+    // https://developers.google.com/apps-script/reference/drive/folder#getFilesByName(String)
+    let files = this.nativeFolder.getFilesByName(name);
+    let result = (files.hasNext()) ? true : false;
+    trace(`fileExists(${name}) in ${this.trace} --> ${result}`);
+    return result;
+  }
+
+  folderExists(name) {    //Check whether folder exists or not
+    // https://developers.google.com/apps-script/reference/drive/folder#getFoldersByName(String)
+    let folders = this.nativeFolder.getFoldersByName(name);
+    let result = (folders.hasNext()) ? true : false;
+    trace(`folderExists(${name}) in ${this.trace} --> ${result}`);
+    return result;
+  }
+
   copyTo(destination, name = this.name) {
     trace(`> Folder.copyTo(${destination.trace}) this=${this.trace}`);
     let copy = destination.createFolder(name); // Create a copy of this folder inside the destination folder
@@ -31,7 +48,7 @@ class Folder {
     let files = this.nativeFolder.getFiles();
     while (files.hasNext()) {                  // Determines whether calling next() will return an item.
       let file = new File(files.next());       // Gets the next item in the collection of files.      
-      file.copyTo(copy);                     // Copy to the newly created folder
+      file.copyTo(copy);                       // Copy to the newly created folder
     }
     // next, loop over folders, and recursively copy them over
     let folders =  this.nativeFolder.getFolders();
@@ -90,8 +107,24 @@ class File {
   }
   
   static getById(fileId) {
-    return new File(DriveApp.getFileById(fileId));
+    trace(`> File.getById(${fileId})`);
+    let nativeFile = DriveApp.getFileById(fileId);
+    let file = new File(nativeFile);
+    trace(`< File.getById(${fileId}) --> ${file.trace}`);
+    return file;
   }
+
+  static getByUrl(url) { 
+    trace(`> File.getByUrl(${url})`);
+    let fileId = File.getIdFromUrl(url);
+    let file = File.getById(fileId);
+    trace(`< File.getByUrl(${url}) --> ${file.trace}`);
+    return file;
+  }
+
+  static getIdFromUrl(url) {
+    return url.match(/[-\w]{25,}/);   //returns the file/folder id with regular expression
+  }  
   
   copyTo(folder, newName = this.name) {
     trace(`Making copy of ${this.trace} in ${folder.name}, new name: "${newName}"`);
