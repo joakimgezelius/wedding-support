@@ -1,7 +1,7 @@
 function addWeddingMenu() {
   trace("> Adding custom wedding menu");
   let ui = SpreadsheetApp.getUi();
-  ui.createMenu("Shaikh")      
+  ui.createMenu("Event")      
       //.addItem("Clear Sheet", globalLibName + ".onClearSheet")
       //.addSeparator()
       //.addItem("Pull Client Information", globalLibName + ".onPullClientInformation") // in client.gs
@@ -76,17 +76,11 @@ function addTestMenu() {
 function addRotaMenu() {
   trace("> Adding custom rota menu");
   let ui = SpreadsheetApp.getUi();
-  ui.createMenu("Shaikh's Rota Menu")
+  ui.createMenu("Rota")
       .addItem("Update Rota", globalLibName + ".onUpdateRota")
       .addItem("Update Transportation", globalLibName + ".onUpdateTransportation")
       .addItem("Update Things-to-Buy", globalLibName + ".onUpdateThingsToBuy")
       .addItem("Update Things-in-Store", globalLibName + ".onUpdateThingsInStore")
-      .addSeparator()
-      .addItem("Activity Colour Coding", globalLibName + ".onActivityColouring")
-      .addItem("Supplier Colour Coding", globalLibName + ".onSupplierColouring")
-      .addItem("Location Colour Coding", globalLibName + ".onLocationColouring")
-      .addSeparator()
-      .addItem("Perform some magic...", globalLibName + ".onPerformMagic")
       .addToUi();
   trace("< Custom rota menu added");
 }
@@ -107,7 +101,7 @@ function addQuoteMenu() {
 function addEnqiriesMenu() {
   trace("> Adding custom enquiries menu");
   let ui = SpreadsheetApp.getUi();
-  ui.createMenu("Shaikh's Enquiries")
+  ui.createMenu("Enquiry")
       .addItem("Update Enquiries", globalLibName + ".onUpdateEnquiries")
       //.addItem("Create Quote/Client Sheet", globalLibName + ".onCreateNewClientSheet")
       .addItem("Open Quote/Client Sheet", globalLibName + ".onOpenClientSheet")

@@ -145,6 +145,7 @@ class Enquiry extends RangeRow {
   }
   
   get name()           { return this.get("Name", "string"); }
+  get date()           { return this.get("EventDate"); }
   get sheetId()        { return this.get("SheetId", "string"); }
   get sheetLink()      { return this.get("SheetLink", "string"); }
   set sheetId(value)   { this.set("SheetId", value); }

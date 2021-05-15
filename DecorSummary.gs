@@ -83,7 +83,8 @@ class DecorSummaryBuilder {
       targetRow.getCell(1,column++).setValue(row.location);
       targetRow.getCell(1,column++).setValue(row.description);
       targetRow.getCell(1,column++).setValue(row.quantity);
-      targetRow.getCell(1,column++).setValue(row.links);
+//    targetRow.getCell(1,column++).setValue(row.links);
+      ++column;
       targetRow.getCell(1,column++).setValue(row.notes);
     }
   }
