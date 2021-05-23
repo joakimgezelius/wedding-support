@@ -91,6 +91,7 @@ class SupplierCostingBuilder {
     var totalNativeGrossCost = row.totalNativeGrossCost;
     var totalNettCost = row.totalNettCost;
     var paymentMethod = row.paymentMethod;
+    var paymentStatus = row.paymentStatus;
     if (!row.isSubItem && Math.abs(row.nativeUnitCost) > 0.01 && row.quantity > 0) { // This not a sub-item (marked as such or with no price)
       trace("SupplierCostingBuilder.onRow " + row.description);
       if (row.supplier !== this.currentSupplier) {
@@ -115,7 +116,8 @@ class SupplierCostingBuilder {
         ++column; // Skip GBP column
       }
       targetRow.getCell(1,column++).setValue(totalNettCost).setNumberFormat("£#,##0.00");
-      targetRow.getCell(1,column++).setValue(paymentMethod);   
+      targetRow.getCell(1,column++).setValue(paymentMethod);
+      targetRow.getCell(1,column++).setValue(paymentStatus);
       targetRow.setFontWeight("normal");
       targetRow.setFontSize(10);
       targetRow.setBackground("#ffffff"); // White

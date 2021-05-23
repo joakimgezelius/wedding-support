@@ -96,6 +96,7 @@ class EventRow extends RangeRow {
   get clientNotes()         { return ""; } // this.get("ItemNotes", "string"); }
   get inventoryNotes()      { return ""; } // this.get("ItemNotes", "string"); }
   get paymentMethod()       { return this.get("PaymentMethod", "string"); }
+  get paymentStatus()       { return this.get("PaymentStatus", "string"); }
   get links()               { return this.get("Links", "string"); }
 
   set itemNo(value)         { this.set("ItemNo", value); }
