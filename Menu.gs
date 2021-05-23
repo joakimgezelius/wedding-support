@@ -77,17 +77,8 @@ function addRotaMenu() {
   trace("> Adding custom rota menu");
   let ui = SpreadsheetApp.getUi();
   ui.createMenu("Rota" + globalLibMenuTag)
-      .addItem("Update Rota", globalLibName + ".onUpdateRota")
-      .addItem("Update Transportation", globalLibName + ".onUpdateTransportation")
-      .addItem("Update Things-to-Buy", globalLibName + ".onUpdateThingsToBuy")
-      .addItem("Update Things-in-Store", globalLibName + ".onUpdateThingsInStore")
-      .addItem("Update Consumable", globalLibName + ".onUpdateConsumable")
-      .addItem("Update In Shop", globalLibName + ".onUpdateInShop")
-      .addItem("Update Service", globalLibName + ".onUpdateService")
-      .addSeparator()
-      .addItem("Activity Colour Coding", globalLibName + ".onActivityColouring")
-      .addItem("Supplier Colour Coding", globalLibName + ".onSupplierColouring")
-      .addItem("Location Colour Coding", globalLibName + ".onLocationColouring")
+      .addItem("Update Rota Sheet", globalLibName + ".onUpdateRota")
+      .addItem("Update Coordination Sheet", globalLibName + ".onCoordinationSheetPeriodChanged")
       .addSeparator()
       .addItem("Perform some magic...", globalLibName + ".onPerformMagic")
       .addToUi();
