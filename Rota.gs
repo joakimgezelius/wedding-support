@@ -1,12 +1,18 @@
 // For the Menu Update Rota
 
-function onUpdateRota() {
-  trace("onUpdateRota");
-  let clientSheetList = new ClientSheetList;  
-  let dataset = clientSheetList.generateDataset("Staff Itinerary!StaffItinerary", "SELECT * WHERE Col1 IS NOT NULL ORDER BY Col4,Col5,Col6");
-  let formula = `=${dataset}`;
+function onRotaSheetPeriodChanged() {
+  trace("onRotaSheetPeriodChanged");
+  Dialog.notify("Period Changed", "Sheet will be recalculated, this may take a few seconds...");
+  let clientSheetList = new ClientSheetList; 
+
+  clientSheetList.setQuery("RotaQuery",
+    "SELECT '${eventName}',Col1,Col6,Col8,Col9,Col10,Col7,Col11,Col12,Col13,Col16 WHERE Col13 IS NOT NULL", 
+    "SELECT * WHERE Col2<>'#01' ORDER BY Col4,Col5,Col6");
+     
+  //let dataset = clientSheetList.generateDataset("Staff Itinerary!StaffItinerary", "SELECT * WHERE Col1 IS NOT NULL ORDER BY Col4,Col5,Col6");
+  //let formula = `=${dataset}`;
   // https://developers.google.com/apps-script/reference/spreadsheet/range#setValue(Object)
-  Range.getByName("ImportedActivitiesQuery").nativeRange.setValue(formula);
+  //Range.getByName("RotaQuery").nativeRange.setValue(formula);
 }
 
 function onCoordinationSheetPeriodChanged() {
