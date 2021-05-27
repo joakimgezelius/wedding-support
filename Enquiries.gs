@@ -1,6 +1,6 @@
 const EnquiriesRangeName = "Enquiries";
-const TemplateClientSheetRangeName = "TemplateClientSheet";
 const ParamsSheetName = "Params";
+
 
 // Go through raw list of enquiries, 
 //  - find those that are work-in-progress
@@ -32,16 +32,27 @@ function onDraftSelectedEmail() {
   enquiries.selected.draftSelectedEmail();
 }
 
-// To Prepare Client Document Structure
+// To Prepare Client Document Structure for Small Weddings
 
-function onPrepareClientStructure() {
-  trace("onPrepareClientStructure");
-  let enquiries = new Enquiries;
-  enquiries.selected.prepareClientStructure();
+function onPrepareClientStructureSmallWedding() {
+  trace("onPrepareClientStructureSmallWedding");
+  let enquiries = new Enquiries;        
+  let sourceFolderId = "1lIUlRJFAxoVsOy_Tdmga9ZqzTWZGDDxr";                                              // Source - Client Template Small Weds
+  let templateClientSheetLinkCell = Range.getByName("TemplateClientSheetSmallWedding", ParamsSheetName); // Small wedding template reference
+  enquiries.selected.prepareClientStructure(sourceFolderId,templateClientSheetLinkCell);  
 }
 
+// To Prepare Client Document Structure for Large Weddings
 
-//================================================================================================
+function onPrepareClientStructureLargeWedding() {
+  trace("onPrepareClientStructureLargeWedding");
+  let enquiries = new Enquiries;
+  let sourceFolderId = "1EDg-xJDwsj-h68L_yFzuo5rVrHQHEB1t";                                              // Source - Client Template Large Weds
+  let templateClientSheetLinkCell = Range.getByName("TemplateClientSheetLargeWedding", ParamsSheetName); // Large weddingtemplate reference
+  enquiries.selected.prepareClientStructure(sourceFolderId,templateClientSheetLinkCell);
+}
+
+//========================================================================================================
 
 class Enquiries {
 
@@ -92,6 +103,7 @@ class Enquiries {
 
 //================================================================================================
 
+
 class Enquiry extends RangeRow {
   
   constructor(range) {
@@ -117,27 +129,33 @@ class Enquiry extends RangeRow {
     Browser.newTab(this.clientSheet.url);
   }
 
-  prepareClientStructure() {
+  prepareClientStructure(sourceFolderId,templateClientSheetLinkCell) {
     trace(`prepareClientStructure for ${this.trace}`);
-    let sourceFolderId = "1lIUlRJFAxoVsOy_Tdmga9ZqzTWZGDDxr";        // Source - Client Template
     let destinationFolderId = "19y3-Zou_RAWHZKaZ_5W_FJXql_Pz-gdd";   // Destination - W & E's
     let sourceFolder = Folder.getById(sourceFolderId);
     let destinationFolder = Folder.getById(destinationFolderId);    
     if (destinationFolder.folderExists(this.fileName) == true) {
       Dialog.notify("Client folder already exists","Please check the Weddings & Events Folder for more details.");      
     } else {
-      sourceFolder.copyTo(destinationFolder, this.fileName);      
-      let templateClientSheetLinkCell = Range.getByName("TemplateClientSheet", ParamsSheetName);
-      let templateClientSheetLink = templateClientSheetLinkCell.nativeRange.getRichTextValue().getLinkUrl();
-      trace(`Found SheetLink: ${templateClientSheetLink}`);
-      let templateSheetFile = File.getByUrl(templateClientSheetLink);
-      trace(`Found File: ${templateSheetFile.name}`);
-      let templateSheetDestination    
-      if ( templateSheetDestination ) {
-        Dialog.notify("Office Use found","Can Copy Here!");
-        //templateSheetFile.copyTo( ,this.fileName);  
+    Dialog.notify("Preparing the Structure", "Making the new Client Document Structure, This may take a few seconds...");
+    sourceFolder.copyTo(destinationFolder, this.fileName);    
+    let templateClientSheetLink = templateClientSheetLinkCell.nativeRange.getRichTextValue().getLinkUrl();
+    let templateSheetFile = File.getByUrl(templateClientSheetLink);
+    let clientFolder = DriveApp.getFoldersByName(this.fileName).next();     // Gets children of a current folder & have the folder with given name
+    let clientFolderLink = clientFolder.getUrl();                           // Gets the URL of newly created client folder structure
+    this.set("FolderLink",clientFolderLink);                                // Places the client folder link to the FolderLink Column
+    let targetFolderName = "Office Use";                                    // Folder name to copy the template file in it
+    let subFolder = DriveApp.getFoldersByName(targetFolderName).next();     // Gets children of a current folder & have the folder with given name
+    let subFolderId = subFolder.getId();                                    // Gets the id of children folder with given folder name
+    let targetFolder = Folder.getById(subFolderId);                         // Gets the folder by id to copy the template file in it
+    if (targetFolder) {
+       templateSheetFile.copyTo(targetFolder,this.fileName);
+       let newClientSheet = DriveApp.getFilesByName(this.fileName).next();  // Gets the file with given name
+       let newClientSheetLink = newClientSheet.getUrl();                    // Gets the URL of newly copied template file 
+       this.set("SheetLink",newClientSheetLink);                            // Places client sheet link to the SheetLink Column
+       Dialog.notify("Client Document Structure Created!", "Please check column Client Sheet & Client Folder for more details.");
       } else {
-        Dialog.notify("Folder not found","Office Use Folder does not exist.");
+        Dialog.notify("Folder not found","Office Use Folder does not exist! Couldn't make a copy of template sheet, please check source folder.");
       }
     }
   }

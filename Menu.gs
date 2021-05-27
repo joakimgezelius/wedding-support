@@ -77,8 +77,8 @@ function addRotaMenu() {
   trace("> Adding custom rota menu");
   let ui = SpreadsheetApp.getUi();
   ui.createMenu("Rota" + globalLibMenuTag)
-      .addItem("Update Rota Sheet", globalLibName + ".onUpdateRotaSheet")
-      .addItem("Update Coordination Sheet", globalLibName + ".onUpdateCoordinationSheet")
+      .addItem("Update Rota Sheet", globalLibName + ".onRotaSheetPeriodChanged")
+      .addItem("Update Coordination Sheet", globalLibName + ".onCoordinationSheetPeriodChanged")
       .addSeparator()
       .addItem("Perform some magic...", globalLibName + ".onPerformMagic")
       .addToUi();
@@ -105,7 +105,10 @@ function addEnqiriesMenu() {
       .addItem("Update Enquiries", globalLibName + ".onUpdateEnquiries")
       //.addItem("Create Quote/Client Sheet", globalLibName + ".onCreateNewClientSheet")
       .addItem("Open Quote/Client Sheet", globalLibName + ".onOpenClientSheet")
-      .addItem("Prepare Client Document Structure", globalLibName + ".onPrepareClientStructure")
+      .addSubMenu(ui.createMenu("Prepare New Client Document Structure")
+        .addItem("For Small Wedding", globalLibName + ".onPrepareClientStructureSmallWedding")
+        .addItem("For Large Wedding", globalLibName + ".onPrepareClientStructureLargeWedding")
+      )
       .addSeparator()
       .addSubMenu(ui.createMenu("Test")
         .addItem("Test Case 1", globalLibName + ".onTestCase1")
