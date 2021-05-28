@@ -74,7 +74,7 @@ class Spreadsheet {
 
   static get active() {
     return new Spreadsheet(SpreadsheetApp.getActiveSpreadsheet());
-  }
+  }  
 
   static openById(id) {
     trace(`> Spreadsheet.openById(${id})`);
@@ -92,6 +92,15 @@ class Spreadsheet {
     let spreadsheet = new Spreadsheet(newSpreadsheet);
     trace(`< Spreadsheet.openByUrl(${url}) --> ${spreadsheet.trace}`);
     return spreadsheet;
+  }
+
+  static setActiveSpreadsheet(newActiveSpreadsheet) {
+    trace(`> Spreadsheet.setActiveSpreadsheet(${newActiveSpreadsheet})`);
+    // https://developers.google.com/apps-script/reference/spreadsheet/spreadsheet-app#setActiveSpreadsheet(Spreadsheet)
+    let newSpreadSheet = SpreadsheetApp.setActiveSpreadsheet(newActiveSpreadsheet);
+    let spreadSheet = new Spreadsheet(newSpreadSheet);
+    trace(`< Spreadsheet.setActiveSpreadsheet(${newActiveSpreadsheet}) --> ${spreadsheet.trace}`);
+    return spreadSheet;
   }
 
   getRangeByName(rangeName, sheetName = "") {

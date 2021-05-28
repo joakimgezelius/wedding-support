@@ -1,6 +1,6 @@
 const EnquiriesRangeName = "Enquiries";
 const ParamsSheetName = "Params";
-
+const CoordinationSheetName = "Coordination";
 
 // Go through raw list of enquiries, 
 //  - find those that are work-in-progress
@@ -140,20 +140,24 @@ class Enquiry extends RangeRow {
     Dialog.notify("Preparing the Structure", "Making the new Client Document Structure, This may take a few seconds...");
     sourceFolder.copyTo(destinationFolder, this.fileName);    
     let templateClientSheetLink = templateClientSheetLinkCell.nativeRange.getRichTextValue().getLinkUrl();
-    let templateSheetFile = File.getByUrl(templateClientSheetLink);
+    let templateSheetFile = File.getByUrl(templateClientSheetLink);    
     let clientFolder = DriveApp.getFoldersByName(this.fileName).next();     // Gets children of a current folder & have the folder with given name
     let clientFolderLink = clientFolder.getUrl();                           // Gets the URL of newly created client folder structure
     this.set("FolderLink",clientFolderLink);                                // Places the client folder link to the FolderLink Column
     let targetFolderName = "Office Use";                                    // Folder name to copy the template file in it
-    let subFolder = DriveApp.getFoldersByName(targetFolderName).next();     // Gets children of a current folder & have the folder with given name
+    let subFolder = DriveApp.getFoldersByName(targetFolderName).next();     
     let subFolderId = subFolder.getId();                                    // Gets the id of children folder with given folder name
     let targetFolder = Folder.getById(subFolderId);                         // Gets the folder by id to copy the template file in it
     if (targetFolder) {
        templateSheetFile.copyTo(targetFolder,this.fileName);
        let newClientSheet = DriveApp.getFilesByName(this.fileName).next();  // Gets the file with given name
+       let newClientSheetId = newClientSheet.getId();                       // Returns the id of found file
+       let clientTemplate = SpreadsheetApp.openById(newClientSheetId);
+       SpreadsheetApp.setActiveSpreadsheet(clientTemplate);                 // Sets the active spreadsheet Confirmed W & E to new client sheet
+       Range.getByName("EventDetails",CoordinationSheetName).clear();      
        let newClientSheetLink = newClientSheet.getUrl();                    // Gets the URL of newly copied template file 
        this.set("SheetLink",newClientSheetLink);                            // Places client sheet link to the SheetLink Column
-       Dialog.notify("Client Document Structure Created!", "Please check column Client Sheet & Client Folder for more details.");
+       Dialog.notify("Client Document Structure Created!","Please check column Client Sheet & Client Folder for more details.");
       } else {
         Dialog.notify("Folder not found","Office Use Folder does not exist! Couldn't make a copy of template sheet, please check source folder.");
       }
