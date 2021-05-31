@@ -3,12 +3,16 @@
 function onRotaSheetPeriodChanged() {
   trace("onRotaSheetPeriodChanged");
   Dialog.notify("Period Changed", "Sheet will be recalculated, this may take a few seconds...");
-  let clientSheetList = new ClientSheetList; 
+  onUpdateRotaSheet();
+}
 
+function onUpdateRotaSheet() {
+  trace("onUpdateRotaSheet");
+  let clientSheetList = new ClientSheetList; 
   clientSheetList.setQuery("RotaQuery",
-    "SELECT '${eventName}',Col1,Col6,Col8,Col9,Col10,Col7,Col11,Col12,Col13,Col16 WHERE Col13 IS NOT NULL", 
-    "SELECT * WHERE Col2<>'#01' ORDER BY Col4,Col5,Col6");
-     
+    "SELECT '${eventName}',Col1,Col6,Col8,Col9,Col10,Col7,Col11,Col12,Col13,Col16 WHERE Col6='Transport' OR  Col6='Rota'", //Col13 IS NOT NULL", 
+    "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' ORDER BY Col4,Col5,Col6");
+   
   //let dataset = clientSheetList.generateDataset("Staff Itinerary!StaffItinerary", "SELECT * WHERE Col1 IS NOT NULL ORDER BY Col4,Col5,Col6");
   //let formula = `=${dataset}`;
   // https://developers.google.com/apps-script/reference/spreadsheet/range#setValue(Object)
@@ -18,35 +22,33 @@ function onRotaSheetPeriodChanged() {
 function onCoordinationSheetPeriodChanged() {
   trace("onCoordinationSheetPeriodChanged");
   Dialog.notify("Period Changed", "Sheet will be recalculated, this may take a few seconds...");
+  onUpdateCoordinationSheet();
+}
+
+function onUpdateCoordinationSheet() {
+  trace("onUpdateCoordinationSheet");
   let clientSheetList = new ClientSheetList;
-
   clientSheetList.setQuery("ThingstoOrderQuery",
-    "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col11,Col12,Col13,Col17,Col16 WHERE Col7='To Order'", 
-    "SELECT * WHERE Col2<>'#01' ORDER BY Col5");
-
+    "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col11,Col12,Col13,Col17,Col16 WHERE Col7='To Order' OR Col7='Ordered'", 
+    "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' ORDER BY Col5");
   clientSheetList.setQuery("ThingstoBuyQuery",
     "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col11,Col12,Col13,Col17,Col16 WHERE Col7='To Buy'", 
-    "SELECT * WHERE Col2<>'#01' ORDER BY Col5");
-
+    "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' ORDER BY Col5");
   clientSheetList.setQuery("TransportationQuery",
     "SELECT '${eventName}',Col1,Col6,Col8,Col9,Col10,Col7,Col11,Col12,Col13,Col16 WHERE Col6='Transport'", 
-    "SELECT * WHERE Col2<>'#01' ORDER BY Col4,Col5");
-
+    "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' ORDER BY Col4,Col5");
   clientSheetList.setQuery("ServicesQuery",
     "SELECT '${eventName}',Col1,Col6,Col8,Col9,Col10,Col7,Col11,Col12,Col13,Col16 WHERE Col6='Service'", 
-    "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' ORDER BY Col4,Col5");
-
+    "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' AND NOT LOWER(Col7) CONTAINS 'booked' AND NOT LOWER(Col7) CONTAINS 'confirmed'  ORDER BY Col1,Col4,Col5");
   clientSheetList.setQuery("ThingsInStoreQuery",
     "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col11,Col12,Col13,Col17,Col16 WHERE Col7 CONTAINS 'Spain'", 
-    "SELECT * WHERE Col2<>'#01' ORDER BY Col5");
-
+    "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' ORDER BY Col5");
   clientSheetList.setQuery("ThingsInShopQuery",
     "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col11,Col12,Col13,Col17,Col16 WHERE Col7 CONTAINS 'Shop'", 
-    "SELECT * WHERE Col2<>'#01' ORDER BY Col5");
-    
+    "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' ORDER BY Col5");
   clientSheetList.setQuery("RotaQuery",
-    "SELECT '${eventName}',Col1,Col6,Col8,Col9,Col10,Col7,Col11,Col12,Col13,Col16 WHERE Col13 IS NOT NULL", 
-    "SELECT * WHERE Col2<>'#01' ORDER BY Col4,Col5,Col6");
+    "SELECT '${eventName}',Col1,Col6,Col8,Col9,Col10,Col7,Col11,Col12,Col13,Col16 WHERE Col6='Transport' OR  Col6='Rota'", //Col13 IS NOT NULL", 
+    "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' ORDER BY Col4,Col5,Col6");
 }
 
 const ClientSheetListRangeName = "ClientSheetList";
@@ -71,7 +73,7 @@ class ClientSheetList {
 
   generateQueryFormula(sourceRangeName, innerQuery, outerQuery) {
     let dataset = this.generateDataset(sourceRangeName, innerQuery);
-    let queryFormula = `=QUERY(${dataset}, "${outerQuery}", 0)`;
+    let queryFormula = `=IFERROR(QUERY(${dataset}, "${outerQuery}", 0))`;
     trace(`ClientSheetList.generateQueryFormula -> ${queryFormula}`);
     return queryFormula;
   }
