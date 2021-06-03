@@ -47,7 +47,7 @@ function onUpdateCoordinationSheet() {
     "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col11,Col12,Col13,Col17,Col16 WHERE Col7 CONTAINS 'Shop'", 
     "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' ORDER BY Col5");
   clientSheetList.setQuery("RotaQuery",
-    "SELECT '${eventName}',Col1,Col6,Col8,Col9,Col10,Col7,Col11,Col12,Col13,Col16 WHERE Col6='Transport' OR  Col6='Rota'", //Col13 IS NOT NULL", 
+    "SELECT '${eventName}',Col1,Col6,Col8,Col9,Col10,Col7,Col11,Col12,Col13,Col16 WHERE Col6='Transport' OR Col6='Rota' OR Col6='To Buy'", //Col13 IS NOT NULL", 
     "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' ORDER BY Col4,Col5,Col6");
 }
 
