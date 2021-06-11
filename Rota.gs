@@ -18,14 +18,14 @@ function onRotaSheetPeriodChanged() {
 function onCoordinationSheetPeriodChanged() {
   trace("onCoordinationSheetPeriodChanged");
   Dialog.notify("Period Changed", "Sheet will be recalculated, this may take a few seconds...");
-  let clientSheetList = new ClientSheetList;
+  let clientSheetList = new ClientSheetList;  
 
-  clientSheetList.setQuery("ThingstoOrderQuery",
-    "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col11,Col12,Col13,Col17,Col16 WHERE Col7='To Order'", 
+  clientSheetList.setQuery("ThingsToOrderQuery",
+    "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col11,Col12,Col13,Col17,Col16 WHERE Col7='To Order' OR Col7='Ordered'", 
     "SELECT * WHERE Col2<>'#01' ORDER BY Col5");
 
-  clientSheetList.setQuery("ThingstoBuyQuery",
-    "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col11,Col12,Col13,Col17,Col16 WHERE Col7='To Buy'", 
+  clientSheetList.setQuery("ThingsToBuyQuery",
+    "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col11,Col12,Col13,Col17,Col16 WHERE Col6='Stock to Buy' OR Col7='To Buy'", 
     "SELECT * WHERE Col2<>'#01' ORDER BY Col5");
 
   clientSheetList.setQuery("TransportationQuery",
@@ -45,8 +45,22 @@ function onCoordinationSheetPeriodChanged() {
     "SELECT * WHERE Col2<>'#01' ORDER BY Col5");
     
   clientSheetList.setQuery("RotaQuery",
-    "SELECT '${eventName}',Col1,Col6,Col8,Col9,Col10,Col7,Col11,Col12,Col13,Col16 WHERE Col13 IS NOT NULL", 
-    "SELECT * WHERE Col2<>'#01' ORDER BY Col4,Col5,Col6");
+    "SELECT '${eventName}',Col1,Col6,Col8,Col9,Col10,Col7,Col11,Col12,Col13,Col16 WHERE Col6='Transport' OR Col6='Rota'", 
+    "SELECT * WHERE Col2<>'#01' ORDER BY Col4,Col5,Col6");  
+
+  clientSheetList.setQuery("HotelReservationsQuery",
+    "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col12,Col14,Col17,Col27,Col16 WHERE Col6='Hotel'", 
+    "SELECT * WHERE Col2<>'#01' ORDER BY Col5");
+}
+
+function onDecorSheetPeriodChanged() {
+  trace("onDecorSheetPeriodChanged");
+  Dialog.notify("Period Changed", "Sheet will be recalculated, this may take a few seconds...");
+  let clientSheetList = new ClientSheetList; 
+
+  clientSheetList.setQuery("DecorQuery",
+    "SELECT '${eventName}',Col1,Col6,Col7,Col11,Col12,Col16,Col18,Col20,Col21,Col22,Col23,Col24,Col25,Col26,Col27,Col28 WHERE Col2=true ORDER BY   Col16",
+    "SELECT * WHERE Col2<>'#01' ORDER BY Col4,Col5");
 }
 
 const ClientSheetListRangeName = "ClientSheetList";

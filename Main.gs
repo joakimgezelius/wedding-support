@@ -26,6 +26,18 @@ function onRotaSheetOpen(libName) {
   addRotaMenu(); // in Menu.gs
 }
 
+function onDecorSheetOpen(libName) {
+  trace(`onDecorSheetOpen globalLibName=${libName}`);
+  globalLibName = libName;
+  addDecorPriceListMenu(); // in Menu.gs
+}
+
+function onShopSalesSheetOpen(libName) {
+  trace(`onShopSalesSheetOpen globalLibName=${libName}`);
+  globalLibName = libName;
+  addShopSalesListMenu(); // in Menu.gs
+}
+
 function onQuoteSheetOpen(libName) {
   trace(`onQuoteSheetOpen globalLibName=${libName}`);
   globalLibName = libName;

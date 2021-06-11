@@ -25,11 +25,18 @@ class Folder {
     return folder;
   }
 
-  static getFoldersByName(name) {
-    trace(`> Folder.getFoldersByName(${name})`);
-    let folder = DriveApp.getFoldersByName(name).next();
-    trace(`< Folder.getFoldersByName(${name})`);
-    return folder;
+  getFolderByName(name) {
+    // https://developers.google.com/apps-script/reference/drive/folder#getFoldersByName(String)
+    trace(`getFoldersByName(${name}) in ${this.trace}`);
+    let folder = new Folder(this.nativeFolder.getFoldersByName(name));
+    return  folder;
+  }
+  
+  getFileByName(name) {
+    // https://developers.google.com/apps-script/reference/drive/folder#getFilesByName(String)
+    trace(`getFilesByName(${name}) in ${this.trace}`);
+    let file = new Folder(this.nativeFolder.getFilesByName(name));
+    return file;
   }
 
   fileExists(name) {
@@ -46,17 +53,6 @@ class Folder {
     let result = (folders.hasNext()) ? true : false;
     trace(`folderExists(${name}) in ${this.trace} --> ${result}`);
     return result;
-  }
-
-  subFolderExists() {     //recursively checks for the subfolders
-    // https://developers.google.com/apps-script/reference/drive/folder#getfolders
-    let subFolders =  this.nativeFolder.getFolders();
-    while (subFolders.hasNext()) {                     
-      let subFolder = new Folder(subFolders.next());    
-      trace(`  found subfolder: ${subFolder.name}`);
-      subFolder.subFolderExists();
-    }
-    trace(`Folder.subFolderExists ${this.trace}`);
   }
 
   copyTo(destination, name = this.name) {
@@ -87,6 +83,13 @@ class Folder {
       trace(`  found file: ${file.name}`);
       file.recursiveWalk();
     } 
+    // https://developers.google.com/apps-script/reference/drive/folder#getfolders
+    let subFolders =  this.nativeFolder.getFolders();
+    while (subFolders.hasNext()) {                     
+      let subFolder = new Folder(subFolders.next());    
+      trace(`  found subfolder: ${subFolder.name}`);
+      subFolder.recursiveWalk();
+    }
     trace(`< Folder.recursiveWalk ${this.trace}`);   
   }
 
@@ -101,7 +104,7 @@ class Folder {
   get parents()      { return this.nativeFolder.getParents(); }
   get parent()       { return new Folder(this.parents.next()); }  
   get id()           { return this.nativeFolder.getId(); }
-  get name()         { return this.nativeFolder.getName() };
+  get name()         { return this.nativeFolder.getName(); }
   get trace()        { return this._trace; }
 
 } // Folder
@@ -137,13 +140,6 @@ class File {
   static getIdFromUrl(url) {
     return url.match(/[-\w]{25,}/);   //returns the file/folder id with regular expression
   }  
-
-  static getFilesByName(name) {
-    trace(`> File.getFilesByName(${name})`);
-    let file = DriveApp.getFilesByName(name).next();
-    trace(`< File.getFilesByName(${name})`);
-    return file;
-  }
   
   copyTo(folder, newName = this.name) {
     trace(`Making copy of ${this.trace} in ${folder.name}, new name: "${newName}"`);

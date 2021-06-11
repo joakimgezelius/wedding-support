@@ -94,13 +94,11 @@ class Spreadsheet {
     return spreadsheet;
   }
 
-  static setActiveSpreadsheet(newActiveSpreadsheet) {
-    trace(`> Spreadsheet.setActiveSpreadsheet(${newActiveSpreadsheet})`);
+  setActive() {
+    trace(`> Spreadsheet.setActiveSpreadsheet(${this.trace})`);
     // https://developers.google.com/apps-script/reference/spreadsheet/spreadsheet-app#setActiveSpreadsheet(Spreadsheet)
-    let newSpreadSheet = SpreadsheetApp.setActiveSpreadsheet(newActiveSpreadsheet);
-    let spreadSheet = new Spreadsheet(newSpreadSheet);
-    trace(`< Spreadsheet.setActiveSpreadsheet(${newActiveSpreadsheet}) --> ${spreadsheet.trace}`);
-    return spreadSheet;
+    SpreadsheetApp.setActiveSpreadsheet(this.nativeSpreadheet);
+    trace(`< Spreadsheet.setActiveSpreadsheet`);
   }
 
   getRangeByName(rangeName, sheetName = "") {

@@ -85,6 +85,29 @@ function addRotaMenu() {
   trace("< Custom rota menu added");
 }
 
+function addDecorPriceListMenu() {
+  trace("> Adding custom decor price list menu");
+  let ui = SpreadsheetApp.getUi();
+  ui.createMenu("Decor" + globalLibMenuTag)
+      .addItem("Update Decor Price List", globalLibName + ".onDecorSheetPeriodChanged")
+      .addSeparator()
+      .addItem("Perform some magic...", globalLibName + ".onPerformMagic")
+      .addToUi();
+  trace("< Custom decor price list menu added");
+}
+
+function addShopSalesListMenu() {
+  trace("> Adding custom shop sales & stock list menu");
+  let ui = SpreadsheetApp.getUi();
+  ui.createMenu("Shop (Sales & Stock)" + globalLibMenuTag)
+      .addItem("Update Daily Sales", globalLibName + ".onUpdateDailySales")
+      .addItem("Update Shop Stock", globalLibName + ".onUpdateShopStock")
+      .addSeparator()
+      .addItem("Perform some magic...", globalLibName + ".onPerformMagic")
+      .addToUi();
+  trace("< Custom shop sales & stock list menu added");
+}
+
 function addQuoteMenu() {
   trace("> Adding custom quote menu");
   let ui = SpreadsheetApp.getUi();
