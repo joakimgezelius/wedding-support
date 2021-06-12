@@ -6,60 +6,50 @@
 //  ScriptID (Jithin): 1mXJiRin063xGwitgWu-0-rUepMTe_GTO1A-oJ5vJnTtIlZLZPnVhpd76
 //  ScriptID (Shaikh): 1uWdnau49TWbINbe_I4eY_JJDswE_J2hQiEB-iKu35-DpdIJf0-EdOn6P
 
-globalLibName = "Undefined";
-globalLibMenuTag = "";
+globalLibMenuTag = ""; // Set to unique value for each library, e.g. " (Shaikh)"
 
-function onOpen() { // For backward compatibility
-  trace(`onOpen globalLibName=${globalLibName}`);
-  addWeddingMenu();
-}
-
-function onWeddingSheetOpen(libName) { // onWeddingSheetOpen("WedLib");
-  trace(`onWeddingSheetOpen globalLibName=${libName}`);
-  globalLibName = libName;
-  addWeddingMenu();
+function onWeddingSheetOpen(libName) {
+  trace(`onWeddingSheetOpen libName=${libName}`);
+  Menu.addEventMenu(libName);
 }
 
 function onRotaSheetOpen(libName) {
-  trace(`onRotaSheetOpen globalLibName=${libName}`);
-  globalLibName = libName;
-  addRotaMenu(); // in Menu.gs
+  trace(`onRotaSheetOpen libName=${libName}`);
+  Menu.addRotaMenu(libName);
+}
+
+function onEventCoordinationSheetOpen(libName) {
+  trace(`onEventCoordinationSheetOpen libName=${libName}`);
+  Menu.addEventCoordinationMenu(libName);
 }
 
 function onDecorSheetOpen(libName) {
-  trace(`onDecorSheetOpen globalLibName=${libName}`);
-  globalLibName = libName;
-  addDecorPriceListMenu(); // in Menu.gs
+  trace(`onDecorSheetOpen libName=${libName}`);
+  Menu.addDecorPriceListMenu(libName);
 }
 
 function onShopSalesSheetOpen(libName) {
-  trace(`onShopSalesSheetOpen globalLibName=${libName}`);
-  globalLibName = libName;
-  addShopSalesListMenu(); // in Menu.gs
+  trace(`onShopSalesSheetOpen libName=${libName}`);
+  Menu.addShopSalesListMenu(libName);
 }
 
 function onQuoteSheetOpen(libName) {
-  trace(`onQuoteSheetOpen globalLibName=${libName}`);
-  globalLibName = libName;
-  addQuoteMenu();
+  trace(`onQuoteSheetOpen libName=${libName}`);
+  Menu.addQuoteMenu(libName);
 }
 
 function onEnqiriesSheetOpen(libName) {
-  trace(`onEnqiriesSheetOpen globalLibName=${libName}`);
-  globalLibName = libName;
-  addEnqiriesMenu();
+  trace(`onEnqiriesSheetOpen libName=${libName}`);
+  Menu.addEnqiriesMenu(libName);
 }
 
 function onWeddingPackagesSheetOpen(libName) {
-  trace(`onWeddingPackagesSheetOpen globalLibName=${libName}`);
-  globalLibName = libName;
-  addWeddingPackagesMenu();
+  trace(`onWeddingPackagesSheetOpen libName=${libName}`);
+  Menu.addWeddingPackagesMenu(libName);
 }
 
 function onProductsSheetOpen(libName) {
-  trace(`onProductsSheetOpen globalLibName=${libName}`);
-  globalLibName = libName;
-  addProductsSheetMenu();
-  addWeddingMenu();
-  //
+  trace(`onProductsSheetOpen libName=${libName}`);
+  Menu.addProductsSheetMenu(libName);
+  Menu.addWeddingMenu(libName);
 }

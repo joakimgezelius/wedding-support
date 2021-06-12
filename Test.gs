@@ -13,16 +13,25 @@
 function onTestCase1() {
   trace("onTestCase1");
   let srcFolderId = "10XxkUmEccJ73aKaznSZITiqx2BvaBPJz";    //  Client Template/Office Use
-  let dstFolderId = "19y3-Zou_RAWHZKaZ_5W_FJXql_Pz-gdd";    //  W & E's
-  weddingEventsFolder.recursiveWalk();
+  //let sampleFolderId = "0B0i74Z2VzsKXNjdSUzIyZ0dSRjg";      // W & E's
+  let sampleFolderId = "1SL8IXZ3bvU62yHXQTycUMKmD29F5tylT"; // 2020
+  let folder = Folder.getById(sampleFolderId);
+  let file1 = folder.getFile("Wedding Docs.pdf");
+  let file2 = folder.getFile("foo");
+  let folder1 = folder.getSubfolder("Welcome gift bag for couples");
+  let folder2 = folder.getSubfolder("foo");
+  folder.recursiveWalk();
 }
 
 function onTestCase2() {
   trace("onTestCase2");
-  let clientTemplateFolderId = "1lIUlRJFAxoVsOy_Tdmga9ZqzTWZGDDxr";
-  let clientTemplateFolder = Folder.getById(clientTemplateFolderId);
+  let user = User.active;
+  trace("try again");
+  user = User.active;
+  //let clientTemplateFolderId = "1lIUlRJFAxoVsOy_Tdmga9ZqzTWZGDDxr";
+  //let clientTemplateFolder = Folder.getById(clientTemplateFolderId);
   //clientTemplateFolder.listFiles();
-  clientTemplateFolder.recursiveWalk();
+  //clientTemplateFolder.recursiveWalk();
 }
 
 function onTestCase3() {
@@ -34,7 +43,3 @@ function onTestCase3() {
   //sourceFolder.listFolders();
   sourceFolder.copyTo(destinationFolder, "New Name");
 }
-
-
-
-

@@ -3,7 +3,7 @@
 //
 class Folder {
   
-  constructor (nativeFolder) {
+  constructor(nativeFolder) {
     this._nativeFolder = nativeFolder;
     this._trace = `{Folder ${this.id} "${this.name}"}`;
     trace(`NEW ${this.trace}`);
@@ -25,17 +25,19 @@ class Folder {
     return folder;
   }
 
-  getFolderByName(name) {
+  getSubfolder(name) { // NOTE: we assume there is at most one subfolder with the given name in the folder
     // https://developers.google.com/apps-script/reference/drive/folder#getFoldersByName(String)
-    trace(`getFoldersByName(${name}) in ${this.trace}`);
-    let folder = new Folder(this.nativeFolder.getFoldersByName(name));
-    return  folder;
+    let nativeFolderIterator = this.nativeFolder.getFoldersByName(name);
+    let subfolder = (nativeFolderIterator.hasNext()) ? new Folder(nativeFolderIterator.next()) : null;
+    trace(`getSubfolder(${name}) in ${this.trace} --> ${subfolder === null ? "null (not found)" : subfolder.trace}`);
+    return  subfolder;
   }
   
-  getFileByName(name) {
+  getFile(name) { // NOTE: we assume there is at most one file with the given name in the folder
     // https://developers.google.com/apps-script/reference/drive/folder#getFilesByName(String)
-    trace(`getFilesByName(${name}) in ${this.trace}`);
-    let file = new Folder(this.nativeFolder.getFilesByName(name));
+    let nativeFileIterator = this.nativeFolder.getFilesByName(name);
+    let file = (nativeFileIterator.hasNext()) ? new File(nativeFileIterator.next()) : null;
+    trace(`getFile(${name}) in ${this.trace} --> ${file === null ? "null (not found)" : file.trace}`);
     return file;
   }
 
@@ -74,14 +76,13 @@ class Folder {
     return copy;
   }
 
-  recursiveWalk() {   // For the Files
+  recursiveWalk() {
     trace(`> Folder.recursiveWalk ${this.trace}`);    
     // https://developers.google.com/apps-script/reference/drive/folder#getFiles()
     let files = this.nativeFolder.getFiles();
     while (files.hasNext()) {                 // Determines whether calling next() will return an item.
       let file = new File(files.next());      // Gets the next item in the collection of files.
       trace(`  found file: ${file.name}`);
-      file.recursiveWalk();
     } 
     // https://developers.google.com/apps-script/reference/drive/folder#getfolders
     let subFolders =  this.nativeFolder.getFolders();

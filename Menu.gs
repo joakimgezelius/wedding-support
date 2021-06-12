@@ -1,186 +1,186 @@
-function addWeddingMenu() {
-  trace("> Adding custom wedding menu");
-  let ui = SpreadsheetApp.getUi();
-  ui.createMenu("Event" + globalLibMenuTag)      
-      //.addItem("Clear Sheet", globalLibName + ".onClearSheet")
+class Menu {
+
+  static addEventMenu(libName) {
+    trace("> Adding custom event menu");
+    let ui = SpreadsheetApp.getUi();
+    ui.createMenu("Event" + globalLibMenuTag)
+      //.addItem("Clear Sheet", libName + ".onClearSheet")
       //.addSeparator()
-      //.addItem("Pull Client Information", globalLibName + ".onPullClientInformation") // in client.gs
+      //.addItem("Pull Client Information", libName + ".onPullClientInformation") // in client.gs
       //.addSeparator()
-      .addItem("Update Coordinator (no over-writes)", globalLibName + ".onUpdateCoordinator")
-      .addItem("Force-Update Coordinator - over-writes data", globalLibName + ".onUpdateCoordinatorForced")
-      //.addItem("Check Coordinator", globalLibName + ".onCheckCoordinator")
-      .addItem("Update Budget", globalLibName + ".onUpdateBudget")
-      .addItem("Update Client Itinerary", globalLibName + ".onUpdateClientItinerary") // In itinerary.gs
-      .addItem("Update Decor Sumamry", globalLibName + ".onUpdateDecorSummary")
-      .addItem("Update Account Summary", globalLibName + ".onUpdateAccountSummary")
-      .addItem("Update Supplier Costing", globalLibName + ".onUpdateSupplierCosting")
-      .addItem("Update Supplier Itinerary", globalLibName + ".onUpdateSupplierItinerary")
-      //.addItem("Update Staff Itinerary", globalLibName + ".onUpdateStaffItinerary")
-      //.addItem("Update Rota", globalLibName + ".onUpdateRota")
+      .addItem("Update Coordinator (no over-writes)", libName + ".onUpdateCoordinator")
+      .addItem("Force-Update Coordinator - over-writes data", libName + ".onUpdateCoordinatorForced")
+      //.addItem("Check Coordinator", libName + ".onCheckCoordinator")
+      .addItem("Update Budget", libName + ".onUpdateBudget")
+      .addItem("Update Client Itinerary", libName + ".onUpdateClientItinerary") // In itinerary.gs
+      .addItem("Update Decor Sumamry", libName + ".onUpdateDecorSummary")
+      .addItem("Update Account Summary", libName + ".onUpdateAccountSummary")
+      .addItem("Update Supplier Costing", libName + ".onUpdateSupplierCosting")
+      .addItem("Update Supplier Itinerary", libName + ".onUpdateSupplierItinerary")
+      //.addItem("Update Staff Itinerary", libName + ".onUpdateStaffItinerary")
+      //.addItem("Update Rota", libName + ".onUpdateRota")
       .addSeparator()
-      .addItem("Update Exchange Rates", globalLibName + ".onUpdateExchangeRates")
+      .addItem("Update Exchange Rates", libName + ".onUpdateExchangeRates")
       .addSeparator()
       .addSubMenu(ui.createMenu("Prices")
-                  .addItem("Import price list", globalLibName + ".onImportPriceList")
-                  .addItem("tbd...", globalLibName + ".onImportPriceList")
+                  .addItem("Import price list", libName + ".onImportPriceList")
+                  .addItem("tbd...", libName + ".onImportPriceList")
                   )
       .addSeparator()
-      //.addItem("Create New Client Sheet", globalLibName + ".onCreateNewClientSheet")
-      .addItem("Apply Format Template", globalLibName + ".onApplyFormat")    // In SheetFormat.gs
-      .addItem("Format Coordinator", globalLibName + ".onFormatCoordinator")
-      .addSeparator()
-      .addSubMenu(ui.createMenu("Email")
-                  .addItem("Prepare client email draft 1", globalLibName + ".onCreateFirstEmailDraft")
-                  .addItem("Send client email 1", globalLibName + ".onSendFirstEmail")
-                  )
-//    .addSubMenu(ui.createMenu("Tasks")
-//                  .addItem("Small Wedding", globalLibName + ".onShowSmallWeddingTasks")
-//                  .addItem("Big Wedding", globalLibName + ".onShowBigWeddingTasks")
-//                  .addItem("Show All", globalLibName + ".onShowAllTasks")
+      //.addItem("Create New Client Sheet", libName + ".onCreateNewClientSheet")
+      .addItem("Apply Format Template", libName + ".onApplyFormat")    // In SheetFormat.gs
+      .addItem("Format Coordinator", libName + ".onFormatCoordinator");
+//      .addSeparator()
+//      .addSubMenu(ui.createMenu("Email")
+//                  .addItem("Prepare client email draft 1", libName + ".onCreateFirstEmailDraft")
+//                  .addItem("Send client email 1", libName + ".onSendFirstEmail")
 //                  )
-      .addSeparator()
-      .addSubMenu(ui.createMenu("Helpers")
-                  .addItem("Reverse Mark-up Calculations", globalLibName + ".onReverseMarkupCalculations")
-                  .addItem("Set Colour", globalLibName + ".onSetColour")
-                  .addItem("Test Case 1", globalLibName + ".onTestCase1")
-                  .addItem("Test Case 2", globalLibName + ".onTestCase2")
-                  )
-      .addToUi();
-  trace("< Custom wedding menu added");
+//    .addSubMenu(ui.createMenu("Tasks")
+//                  .addItem("Small Wedding", libName + ".onShowSmallWeddingTasks")
+//                  .addItem("Big Wedding", libName + ".onShowBigWeddingTasks")
+//                  .addItem("Show All", libName + ".onShowAllTasks")
+//                  )
+  Menu.addTestItems(libName, menu).addToUi();
+  trace("< Custom event menu added");
 }
 
-function addTestMenu() {
-  trace("> Adding custom test menu");
-  let ui = SpreadsheetApp.getUi();
-  ui.createMenu("Test" + globalLibMenuTag)
-    .addItem("Update Dynamic Itinerary", "Event.onUpdateDynamicItinerary")
+static addTestMenu(libName) {
+  trace("> Adding custom test menu if user is developer");
+  if (User.active.isDeveloper) {
+    let ui = SpreadsheetApp.getUi();
+    ui.createMenu("Test" + globalLibMenuTag)
 /*
     .addSubMenu(ui.createMenu("Testing")
-      .addItem("Clear", globalLibName + ".onClearCoordinatorSummary")
-      .addItem("List All Sheets", globalLibName + ".onListAllSheets")
-      .addItem("List Coordinator Sheets", globalLibName + ".onListCoordinatorSheets")
-      .addItem("Test Coordinator Summary", globalLibName + ".onUpdateCoordinatorSummary")
-      .addItem("Show Details", globalLibName + ".onShowDetails")
-      .addItem("Hide Details", globalLibName + ".onHideDetails")
+      .addItem("Clear", libName + ".onClearCoordinatorSummary")
+      .addItem("List All Sheets", libName + ".onListAllSheets")
+      .addItem("List Coordinator Sheets", libName + ".onListCoordinatorSheets")
+      .addItem("Test Coordinator Summary", libName + ".onUpdateCoordinatorSummary")
+      .addItem("Show Details", libName + ".onShowDetails")
+      .addItem("Hide Details", libName + ".onHideDetails")
       .addSeparator()
-    )
-    .addSubMenu(ui.createMenu("Log")
-      .addItem("View", globalLibName + ".onLogView")
-      .addItem("Clear", globalLibName + ".onLogClear")
     )
     */
-    .addToUi();
-  trace("< Custom  test menu added");
+      .addToUi();
+    trace("< Custom  test menu added");
+  }
 }
 
-function addRotaMenu() {
+static addEventCoordinationMenu(libName) {
+  trace("> Adding custom event coordination menu");
+  let ui = SpreadsheetApp.getUi();
+  let menu = ui.createMenu("Events" + globalLibMenuTag)
+      .addItem("Update Coordination Sheet", libName + ".onUpdateCoordinationSheet");
+  Menu.addTestItems(libName, menu).addToUi();
+  trace("< Custom event coordination menu added");
+}
+
+static addRotaMenu(libName) {
   trace("> Adding custom rota menu");
   let ui = SpreadsheetApp.getUi();
-  ui.createMenu("Rota" + globalLibMenuTag)
-      .addItem("Update Rota Sheet", globalLibName + ".onUpdateRotaSheet")
-      .addItem("Update Coordination Sheet", globalLibName + ".onUpdateCoordinationSheet")
-      .addSeparator()
-      .addItem("Perform some magic...", globalLibName + ".onPerformMagic")
-      .addToUi();
+  let menu = ui.createMenu("Rota" + globalLibMenuTag)
+      .addItem("Update Rota Sheet", libName + ".onUpdateRotaSheet");
+  Menu.addTestItems(libName, menu).addToUi();
   trace("< Custom rota menu added");
 }
 
-function addDecorPriceListMenu() {
+static addDecorPriceListMenu(libName) {
   trace("> Adding custom decor price list menu");
   let ui = SpreadsheetApp.getUi();
   ui.createMenu("Decor" + globalLibMenuTag)
-      .addItem("Update Decor Price List", globalLibName + ".onDecorSheetPeriodChanged")
-      .addSeparator()
-      .addItem("Perform some magic...", globalLibName + ".onPerformMagic")
-      .addToUi();
+      .addItem("Update Decor Price List", libName + ".onDecorSheetPeriodChanged");
+  Menu.addTestItems(libName, menu).addToUi();
   trace("< Custom decor price list menu added");
 }
 
-function addShopSalesListMenu() {
+static addShopSalesListMenu(libName) {
   trace("> Adding custom shop sales & stock list menu");
   let ui = SpreadsheetApp.getUi();
   ui.createMenu("Shop (Sales & Stock)" + globalLibMenuTag)
-      .addItem("Update Daily Sales", globalLibName + ".onUpdateDailySales")
-      .addItem("Update Shop Stock", globalLibName + ".onUpdateShopStock")
-      .addSeparator()
-      .addItem("Perform some magic...", globalLibName + ".onPerformMagic")
-      .addToUi();
+      .addItem("Update Daily Sales", libName + ".onUpdateDailySales")
+      .addItem("Update Shop Stock", libName + ".onUpdateShopStock");
+  Menu.addTestItems(libName, menu).addToUi();
   trace("< Custom shop sales & stock list menu added");
 }
 
-function addQuoteMenu() {
+static addQuoteMenu(libName) {
   trace("> Adding custom quote menu");
   let ui = SpreadsheetApp.getUi();
   ui.createMenu("Quote" + globalLibMenuTag)
-      .addItem("Update Quote", globalLibName + ".onUpdateQuote")
+      .addItem("Update Quote", libName + ".onUpdateQuote")
       .addSeparator()
-      .addItem("Create Estimate Summary", globalLibName + ".onCreateEstimateSummary")
-      .addSeparator()
-      .addItem("Perform some magic...", globalLibName + ".onPerformMagic")
-      .addToUi();
+      .addItem("Create Estimate Summary", libName + ".onCreateEstimateSummary");
+  Menu.addTestItems(libName, menu).addToUi();
   trace("< Custom quote menu added");
 }
 
-function addEnqiriesMenu() {
+static addEnqiriesMenu(libName) {
   trace("> Adding custom enquiries menu");
   let ui = SpreadsheetApp.getUi();
   ui.createMenu("Enquiries" + globalLibMenuTag)
-      .addItem("Update Enquiries", globalLibName + ".onUpdateEnquiries")
-      //.addItem("Create Quote/Client Sheet", globalLibName + ".onCreateNewClientSheet")
-      .addItem("Open Quote/Client Sheet", globalLibName + ".onOpenClientSheet")
+      .addItem("Update Enquiries", libName + ".onUpdateEnquiries")
+      //.addItem("Create Quote/Client Sheet", libName + ".onCreateNewClientSheet")
+      .addItem("Open Quote/Client Sheet", libName + ".onOpenClientSheet")
       .addSubMenu(ui.createMenu("Prepare New Client Document Structure")
-        .addItem("For Small Wedding", globalLibName + ".onPrepareClientStructureSmallWedding")
-        .addItem("For Large Wedding", globalLibName + ".onPrepareClientStructureLargeWedding")
+        .addItem("For Small Wedding", libName + ".onPrepareClientStructureSmallWedding")
+        .addItem("For Large Wedding", libName + ".onPrepareClientStructureLargeWedding")
       )
       .addSeparator()
       .addSubMenu(ui.createMenu("Test")
-        .addItem("Test Case 1", globalLibName + ".onTestCase1")
-        .addItem("Test Case 2", globalLibName + ".onTestCase2")
-        .addItem("Test Case 3", globalLibName + ".onTestCase3")
+        .addItem("Test Case 1", libName + ".onTestCase1")
+        .addItem("Test Case 2", libName + ".onTestCase2")
+        .addItem("Test Case 3", libName + ".onTestCase3")
       )
       .addToUi();
   trace("< Custom enquiries menu added");
 }
 
-function addWeddingPackagesMenu() {
-  trace("> Adding custom wedding packages menu");
-  let ui = SpreadsheetApp.getUi();
-  ui.createMenu("Prices & Packages" + globalLibMenuTag)
-      .addItem("Refresh Price List", globalLibName + ".onRefreshPriceList")
-      .addItem("Update Packages", globalLibName + ".onUpdatePackages")
-      .addToUi();
-  trace("< Custom wedding packages menu added");
-}
+  static addWeddingPackagesMenu(libName) {
+    trace("> Adding custom wedding packages menu");
+    let ui = SpreadsheetApp.getUi();
+    ui.createMenu("Prices & Packages" + globalLibMenuTag)
+        .addItem("Refresh Price List", libName + ".onRefreshPriceList")
+        .addItem("Update Packages", libName + ".onUpdatePackages")
+        .addToUi();
+    trace("< Custom wedding packages menu added");
+  }
 
-function addEmailMenu() {
-  trace("> Adding custom email menu");
-  let ui = SpreadsheetApp.getUi();
-  let menu = ui.createMenu("Email" + globalLibMenuTag)
-  .addItem("Draft selected email", globalLibName + ".onDraftSelectedEmail")
-  .addSeparator();
-  EmailTemplateList.singleton.populateMenu(menu)
-  .addToUi();
-  trace("< Custom email menu added");
-}
+  static addEmailMenu(libName) {
+    trace("> Adding custom email menu");
+    let ui = SpreadsheetApp.getUi();
+    let menu = ui.createMenu("Email" + globalLibMenuTag)
+    .addItem("Draft selected email", libName + ".onDraftSelectedEmail")
+    .addSeparator();
+    EmailTemplateList.singleton.populateMenu(menu)
+    .addToUi();
+    trace("< Custom email menu added");
+  }
 
-addProductsSheetMenu
-function addProductsSheetMenu() {
-  trace("> Adding custom products menu");
-  let ui = SpreadsheetApp.getUi();
-  ui.createMenu("Products" + globalLibMenuTag)
-      .addItem("Refresh Price List", globalLibName + ".onRefreshPriceList")
-      .addItem("Update Packages", globalLibName + ".onUpdatePackages")
-      .addSubMenu(ui.createMenu("Export")
-                  .addItem("Clear Export Area", globalLibName + ".onPriceListClearExport")
-                  .addItem("Clear Selection Ticks", globalLibName + ".onPriceListClearSelectionTicks")
-                  .addItem("Export Ticked Items", globalLibName + ".onPriceListExportTicked")
-                  .addItem("Export Marked Items", globalLibName + ".onPriceListExportSelection")
-                  )
-      .addSubMenu(ui.createMenu("Helpers")
-                  .addItem("Test Case 1", globalLibName + ".onTestCase1")
-                  .addItem("Test Case 2", globalLibName + ".onTestCase2")
-                  )
-      .addToUi();
-  trace("< Custom products menu added");
+  static addProductsSheetMenu(libName) {
+    trace("> Adding custom products menu");
+    let ui = SpreadsheetApp.getUi();
+    let menu = ui.createMenu("Products" + globalLibMenuTag)
+        .addItem("Refresh Price List", libName + ".onRefreshPriceList")
+        .addItem("Update Packages", libName + ".onUpdatePackages")
+        .addSubMenu(ui.createMenu("Export")
+                    .addItem("Clear Export Area", libName + ".onPriceListClearExport")
+                    .addItem("Clear Selection Ticks", libName + ".onPriceListClearSelectionTicks")
+                    .addItem("Export Ticked Items", libName + ".onPriceListExportTicked")
+                    .addItem("Export Marked Items", libName + ".onPriceListExportSelection")
+                    );
+    Menu.addTestItems(libName, menu).addToUi();
+    trace("< Custom products menu added");
+  }
+
+  static addTestItems(libName, menu) {
+    return /*User.active.isDeveloper*/ true ? 
+      menu
+        .addSeparator()
+        .addSubMenu(SpreadsheetApp.getUi().createMenu("Test (for developers)")
+        .addItem("Test Case 1", libName + ".onTestCase1")
+        .addItem("Test Case 2", libName + ".onTestCase2")
+        .addItem("Test Case 3", libName + ".onTestCase3")
+      ) : menu;
+  }
+
 }
 
