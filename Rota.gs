@@ -69,7 +69,7 @@ function onUpdateCoordinationSheet() {
 function onDecorPriceListPeriodChanged() {
   trace("onDecorSheetPeriodChanged");
   Dialog.notify("Period Changed", "Sheet will be recalculated, this may take a few seconds...");
-  onUpdateDecorSheet();
+  onUpdateDecorPriceList();
 }
 
 function onUpdateDecorPriceList() {

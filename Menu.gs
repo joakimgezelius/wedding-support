@@ -86,8 +86,8 @@ static addRotaMenu(libName) {
 static addDecorPriceListMenu(libName) {
   trace("> Adding custom decor price list menu");
   let ui = SpreadsheetApp.getUi();
-  ui.createMenu("Decor" + globalLibMenuTag)
-      .addItem("Update Decor Price List", libName + ".onDecorSheetPeriodChanged");
+  let menu = ui.createMenu("Decor" + globalLibMenuTag)
+      .addItem("Update Decor Price List", libName + ".onUpdateDecorPriceList");
   Menu.addTestItems(libName, menu).addToUi();
   trace("< Custom decor price list menu added");
 }
