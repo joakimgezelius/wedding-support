@@ -3,7 +3,7 @@ class Menu {
   static addEventMenu(libName) {
     trace("> Adding custom event menu");
     let ui = SpreadsheetApp.getUi();
-    ui.createMenu("Event" + globalLibMenuTag)
+    let menu = ui.createMenu("Event" + globalLibMenuTag)
       //.addItem("Clear Sheet", libName + ".onClearSheet")
       //.addSeparator()
       //.addItem("Pull Client Information", libName + ".onPullClientInformation") // in client.gs
