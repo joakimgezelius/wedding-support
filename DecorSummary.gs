@@ -1,14 +1,7 @@
 DecorSummaryRangeName = "DecorSummary";
 DecorSummarySheetName = "Decor Summary";
 
-function onUpdateDecorSummary() {
-  trace("onUpdateDecorSummary");
-  let eventDetails = new EventDetails();
-  let decorSummaryBuilder = new DecorSummaryBuilder(Range.getByName(DecorSummaryRangeName, DecorSummarySheetName));
-  eventDetails.apply(decorSummaryBuilder);
-}
-
-//----------------------------------------------------------------------------------------
+//=============================================================================================
 // Decor Price List Sheet
 
 function onDecorPriceListPeriodChanged() {
@@ -19,7 +12,7 @@ function onDecorPriceListPeriodChanged() {
 
 function onUpdateDecorPriceList() {
   trace("onUpdateDecorPriceList");
-  let clientSheetList = new ClientSheetList; 
+  let clientSheetList = new ClientSheetList; // In Rota.gs
 
   clientSheetList.setQuery("DecorQuery",
     "SELECT '${eventName}',Col1,Col6,Col7,Col11,Col12,Col16,Col17,Col18,Col19,Col20,Col21,Col22,Col23,Col24,Col25,Col26,Col27,Col28,Col29 WHERE Col2=true ORDER BY Col16",
@@ -28,6 +21,16 @@ function onUpdateDecorPriceList() {
 
 
 //=============================================================================================
+// Decor Summary tab (in client sheet)
+//
+function onUpdateDecorSummary() {
+  trace("onUpdateDecorSummary");
+  let eventDetails = new EventDetails();
+  let decorSummaryBuilder = new DecorSummaryBuilder(Range.getByName(DecorSummaryRangeName, DecorSummarySheetName));
+  eventDetails.apply(decorSummaryBuilder);
+}
+
+//----------------------------------------------------------------------------------------
 // Class DecorSummaryBuilder
 //
 class DecorSummaryBuilder {
@@ -111,5 +114,3 @@ class DecorSummaryBuilder {
     return `{DecorSummaryBuilder ${this.targetRange.trace}}`;
   }
 }
-
-

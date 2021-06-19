@@ -63,23 +63,6 @@ function onUpdateCoordinationSheet() {
     "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' ORDER BY Col5");
 }
 
-//----------------------------------------------------------------------------------------
-// Decor Price List Sheet
-
-function onDecorPriceListPeriodChanged() {
-  trace("onDecorSheetPeriodChanged");
-  Dialog.notify("Period Changed", "Sheet will be recalculated, this may take a few seconds...");
-  onUpdateDecorPriceList();
-}
-
-function onUpdateDecorPriceList() {
-  trace("onUpdateDecorSheet");
-  let clientSheetList = new ClientSheetList; 
-
-  clientSheetList.setQuery("DecorQuery",
-    "SELECT '${eventName}',Col1,Col6,Col7,Col11,Col12,Col16,Col18,Col20,Col21,Col22,Col23,Col24,Col25,Col26,Col27,Col28 WHERE Col2=true ORDER BY Col16",
-    "SELECT * WHERE Col2<>'#01' ORDER BY Col4,Col5");
-}
 
 //----------------------------------------------------------------------------------------
 // ClientSheetList
