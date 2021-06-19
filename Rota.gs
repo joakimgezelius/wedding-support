@@ -12,7 +12,7 @@ function onUpdateRotaSheet() {
   let clientSheetList = new ClientSheetList;
 
   clientSheetList.setQuery("RotaQuery",
-    "SELECT '${eventName}',Col1,Col6,Col8,Col9,Col10,Col7,Col11,Col12,Col13,Col16 WHERE Col6='Transport' OR Col6='Rota'", //Col13 IS NOT NULL", 
+    "SELECT '${eventName}',Col1,Col6,Col8,Col9,Col10,Col7,Col11,Col12,Col13,Col16 WHERE (Col4=TRUE OR Col6='Transport' OR Col6='Rota')", //Col13 IS NOT NULL", 
     "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' ORDER BY Col4,Col5,Col6");
 }
 
@@ -31,11 +31,11 @@ function onUpdateCoordinationSheet() {
   let clientSheetList = new ClientSheetList;
 
   clientSheetList.setQuery("ThingsToOrderQuery",
-    "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col11,Col12,Col13,Col17,Col16 WHERE Col7='To Order' OR Col7='Ordered'", 
+    "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col11,Col12,Col34,Col13,Col17,Col16 WHERE Col7='To Order' OR Col7='Ordered'", 
     "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' ORDER BY Col5");
 
   clientSheetList.setQuery("ThingsToBuyQuery",
-    "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col11,Col12,Col13,Col17,Col16 WHERE Col7='To Buy'", 
+    "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col11,Col12,Col34,Col13,Col17,Col16 WHERE Col7='To Buy'", 
     "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' ORDER BY Col5");
 
   clientSheetList.setQuery("TransportationQuery",
@@ -55,7 +55,7 @@ function onUpdateCoordinationSheet() {
     "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' ORDER BY Col5");
 
   clientSheetList.setQuery("RotaQuery",
-    "SELECT '${eventName}',Col1,Col6,Col8,Col9,Col10,Col7,Col11,Col12,Col13,Col16 WHERE Col6='Transport' OR  Col6='Rota'", //Col13 IS NOT NULL", 
+    "SELECT '${eventName}',Col1,Col6,Col8,Col9,Col10,Col7,Col11,Col12,Col13,Col16 WHERE (Col4=TRUE OR Col6='Transport' OR  Col6='Rota')", //Col13 IS NOT NULL", 
     "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' ORDER BY Col4,Col5,Col6");
 
   clientSheetList.setQuery("HotelReservationsQuery",
