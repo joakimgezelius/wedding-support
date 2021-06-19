@@ -131,47 +131,44 @@ class Enquiry extends RangeRow {
 
   prepareClientStructure(sourceFolderId,templateClientSheetLinkCell) {
     trace(`prepareClientStructure for ${this.trace}`);
-    let destinationFolderId = "19y3-Zou_RAWHZKaZ_5W_FJXql_Pz-gdd";   // Destination - W & E's
+    let destinationFolderId = "19y3-Zou_RAWHZKaZ_5W_FJXql_Pz-gdd";              // Destination Folder - W & E's
     let sourceFolder = Folder.getById(sourceFolderId);
     let destinationFolder = Folder.getById(destinationFolderId);    
-    if (destinationFolder.folderExists(this.fileName) == true) {
-      Dialog.notify("Client folder already exists","Please check the Weddings & Events Folder for more details.");      
+    if (destinationFolder.folderExists(this.fileName)) {
+      Dialog.notify("Client folder already exists!","Please check the Weddings & Events Folder for more details.");      
     } else {
-      Dialog.notify("Preparing the Structure", "Making the new Client Document Structure, This may take a few seconds...");
-      sourceFolder.copyTo(destinationFolder, this.fileName);                 // Copies source folder contents to destination folder with given name
+      Dialog.notify("Preparing the Structure...", "Making the new Client Document Structure, This may take a few seconds...");
+      sourceFolder.copyTo(destinationFolder, this.fileName);                    // Copies source folder contents to target folder 
 
       let templateClientSheetLink = templateClientSheetLinkCell.nativeRange.getRichTextValue().getLinkUrl();
       let templateSheetFile = File.getByUrl(templateClientSheetLink);
-      trace(` Client Template Sheet: ${templateSheetFile.name}`);
 
-      let clientFolder = destinationFolder.getFolderByName(this.fileName);    // Gets newly created client folder by name
-      trace(` New Client Folder: ${clientFolder}`);
-      let clientFolderLink = clientFolder.url;                                // Gets the URL of newly created client folder  
-      trace(` New Client Folder Link: ${clientFolderLink}`);   
-      this.set("FolderLink",clientFolderLink);                                // Places the client folder link to the FolderLink Column
+      let clientFolder = destinationFolder.getSubfolder(this.fileName);         // Gets newly created client folder by name
+      let clientFolderLink = clientFolder.url;                                  // Gets the URL of newly created client folder 
+      this.set("FolderLink",clientFolderLink);                                  // Sets the folder link to the cell in FolderLink Column
     
-      /*let targetFolderName = "Office Use";                                  // Folder name to copy the template file in it
-      let subFolder = clientFolder.getFolderByName(targetFolderName);
-      trace(` Sub Folder: ${subFolder}`);
-      let subFolderId = subFolder.getId();                                    // Gets the id of children folder with given folder name
-    
-      let targetFolder = Folder.getById(subFolderId);                         // Gets the folder by id to copy the template file in it
+      let targetFolderName = "Office Use";                                      // Folder name to look for copying the template file in it
+      let subFolder = clientFolder.getSubfolder(targetFolderName);
+      let subFolderId = subFolder.id;                                           // Gets the id of found subfolder "Office Use"
+
+      let targetFolder = Folder.getById(subFolderId);                           // Gets the folder by id to copy the template file in it
       if (targetFolder) {
          templateSheetFile.copyTo(targetFolder,this.fileName);       
-         let newClientSheet = targetFolder.getFileByName(this.fileName);      // Gets the file with given name
-         let newClientSheetId = newClientSheet.getId();                       // Returns the id of found file
+         let newClientSheet = targetFolder.getFile(this.fileName);              // Gets the newly copied file with given name
+         let newClientSheetId = newClientSheet.id;                              // Returns the id of found file
          let clientTemplate = Spreadsheet.openById(newClientSheetId);
-         clientTemplate.setActive();                                          // Sets the active spreadsheet Confirmed W & E to new client sheet
+         clientTemplate.setActive();                                            // Sets the active spreadsheet Confirmed W & E to new client sheet
          Range.getByName("EventDetailsSectionA",CoordinationSheetName).clear();
          Range.getByName("EventDetailsSectionB",CoordinationSheetName).clear();
          Range.getByName("EventDetailsSectionC",CoordinationSheetName).clear();
          Range.getByName("EventDetailsSectionD",CoordinationSheetName).clear();      
-         let newClientSheetLink = newClientSheet.getUrl();                    // Gets the URL of newly copied template file 
-         this.set("SheetLink",newClientSheetLink);                            // Places client sheet link to the SheetLink Column
+         let newClientSheetLink = newClientSheet.url;                           // Gets the URL of newly copied template file 
+         this.set("SheetLink",newClientSheetLink);                              // Sets the client sheet link to the cell in SheetLink Column
          Dialog.notify("Client Document Structure Created!","Please check column Client Sheet & Client Folder for more details.");
+         Browser.newTab(newClientSheetLink);
        } else {
-          Dialog.notify("Folder not found","Office Use Folder does not exist! Couldn't make a copy of template sheet, please check source folder.");
-      }*/
+          Dialog.notify("Folder not found!","Office Use Folder does not exist! Couldn't make a copy of template sheet, please check source folder.");
+      }
     }
   }
 
