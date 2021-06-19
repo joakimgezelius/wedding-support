@@ -105,6 +105,7 @@ class Folder {
   get parents()      { return this.nativeFolder.getParents(); }
   get parent()       { return new Folder(this.parents.next()); }  
   get id()           { return this.nativeFolder.getId(); }
+  get url()          { return this.nativeFolder.getUrl(); }
   get name()         { return this.nativeFolder.getName(); }
   get trace()        { return this._trace; }
 
@@ -153,6 +154,7 @@ class File {
   get parent()     { return new Folder(this.parents.next()); }  
   get parents()    { return this.nativeFile.getParents(); }
   get id()         { return this.nativeFile.getId(); }
+  get url()        { return this.nativeFile.getUrl(); }
   get name()       { return this.nativeFile.getName(); }
   get trace()      { return this._trace; }
      
