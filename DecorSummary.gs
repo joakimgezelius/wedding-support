@@ -8,6 +8,24 @@ function onUpdateDecorSummary() {
   eventDetails.apply(decorSummaryBuilder);
 }
 
+//----------------------------------------------------------------------------------------
+// Decor Price List Sheet
+
+function onDecorPriceListPeriodChanged() {
+  trace("onDecorPriceListPeriodChanged");
+  Dialog.notify("Period Changed", "Sheet will be recalculated, this may take a few seconds...");
+  onUpdateDecorPriceList();
+}
+
+function onUpdateDecorPriceList() {
+  trace("onUpdateDecorPriceList");
+  let clientSheetList = new ClientSheetList; 
+
+  clientSheetList.setQuery("DecorQuery",
+    "SELECT '${eventName}',Col1,Col6,Col7,Col11,Col12,Col16,Col17,Col18,Col19,Col20,Col21,Col22,Col23,Col24,Col25,Col26,Col27,Col28,Col29 WHERE Col2=true ORDER BY Col16",
+    "SELECT * WHERE Col2<>'#01' ORDER BY Col4,Col5");
+}
+
 
 //=============================================================================================
 // Class DecorSummaryBuilder
@@ -93,3 +111,5 @@ class DecorSummaryBuilder {
     return `{DecorSummaryBuilder ${this.targetRange.trace}}`;
   }
 }
+
+
