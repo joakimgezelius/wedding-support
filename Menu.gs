@@ -95,7 +95,7 @@ static addDecorPriceListMenu(libName) {
 static addShopSalesListMenu(libName) {
   trace("> Adding custom shop sales & stock list menu");
   let ui = SpreadsheetApp.getUi();
-  ui.createMenu("Shop (Sales & Stock)" + globalLibMenuTag)
+  let menu = ui.createMenu("Shop (Sales & Stock)" + globalLibMenuTag)
       .addItem("Update Daily Sales", libName + ".onUpdateDailySales")
       .addItem("Update Shop Stock", libName + ".onUpdateShopStock");
   Menu.addTestItems(libName, menu).addToUi();
@@ -105,7 +105,7 @@ static addShopSalesListMenu(libName) {
 static addQuoteMenu(libName) {
   trace("> Adding custom quote menu");
   let ui = SpreadsheetApp.getUi();
-  ui.createMenu("Quote" + globalLibMenuTag)
+  let menu = ui.createMenu("Quote" + globalLibMenuTag)
       .addItem("Update Quote", libName + ".onUpdateQuote")
       .addSeparator()
       .addItem("Create Estimate Summary", libName + ".onCreateEstimateSummary");
@@ -116,31 +116,25 @@ static addQuoteMenu(libName) {
 static addEnqiriesMenu(libName) {
   trace("> Adding custom enquiries menu");
   let ui = SpreadsheetApp.getUi();
-  ui.createMenu("Enquiries" + globalLibMenuTag)
+  let menu = ui.createMenu("Enquiries" + globalLibMenuTag)
       .addItem("Update Enquiries", libName + ".onUpdateEnquiries")
       //.addItem("Create Quote/Client Sheet", libName + ".onCreateNewClientSheet")
       .addItem("Open Quote/Client Sheet", libName + ".onOpenClientSheet")
       .addSubMenu(ui.createMenu("Prepare New Client Document Structure")
-        .addItem("For Small Wedding", libName + ".onPrepareClientStructureSmallWedding")
-        .addItem("For Large Wedding", libName + ".onPrepareClientStructureLargeWedding")
-      )
-      .addSeparator()
-      .addSubMenu(ui.createMenu("Test")
-        .addItem("Test Case 1", libName + ".onTestCase1")
-        .addItem("Test Case 2", libName + ".onTestCase2")
-        .addItem("Test Case 3", libName + ".onTestCase3")
-      )
-      .addToUi();
+        .addItem("For Small Wedding/Event", libName + ".onPrepareClientStructureSmallWedding")
+        .addItem("For Large Wedding/Event", libName + ".onPrepareClientStructureLargeWedding")
+      );
+  Menu.addTestItems(libName, menu).addToUi();
   trace("< Custom enquiries menu added");
 }
 
   static addWeddingPackagesMenu(libName) {
     trace("> Adding custom wedding packages menu");
     let ui = SpreadsheetApp.getUi();
-    ui.createMenu("Prices & Packages" + globalLibMenuTag)
+    let menu = ui.createMenu("Prices & Packages" + globalLibMenuTag)
         .addItem("Refresh Price List", libName + ".onRefreshPriceList")
-        .addItem("Update Packages", libName + ".onUpdatePackages")
-        .addToUi();
+        .addItem("Update Packages", libName + ".onUpdatePackages");
+    Menu.addTestItems(libName, menu).addToUi();
     trace("< Custom wedding packages menu added");
   }
 
@@ -150,8 +144,8 @@ static addEnqiriesMenu(libName) {
     let menu = ui.createMenu("Email" + globalLibMenuTag)
     .addItem("Draft selected email", libName + ".onDraftSelectedEmail")
     .addSeparator();
-    EmailTemplateList.singleton.populateMenu(menu)
-    .addToUi();
+    EmailTemplateList.singleton.populateMenu(menu);
+    Menu.addTestItems(libName, menu).addToUi();
     trace("< Custom email menu added");
   }
 

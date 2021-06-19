@@ -30,11 +30,11 @@ function onUpdateCoordinationSheet() {
   trace("onUpdateCoordinationSheet");
   let clientSheetList = new ClientSheetList;
 
-  clientSheetList.setQuery("ThingstoOrderQuery",
+  clientSheetList.setQuery("ThingsToOrderQuery",
     "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col11,Col12,Col13,Col17,Col16 WHERE Col7='To Order' OR Col7='Ordered'", 
     "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' ORDER BY Col5");
 
-  clientSheetList.setQuery("ThingstoBuyQuery",
+  clientSheetList.setQuery("ThingsToBuyQuery",
     "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col11,Col12,Col13,Col17,Col16 WHERE Col7='To Buy'", 
     "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' ORDER BY Col5");
 
