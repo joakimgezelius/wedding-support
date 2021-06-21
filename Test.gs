@@ -25,9 +25,8 @@ function onTestCase1() {
 
 function onTestCase2() {
   trace("onTestCase2");
-  let user = User.active;
-  trace("try again");
-  user = User.active;
+//  let user = User.active;
+  HubSpot.listContacts();
   //let clientTemplateFolderId = "1lIUlRJFAxoVsOy_Tdmga9ZqzTWZGDDxr";
   //let clientTemplateFolder = Folder.getById(clientTemplateFolderId);
   //clientTemplateFolder.listFiles();
