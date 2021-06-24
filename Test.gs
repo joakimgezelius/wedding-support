@@ -25,20 +25,12 @@ function onTestCase1() {
 
 function onTestCase2() {
   trace("onTestCase2");
-//  let user = User.active;
-  HubSpot.listContacts();
-  //let clientTemplateFolderId = "1lIUlRJFAxoVsOy_Tdmga9ZqzTWZGDDxr";
-  //let clientTemplateFolder = Folder.getById(clientTemplateFolderId);
-  //clientTemplateFolder.listFiles();
-  //clientTemplateFolder.recursiveWalk();
+  HubSpot.listContacts();  
 }
 
 function onTestCase3() {
   trace("onTestCase3");
-  let sourceFolderId = "1lIUlRJFAxoVsOy_Tdmga9ZqzTWZGDDxr";        // Client Template
-  let destinationFolderId = "19y3-Zou_RAWHZKaZ_5W_FJXql_Pz-gdd";   // W & E's
-  let sourceFolder = Folder.getById(sourceFolderId);
-  let destinationFolder = Folder.getById(destinationFolderId);
-  //sourceFolder.listFolders();
-  sourceFolder.copyTo(destinationFolder, "New Name");
+  HubSpot.listDeals();
+  //let user = User.active;
+  //trace(`${user}`);
 }

@@ -2,7 +2,8 @@
 // Wrapper for https://developers.hubspot.com/docs/api/crm/understanding-the-crm
 //   Contacts: https://developers.hubspot.com/docs/api/crm/contacts
 //   Deals:    https://developers.hubspot.com/docs/api/crm/deals
-//
+
+
 class HubSpot {
 
   static listContacts() {
@@ -11,10 +12,40 @@ class HubSpot {
     trace(`HubSpot.listContacts --> ${response.getContentText()}`);
     let data = JSON.parse(response.getContentText());
     let results = data['results'];
+    let paging = data.paging.next;
+    let sheet = SpreadsheetApp.getActiveSheet();
+    let header = ["Id", "Create Date", "Email", "First Name", "Object Id", "Last Modified Date", "Last Name", "Phone", "Website","Paging After","Paging Link"];
+    let items = [header];
+    results.forEach(function (result) {
+    items.push([ result['properties'].hs_object_id, result['properties'].createdate, result['properties'].email, result['properties'].firstname, result['properties'].hs_object_id, result['properties'].lastmodifieddate, result['properties'].lastname, result['properties'].phone, result['properties'].website, paging.after, paging.link]);
+    });
+    sheet.getRange(3,1,items.length,items[0].length).setValues(items);
+    results.forEach(function (result) {
+      Logger.log(result['properties']);
+     });
+  }
+
+  static listDeals() {
+    let url = HubSpot.getUrl("deals");
+    let response = UrlFetchApp.fetch(url);
+    trace(`HubSpot.listContacts --> ${response.getContentText()}`);
+    let data = JSON.parse(response.getContentText());
+    let results = data['results'];
+    let paging = data.paging.next;
+    let sheet = SpreadsheetApp.getActiveSheet();
+    let header = ["Amount", "Close Date", "Create Date", "Deal Name", "Deal Stage", "Last Modified Date", "HS Owner ID","Paging After","Paging Link"];
+    let items = [header];
+    results.forEach(function (result) {
+    items.push([ result['properties'].amount, result['properties'].closedate, result['properties'].createdate, result['properties'].dealname, result['properties'].dealstage, result['properties'].hs_lastmodifieddate, result['properties'].hubspot_owner_id,paging.after, paging.link]);
+    });
+    sheet.getRange(3,1,items.length,items[0].length).setValues(items);
+    results.forEach(function (result) {
+      Logger.log(result['properties']);
+     });
   }
 
   static getUrl(method) {
-    return `${HubSpot.baseUrl}/${method}?hapikey=${HubSpot.key}`;
+    return `${HubSpot.baseUrl}/${method}?limit=100&hapikey=${HubSpot.key}`;
   }
 
 } // User
@@ -22,23 +53,3 @@ class HubSpot {
 HubSpot.baseUrl = "https://api.hubapi.com/crm/v3/objects";
 HubSpot.key = "0020bf99-6b2a-4887-90af-adac067aacba";
 
-
-// Sample code from https://www.actiondesk.io/blog/google-script-query-hubspot-api-dashboard
-//
-function callHsapi() {
-  var API_KEY = "YOUR_HUBSPOT_API_KEY"; // Replace YOUR_HUBSPOT_API_KEY with your API Key
-  var url = "https://api.hubapi.com/crm/v3/objects/contacts?limit=10&archived=false&hapikey=YOUR_HUBSPOT_API_KEY"; // Replace YOUR_HUBSPOT_API_KEY with your API Key
-  var response = UrlFetchApp.fetch(url);
-  var data = JSON.parse(response.getContentText());
-  var results = data['results'];
-  var sheet = SpreadsheetApp.getActiveSheet();
-  var header = ["Company", "Create Date", "Email", "First Name", "Last Modified Date", "Last Name", "Phone", "Website"];
-  var items = [header];
-  results.forEach(function (result) {
-    items.push([result['properties'].company, result['properties'].createdate, result['properties'].email, result['properties'].firstname, result['properties'].lastmodifieddate, result['properties'].lastname, result['properties'].phone, result['properties'].website]);
-  });
-  sheet.getRange(1,1,items.length,items[0].length).setValues(items);
-  results.forEach(function (result) {
-    Logger.log(result['properties']);
-  });
-}
