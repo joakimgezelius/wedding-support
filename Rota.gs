@@ -89,7 +89,7 @@ class ClientSheetList {
 
   generateQueryFormula(sourceRangeName, innerQuery, outerQuery) {
     let dataset = this.generateDataset(sourceRangeName, innerQuery);
-    let queryFormula = `=QUERY(${dataset}, "${outerQuery}", 0)`;
+    let queryFormula = `=IFERROR(QUERY(${dataset}, "${outerQuery}", 0))`;
     trace(`ClientSheetList.generateQueryFormula -> ${queryFormula}`);
     return queryFormula;
   }
