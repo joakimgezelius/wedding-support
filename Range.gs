@@ -197,7 +197,7 @@ class Range {
   
   loadColumnNames() {
     if (this.namedColumns === undefined) {
-      const columnNamesNativeRange = this.nativeRange.offset(-2, 0, 1); // Get the one row above the range, we assume this row holds the column names
+      const columnNamesNativeRange = this.nativeRange.offset(-2, 0, 1); // Get the two row above the range, we assume this row holds the column names
       this.namedColumns = new NamedColumns(this.name, columnNamesNativeRange);
     }
     return this;
