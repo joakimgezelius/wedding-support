@@ -46,7 +46,7 @@ class HubSpot {
   static contactToDeal() {
     let url = HubSpot.getUrl("contacts");
     let response = UrlFetchApp.fetch(url);
-    trace(`HubSpot.associatedDealContacts --> ${response.getContentText()}`);
+    trace(`HubSpot.contactToDeal --> ${response.getContentText()}`);
     let data = JSON.parse(response.getContentText());
     let results = data['results'];
     /*let sheet = SpreadsheetApp.getActiveSheet();
