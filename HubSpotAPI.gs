@@ -49,16 +49,26 @@ class HubSpot {
     trace(`HubSpot.contactToDeal --> ${response.getContentText()}`);
     let data = JSON.parse(response.getContentText());
     let results = data['results'];
-    /*let sheet = SpreadsheetApp.getActiveSheet();
-    let header = ["Id", "Create Date", "Email", "First Name", "Object Id", "Last Modified Date", "Last Name", "Phone", "Website"];
-    let items = [header];
-    results.forEach(function (result) {
-    items.push([ result['properties'].hs_object_id, result['properties'].createdate, result['properties'].email, result['properties'].firstname, result['properties'].hs_object_id, result['properties'].lastmodifieddate, result['properties'].lastname, result['properties'].phone, result['properties'].website]);
-    });
-    sheet.getRange(3,1,items.length,items[0].length).setValues(items);*/
     results.forEach(function (result) {
       Logger.log(result['associations']);
     });
+  }
+
+  static listTasks() {
+    let url = "https://api.hubapi.com/engagements/v1/engagements/paged?hapikey=0020bf99-6b2a-4887-90af-adac067aacba&limit=250";
+    let response = UrlFetchApp.fetch(url);
+    trace(`HubSpot.listTasks --> ${response.getContentText()}`);
+    let data = JSON.parse(response.getContentText());
+    let results = data['results'];
+    let sheet = SpreadsheetApp.getActiveSheet();
+    let header = ["ID", "Created At", "Type", "Owner ID", "Source ID", "Contact ID", "Deal ID", "Status", "Subject", "Body"];
+    let items = [header];
+    results.forEach(function (result) {
+      if(result['engagement'].type === "TASK") { 
+      items.push([ result['engagement'].id, result['engagement'].createdAt, result['engagement'].type, result['engagement'].ownerId, result['engagement'].sourceId, result['associations'].contactIds, result['associations'].dealIds, result['metadata'].status, result['metadata'].subject, result['metadata'].body ]);
+      }
+    });    
+    sheet.getRange(3,1,items.length,items[0].length).setValues(items);
   }
 
 

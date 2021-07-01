@@ -32,7 +32,8 @@ function onTestCase2() {
 
 function onTestCase3() {
   trace("onTestCase3");
-  HubSpot.contactToDeal();
+  //HubSpot.contactToDeal();
+  HubSpot.listTasks();
   //let user = User.active;
   //trace(`${user}`);
 }

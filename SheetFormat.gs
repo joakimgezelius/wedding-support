@@ -5,7 +5,7 @@ function onApplyFormat() {
   // Identify the template (hard coded reference is OK for now)
   let templateSpreadsheet = Spreadsheet.openById(TemplateSpreadsheetId);
 
-  // Get handle to current sheet (tab in spreadsheet)
+  // Get handle to current sheet (current tab in spreadsheet)
   let activeSheet = Spreadsheet.active.activeSheet;
   
   // Get handle to same sheet in the template, get it by looking for the same tab name  
@@ -25,17 +25,18 @@ function onApplyFormat() {
   
   // Iterate over the rows in the current sheet
   for (let row=1; row<= activeSheet.maxRows; ++row) {
-    // https://developers.google.com/apps-script/reference/spreadsheet/range#getFontFamily()
+    trace(`Formatting row ${row}`);
     let range = activeSheet.fullRange;
-    Logger.log(range.nativeRange.getFontFamily()); 
-    range.nativeRange.setFontFamily("Verdana");   
-    // https://developers.google.com/apps-script/reference/spreadsheet/range#getfontsize   
-    Logger.log(range.nativeRange.getFontSize());   
-    // https://developers.google.com/apps-script/reference/spreadsheet/range#setfontsizesize
-    range.nativeRange.setFontSize(9);
+    range.nativeRange.setFontFamily("Verdana");
+    trace(`set row font to Verdana`);
+    let templateRange = templateSheet.fullRange;
+    // https://developers.google.com/apps-script/reference/spreadsheet/range#getFontSizes()
+    let fontSize = templateRange.nativeRange.getFontSizes();
+    // https://developers.google.com/apps-script/reference/spreadsheet/range#setFontSizes(Object)
+    range.nativeRange.setFontSizes(fontSize);
+    //try catch here
   }
 }
-
 
 function onFormatCoordinator() {
   trace("onFormatCoordinator");
