@@ -61,11 +61,11 @@ class HubSpot {
     let data = JSON.parse(response.getContentText());
     let results = data['results'];
     let sheet = SpreadsheetApp.getActiveSheet();
-    let header = ["ID", "Created At", "Type", "Owner ID", "Source ID", "Contact ID", "Deal ID", "Status", "Subject", "Body"];
+    let header = ["Id", "Portal Id", "Active", "Created At", "Last Updated", "Created By", "Modified By", "Owner Id", "Type", "Timestamp", "Source", "Source Id", "Accessible Team Ids", "Queue Membership Ids", "Body Preview Is Truncated", "gdpr Deleted", "Contact Ids", "Deal Ids", "Status", "For Object Type", "Subject", "Task Type", "Reminders", "Send Default Reminder", "Priority", "Is All Day", "Completion Date"];
     let items = [header];
     results.forEach(function (result) {
       if(result['engagement'].type === "TASK") { 
-      items.push([ result['engagement'].id, result['engagement'].createdAt, result['engagement'].type, result['engagement'].ownerId, result['engagement'].sourceId, result['associations'].contactIds, result['associations'].dealIds, result['metadata'].status, result['metadata'].subject, result['metadata'].body ]);
+      items.push([ result['engagement'].id, result['engagement'].portalId, result['engagement'].active, result['engagement'].createdAt, result['engagement'].lastUpdated,result['engagement'].createdBy, result['engagement'].modifiedBy, result['engagement'].ownerId, result['engagement'].type, result['engagement'].timestamp, result['engagement'].source, result['engagement'].sourceId, result['engagement'].allAccessibleTeamIds, result['engagement'].queueMembershipIds, result['engagement'].bodyPreviewIsTruncated, result['engagement'].gdprDeleted, result['associations'].contactIds, result['associations'].dealIds, result['metadata'].status, result['metadata'].forObjectType, result['metadata'].subject, result['metadata'].taskType, result['metadata'].reminders, result['metadata'].sendDefaultReminder, result['metadata'].priority, result['metadata'].isAllDay, result['metadata'].completionDate]);
       }
     });    
     sheet.getRange(3,1,items.length,items[0].length).setValues(items);
