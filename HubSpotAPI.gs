@@ -6,7 +6,7 @@
 class HubSpot {
 
   static listContacts() {
-    let url = HubSpot.getUrl("contacts?limit=100&properties=hs_object_id,firstname,lastname,createdate,email,hs_email_domain,phone,annualrevenue,how_many_people_in_total_including_the_couple_will_be_at_the_ceremony_and_or_the_celebration_,asana_link,hs_lifecyclestage_customer_date,hs_lifecyclestage_lead_date,hs_lifecyclestage_marketingqualifiedlead_date,hs_lifecyclestage_salesqualifiedlead_date,hs_lifecyclestage_subscriber_date,hs_lifecyclestage_evangelist_date,hs_lifecyclestage_opportunity_date,hs_lifecyclestage_other_date,city,company,hs_object_id,country,date,date_worked,do_you_agree_to_special_terms_in_the_event_of_a_coronavirus_event,hs_content_membership_email_confirmed,event_start_time,industry,is_there_any_food_that_you_dislike,is_your_kitchen_fulled_equipped_and_functional,jobtitle,kitchen,kitchen_1,lastmodifieddate,hs_latest_sequence_ended_date,hs_latest_sequence_enrolled,hs_latest_sequence_enrolled_date,lifecyclestage,hs_marketable_status,hs_marketable_reason_id,hs_marketable_reason_type,hs_marketable_until_renewal,mobilephone,numemployees,hs_sequences_enrolled_count,hs_createdate,hs_persona,zip,hs_language,salutation,state,address,hs_content_membership_registration_email_sent_at,time_sheet,twitterhandle,website,what_the_occasion");
+    let url = HubSpot.getUrl("contacts?limit=100&properties=hs_object_id,firstname,lastname,createdate,email,hs_email_domain,phone,annualrevenue,how_many_people_in_total_including_the_couple_will_be_at_the_ceremony_and_or_the_celebration_,asana_link,hs_lifecyclestage_customer_date,hs_lifecyclestage_lead_date,hs_lifecyclestage_marketingqualifiedlead_date,hs_lifecyclestage_salesqualifiedlead_date,hs_lifecyclestage_subscriber_date,hs_lifecyclestage_evangelist_date,hs_lifecyclestage_opportunity_date,hs_lifecyclestage_other_date,city,company,hs_object_id,country,date,date_worked,do_you_agree_to_special_terms_in_the_event_of_a_coronavirus_event,hs_content_membership_email_confirmed,event_start_time,industry,is_there_any_food_that_you_dislike,is_your_kitchen_fulled_equipped_and_functional,jobtitle,kitchen,kitchen_1,lastmodifieddate,hs_latest_sequence_ended_date,hs_latest_sequence_enrolled,hs_latest_sequence_enrolled_date,lifecyclestage,hs_marketable_status,hs_marketable_reason_id,hs_marketable_reason_type,hs_marketable_until_renewal,mobilephone,numemployees,hs_sequences_enrolled_count,hs_createdate,hs_persona,zip,hs_language,salutation,state,address,hs_content_membership_registration_email_sent_at,time_sheet,twitterhandle,website,what_the_occasion&archived=false");
     let response = UrlFetchApp.fetch(url);
     trace(`HubSpot.listContacts --> ${response.getContentText()}`);
     let data = JSON.parse(response.getContentText());
@@ -25,22 +25,22 @@ class HubSpot {
   }
 
   static listDeals() {
-    let url = HubSpot.getUrl("deals");
+    let url = HubSpot.getUrl("deals?limit=100&properties=hs_object_id,amount,closedate,createdate,dealname,description,hubspot_owner_id,dealstage,dealtype,departure_date,hs_forecast_amount,hs_manual_forecast_category,hs_forecast_probability,hubspot_team_id,hs_lastmodifieddate,hs_next_step,num_associated_contacts,hs_priority,pipeline&archived=false");
     let response = UrlFetchApp.fetch(url);
     trace(`HubSpot.listContacts --> ${response.getContentText()}`);
     let data = JSON.parse(response.getContentText());
     let results = data['results'];
     let paging = data.paging.next;
     let sheet = SpreadsheetApp.getActiveSheet();
-    let header = ["Amount", "Close Date", "Create Date", "Deal Name", "Deal Stage", "Last Modified Date", "HS Owner ID","Paging After","Paging Link"];
+    let header = ["Deal ID","Amount", "Close Date", "Create Date", "Deal Name", "Deal Description", "Deal Owner", "Deal Type", "Deal Stage", "Departure Date", "Forecast Amount", "Forecast Category", "Forecast Probabilty", "HubSpot Team", "Last Modified Date", "Next Step", "Number of Contacts", "Priority", "Pipeline","Paging After","Paging Link"];
     let items = [header];
     results.forEach(function (result) {
-    items.push([ result['properties'].amount, result['properties'].closedate, result['properties'].createdate, result['properties'].dealname, result['properties'].dealstage, result['properties'].hs_lastmodifieddate, result['properties'].hubspot_owner_id, paging.after, paging.link]);
+    items.push([ result['properties'].hs_object_id, result['properties'].amount, result['properties'].closedate, result['properties'].createdate, result['properties'].dealname, result['properties'].description, result['properties'].hubspot_owner_id, result['properties'].dealtype, result['properties'].dealstage, result['properties'].departure_date, result['properties'].hs_forecast_amount, result['properties'].hs_manual_forecast_category, result['properties'].hs_forecast_probability, result['properties'].hubspot_team_id, result['properties'].hs_lastmodifieddate, result['properties'].hs_next_step, result['properties'].num_associated_contacts, result['properties'].priority, result['properties'].pipeline, paging.after, paging.link]);
     });
     sheet.getRange(3,1,items.length,items[0].length).setValues(items);
-    results.forEach(function (result) {
+    /*results.forEach(function (result) {
       Logger.log(result['properties']);
-     });
+     });*/
   }
 
   static contactToDeal() {
