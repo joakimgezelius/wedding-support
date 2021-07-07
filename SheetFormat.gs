@@ -28,13 +28,16 @@ function onApplyFormat() {
     trace(`Formatting row ${row}`);
     let range = activeSheet.fullRange;
     range.nativeRange.setFontFamily("Verdana");
-    trace(`set row font to Verdana`);
+    trace(`set row font to Verdana`);    
     let templateRange = templateSheet.fullRange;
+    // https://developers.google.com/apps-script/reference/spreadsheet/range#getFontColors()
+    let fontColor = templateRange.nativeRange.getFontColors();
+    // https://developers.google.com/apps-script/reference/spreadsheet/range#setFontColors(Object)
+    range.nativeRange.setFontColors(fontColor);
     // https://developers.google.com/apps-script/reference/spreadsheet/range#getFontSizes()
     let fontSize = templateRange.nativeRange.getFontSizes();
     // https://developers.google.com/apps-script/reference/spreadsheet/range#setFontSizes(Object)
     range.nativeRange.setFontSizes(fontSize);
-    //try catch here
   }
 }
 
