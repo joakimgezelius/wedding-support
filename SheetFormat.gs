@@ -7,38 +7,65 @@ function onApplyFormat() {
 
   // Get handle to current sheet (current tab in spreadsheet)
   let activeSheet = Spreadsheet.active.activeSheet;
+  let activeRange = activeSheet.fullRange;
   
   // Get handle to same sheet in the template, get it by looking for the same tab name  
   let templateSheet = templateSpreadsheet.getSheetByName(activeSheet.name);
+  let templateRange = templateSheet.fullRange;
 
-  // Iterate over the columns in the current sheet, for each column
+  Dialog.notify("Applying Template Format...","Please wait this may take a few minutes...");
+
+  // Looping over only Columns to avoid exceeding the execution time which is 360 Seconds.
   for (let column=1; column <= activeSheet.maxColumns; ++column) {
     trace(`Formatting column ${column}`);
-    // Get the column width from the template
+    // Getting & Setting Row Width
     // https://developers.google.com/apps-script/reference/spreadsheet/sheet#getColumnWidth(Integer)
     let width = templateSheet.nativeSheet.getColumnWidth(column);
-    // Apply the found column width to the current sheet
     // https://developers.google.com/apps-script/reference/spreadsheet/sheet#setColumnWidth(Integer,Integer)
-    activeSheet.nativeSheet.setColumnWidth(column, width);
-    trace(`set column width to ${width}`);
-  }
-  
-  // Iterate over the rows in the current sheet
-  for (let row=1; row<= activeSheet.maxRows; ++row) {
-    trace(`Formatting row ${row}`);
-    let range = activeSheet.fullRange;
-    range.nativeRange.setFontFamily("Verdana");
-    trace(`set row font to Verdana`);    
-    let templateRange = templateSheet.fullRange;
-    // https://developers.google.com/apps-script/reference/spreadsheet/range#getFontColors()
-    let fontColor = templateRange.nativeRange.getFontColors();
-    // https://developers.google.com/apps-script/reference/spreadsheet/range#setFontColors(Object)
-    range.nativeRange.setFontColors(fontColor);
+    activeSheet.nativeSheet.setColumnWidth(column, width); 
+
+    // Getting & Setting Row Height
+    // https://developers.google.com/apps-script/reference/spreadsheet/sheet#getRowHeight(Integer)
+    let height = templateSheet.nativeSheet.getRowHeight(column);
+    // https://developers.google.com/apps-script/reference/spreadsheet/sheet#setRowHeight(Integer,Integer)  
+    activeSheet.nativeSheet.setRowHeight(column,height);
+
+    // Getting & Setting Row Fonts
+    // https://developers.google.com/apps-script/reference/spreadsheet/range#getFontFamilies()
+    let fonts = templateRange.nativeRange.getFontFamilies();
+    // https://developers.google.com/apps-script/reference/spreadsheet/range#setFontFamilies(Object)
+    activeRange.nativeRange.setFontFamilies(fonts);
+
+    // Getting & Setting Row Font Size
     // https://developers.google.com/apps-script/reference/spreadsheet/range#getFontSizes()
     let fontSize = templateRange.nativeRange.getFontSizes();
     // https://developers.google.com/apps-script/reference/spreadsheet/range#setFontSizes(Object)
-    range.nativeRange.setFontSizes(fontSize);
-  }
+    activeRange.nativeRange.setFontSizes(fontSize); 
+
+    // Getting & Setting Row Font Styles
+    // https://developers.google.com/apps-script/reference/spreadsheet/range#getFontStyles()
+    let fontStyle = templateRange.nativeRange.getFontStyles();
+    // https://developers.google.com/apps-script/reference/spreadsheet/range#setFontStyles(Object)
+    activeRange.nativeRange.setFontStyles(fontStyle);
+
+    // Getting & Setting Row Font Color
+    // https://developers.google.com/apps-script/reference/spreadsheet/range#getFontColors()
+    let fontColor = templateRange.nativeRange.getFontColors();
+    // https://developers.google.com/apps-script/reference/spreadsheet/range#setFontColors(Object)
+    activeRange.nativeRange.setFontColors(fontColor);  
+
+    // Getting & Setting Row Number Formats
+    // https://developers.google.com/apps-script/reference/spreadsheet/range#getNumberFormats()
+    let numberFormat = templateRange.nativeRange.getNumberFormats();
+    // https://developers.google.com/apps-script/reference/spreadsheet/range#setNumberFormats(Object) 
+    activeRange.nativeRange.setNumberFormats(numberFormat);
+
+    // Getting & Setting Row Background Colors
+    // https://developers.google.com/apps-script/reference/spreadsheet/range#getBackgroundObjects()
+    let bgObjects = templateRange.nativeRange.getBackgroundObjects();
+    // https://developers.google.com/apps-script/reference/spreadsheet/range#setBackgroundObjects(Object)
+    activeRange.nativeRange.setBackgroundObjects(bgObjects);  
+  }    
 }
 
 function onFormatCoordinator() {
