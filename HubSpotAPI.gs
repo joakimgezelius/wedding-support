@@ -21,6 +21,22 @@ class HubSpot {
     sheet.getRange(3,1,items.length,items[0].length).setValues(items);
   }
 
+  static masterHubspot() {
+    let url = HubSpot.getUrl("contacts?limit=100&properties=invoice_no,first_conversion_date,deal_status,hubspot_owner_id,contacttype,number_of_guests,decor,firstname,lastname,partner_s_first_name,partner_s_last_name,meet___greet_date,meet___greet_time,event_date,time_of_ceremony,confirmed_venue,venue___reception,do_you_require_witnesses_,documents_status,notes,registry_office_payment,xero_outstanding_thirty_days,florist,suppliers_deposits&archived=false");
+    let response = UrlFetchApp.fetch(url);
+    trace(`HubSpot.masterHubspot --> ${response.getContentText()}`);
+    let data = JSON.parse(response.getContentText());
+    let results = data['results'];
+    let paging = data.paging.next;
+    let sheet = SpreadsheetApp.getActiveSheet();
+    let header = ["Invoice Number", "Enquiry Date", "Status", "WP", "Type of Event", "# of Guests", "Decor Required", "Client Name", "Partner Full Name", "Meet & Greet Date", "Meet & Greet Time", "Event Date", "Event Time", "Venue 1", "Venue 2", "Witnesses", "Registry Office Documents", "Notes","Registry Amount Paid", "Outstanding", "Florist", "Suppliers Costings"];
+    let items = [header];
+    results.forEach(function (result) {
+    items.push([ result['properties'].invoice_no, result['properties'].first_conversion_date, result['properties'].deal_status, result['properties'].hubspot_owner_id, result['properties'].contacttype, result['properties'].number_of_guests, result['properties'].decor, result['properties'].firstname +" "+result['properties'].lastname, result['properties'].partner_s_first_name +" "+ result['properties'].partner_s_last_name, result['properties'].meet___greet_date, result['properties'].meet___greet_time, result['properties'].event_date, result['properties'].time_of_ceremony, result['properties'].confirmed_venue, result['properties'].venue___reception, result['properties'].do_you_require_witnesses_, result['properties'].documents_status, result['properties'].notes, result['properties'].registry_office_payment, result['properties'].xero_outstanding_thirty_days, result['properties'].florist, result['properties'].suppliers_deposits]);
+    });
+    sheet.getRange(3,1,items.length,items[0].length).setValues(items);
+  }
+
   static listDeals() {
     let url = HubSpot.getUrl("deals?limit=100&properties=hs_object_id,amount,closedate,createdate,dealname,description,hubspot_owner_id,dealstage,dealtype,departure_date,hs_forecast_amount,hs_manual_forecast_category,hs_forecast_probability,hubspot_team_id,hs_lastmodifieddate,hs_next_step,num_associated_contacts,hs_priority,pipeline&archived=false");
     let response = UrlFetchApp.fetch(url);

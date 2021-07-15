@@ -22,7 +22,8 @@
 
 function onTestCase1() {
   trace("onTestCase2");
-  HubSpot.listContacts(); 
+  // /HubSpot.listContacts(); 
+  HubSpot.masterHubspot();
 }
 
 function onTestCase2() {
