@@ -2,7 +2,7 @@ function onUpdateSupplierCosting() {
   trace("onUpdateSupplierCosting");
   let eventDetails = new EventDetails();
   let supplierCostingBuilder = new SupplierCostingBuilder(Range.getByName("SupplierCosting", "Supplier Costing"));
-  eventDetails.sort(SortType.supplier);
+  eventDetails.sort(SortType.supplier_location);
   eventDetails.apply(supplierCostingBuilder);
 }
 
@@ -77,8 +77,11 @@ class SupplierCostingBuilder {
     }
     let targetRow = this.targetRange.getNextRowAndExtend();
     let column = 1;
+    ++column;
     targetRow.getCell(1,column++).setValue(this.currentSupplier);
     targetRow.getCell(1,column++).setValue(this.currentSupplier);
+    ++column;
+    ++column;
     ++column;
     ++column;
     this.fillSupplierSums(targetRow.getCell(1,column++), targetRow.getCell(1,column++), targetRow.getCell(1,column++));
@@ -101,8 +104,11 @@ class SupplierCostingBuilder {
       this.currentSupplierNettSum += totalNettCost;
       let targetRow = this.targetRange.getNextRowAndExtend();
       let column = 1;
+      targetRow.getCell(1,column++).setValue(row.itemNo);
       targetRow.getCell(1,column++).setValue(row.supplier);
 //    targetRow.getCell(1,column++).setValue(this.currentTitle);
+      targetRow.getCell(1,column++).setValue(row.status);
+      targetRow.getCell(1,column++).setValue(row.location);
       targetRow.getCell(1,column++).setValue(description);
       targetRow.getCell(1,column++).setValue(row.quantity);
       targetRow.getCell(1,column++).setValue(row.nativeUnitCost).setNumberFormat(row.currencyFormat);

@@ -1,11 +1,12 @@
 //=============================================================================================
 // Class EventDetails
 //
-const SortType = { time: "time", supplier: "supplier", staff: "staff" };
+const SortType = { time: "time", supplier: "supplier", supplier_location: "supplier_location", staff: "staff" };
 
 class EventDetails {
   
   constructor() {
+    trace("constructing EventDetails object...");
     this.range = Coordinator.eventDetailsRange;
     this.rowCount = this.range.height;
     //this.values = this.range.values;     // NOTE: indexed from [0][0]
@@ -121,6 +122,9 @@ class EventRow extends RangeRow {
     if (type === SortType.supplier) { // compare suppliers
       result = this.compareSupplier(other);
     }
+    else if (type === SortType.supplier_location) { // compare suppliers, then location
+      result = this.compareSupplierLocation(other);
+    }
     else if (type === SortType.staff) { // compare staff
       result = this.compareStaff(other);
     }
@@ -136,6 +140,18 @@ class EventRow extends RangeRow {
   compareSupplier(other) {
     let myValue = this.supplier;
     let otherValue = other.supplier;
+    return myValue < otherValue ? -1 : (myValue > otherValue ? 1 : 0);
+  }
+
+  compareSupplierLocation(other) {
+    let myValue = this.supplier;
+    let otherValue = other.supplier;
+    return myValue < otherValue ? -1 : (myValue > otherValue ? 1 : this.compareLocation(other));
+  }
+
+  compareLocation(other) {
+    let myValue = this.location;
+    let otherValue = other.location;
     return myValue < otherValue ? -1 : (myValue > otherValue ? 1 : 0);
   }
 

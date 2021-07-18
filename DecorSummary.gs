@@ -25,8 +25,9 @@ function onUpdateDecorPriceList() {
 //
 function onUpdateDecorSummary() {
   trace("onUpdateDecorSummary");
-  let eventDetails = new EventDetails();
+  let eventDetails = new EventDetails;
   let decorSummaryBuilder = new DecorSummaryBuilder(Range.getByName(DecorSummaryRangeName, DecorSummarySheetName));
+  trace("onUpdateDecorSummary: apply decorSummaryBuilder...");
   eventDetails.apply(decorSummaryBuilder);
 }
 

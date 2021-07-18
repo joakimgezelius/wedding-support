@@ -11,8 +11,8 @@ class Range {
     this._sheetName = this.sheet.name;
     this._currentRowOffset = 0;
     this._currentColumnOffset = 0;
-    this._trace = `{Range ${name} ${Range.trace(nativeRange)} `;
-    trace(`NEW ${this._trace}`);
+    this._trace = `{Range ${name} ${Range.trace(nativeRange)} `; // NOTE: This static trace string is incomplete un purpose, see trace access method below
+    trace(`NEW ${this.trace}`);
   }
   
   clear() {
