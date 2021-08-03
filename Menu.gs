@@ -13,7 +13,7 @@ class Menu {
       //.addItem("Check Coordinator", libName + ".onCheckCoordinator")
       .addItem("Update Budget", libName + ".onUpdateBudget")
       .addItem("Update Client Itinerary", libName + ".onUpdateClientItinerary") // In itinerary.gs
-      .addItem("Update Decor Sumamry", libName + ".onUpdateDecorSummary")
+      .addItem("Update Decor Summary", libName + ".onUpdateDecorSummary")
       .addItem("Update Account Summary", libName + ".onUpdateAccountSummary")
       .addItem("Update Supplier Costing", libName + ".onUpdateSupplierCosting")
       .addItem("Update Supplier Itinerary", libName + ".onUpdateSupplierItinerary")
