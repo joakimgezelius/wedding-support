@@ -1,41 +1,20 @@
-/*function onTestCase1() {
-  trace("onTestCase1");
-  //Error.break;
-  
-  let spreadsheet = Spreadsheet.active;
-  let sheet = spreadsheet.getSheetByName("Suppliers Price List");
-  let selection = sheet.selection;
-  let range = selection.getActiveRange();
-  Dialog.notify("Selection", range.getA1Notation());
-  //Error.break;
-   trace("onTestCase1");
-  let srcFolderId = "10XxkUmEccJ73aKaznSZITiqx2BvaBPJz";    //  Client Template/Office Use
-  //let sampleFolderId = "0B0i74Z2VzsKXNjdSUzIyZ0dSRjg";      // W & E's
-  let sampleFolderId = "1SL8IXZ3bvU62yHXQTycUMKmD29F5tylT"; // 2020
-  let folder = Folder.getById(sampleFolderId);
-  let file1 = folder.getFile("Wedding Docs.pdf");
-  let file2 = folder.getFile("foo");
-  let folder1 = folder.getSubfolder("Welcome gift bag for couples");
-  let folder2 = folder.getSubfolder("foo");
-  folder.recursiveWalk();
-}*/
-
-function onTestCase1() {
-  trace("onTestCase2");
-  // /HubSpot.listContacts(); 
+function onTestCase1() {        // HubSpot Testing
+  trace("onTestCase2");  
+  //HubSpot.listContacts(); 
+  //HubSpot.listDeals();
+  //HubSpot.contactToDeal();
+  //HubSpot.listEngagement();
   HubSpot.masterHubspot();
 }
 
-function onTestCase2() {
+function onTestCase2() {        // Asana Testing
   trace("onTestCase2");
-  HubSpot.listDeals();
+  //Project.create();
+  Task.create();
 }
 
-function onTestCase3() {
+function onTestCase3() {        // Other Testings
   trace("onTestCase3");
-  //let user = User.active;
-  //trace(`${user}`);
-  //HubSpot.contactToDeal();
-  //HubSpot.listEngagement();
-  Asana.createProject();
+  let user = User.active;
+  trace(`${user}`);
 }
