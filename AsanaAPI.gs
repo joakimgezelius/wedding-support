@@ -71,18 +71,18 @@ class Task {
 static create() {
     let body = {
       "data": {
-        "approval_status": "pending",     // approved, rejected, changes_requested
+        "approval_status": "pending",     // approved, rejected, changes_requested, pending
         "assignee": "me",
-        "assignee_status": "upcoming",    // today, later, new, inbox
+        "assignee_status": "upcoming",    // today, later, new, inbox, upcoming
         "completed": false,
         "due_on": "2021-08-04",
         "html_notes": "<body>Work towards parameterisation of the API wrapper - The two main entities we will deal with in Asana are <em>Projects and Tasks</em></body>",
         "name": " Add classes for Project & Task entity",
         "notes": "Work towards parameterisation of the API wrapper - The two main entities we will deal with in Asana are Projects and Tasks",
         "projects": [
-          "1200714734875880"        // project_gid for creating task under it
+          "1200714734875880"             // project_gid (Large Weddings) for creating task under it
         ],
-        "resource_subtype": "default_task",   //milestone, approval, section
+        "resource_subtype": "default_task",   //milestone, approval, section, default_task
       }
     };
     let options = {
