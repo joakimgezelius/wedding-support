@@ -9,12 +9,13 @@ function onTestCase1() {        // HubSpot Testing
 
 function onTestCase2() {        // Asana Testing
   trace("onTestCase2");
-  Project.create();
+  //Project.create();
   //Project.update();
   //Project.destroy();
   //Task.create(); 
   //Task.update();
   //Task.destroy(); 
+  Subtask.create();
 }
 
 function onTestCase3() {        // Other Testings

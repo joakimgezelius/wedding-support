@@ -9,7 +9,11 @@ class Asana {
 
   static getTaskUrl(method) {
       return `${Asana.taskUrl}/${method}`;      
-  }  
+  } 
+
+  static getSubtaskUrl(method) {
+      return `${Asana.taskUrl}/${method}/subtasks`; 
+  }
 }
 
 Asana.projectUrl = "https://app.asana.com/api/1.0/projects";     // For basic project operations
@@ -191,6 +195,44 @@ static create() {
   }
 }
 
+
+//=========================================================================================================
+// Wrapper for Subtask - https://developers.asana.com/docs/get-subtasks-from-a-task
+// Class Subtask
+
+class Subtask {
+
+  static create() {
+    let body = {
+      "data": {
+        "approval_status": "pending",
+        "assignee": "me",
+        "assignee_status": "upcoming",
+        "completed": false,
+        "due_on": "2021-08-07",
+        "html_notes": "<body>Integration of<strong>client sheets</strong> with Asana.</body>",
+        "name": "Integration of client sheets with Asana",
+        "notes": "Subtasks created in the project.",
+        "resource_subtype": "default_task",
+        "workspace": WORKSPACE_ID             // Hour Productions Testing
+      }        
+    };
+  let options = {
+    "method" : "POST",
+    "payload": JSON.stringify(body),
+    "headers": {
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+      "Authorization": "Bearer " + ACCESS_TOKEN
+    }
+   };
+    let url = Asana.getSubtaskUrl("1200723005936586");        // {task_gid} to add subtask under that
+    let response = UrlFetchApp.fetch(url,options);
+    trace(`Subtask.create --> ${response.getContentText()}`);
+    let data = JSON.parse(response.getContentText());
+  }
+
+}
 
 
 
