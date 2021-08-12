@@ -97,12 +97,12 @@ class Spreadsheet {
   setActive() {
     trace(`> Spreadsheet.setActiveSpreadsheet(${this.trace})`);
     // https://developers.google.com/apps-script/reference/spreadsheet/spreadsheet-app#setActiveSpreadsheet(Spreadsheet)
-    SpreadsheetApp.setActiveSpreadsheet(this.nativeSpreadheet);
+    SpreadsheetApp.setActiveSpreadsheet(this.nativeSpreadsheet);
     trace(`< Spreadsheet.setActiveSpreadsheet`);
   }
 
   getRangeByName(rangeName, sheetName = "") {
-    let range = this.nativeSpreadheet.getRangeByName(rangeName);
+    let range = this.nativeSpreadsheet.getRangeByName(rangeName);
     if (range !== null) { 
       // Range found, create wrapper and return
       let newRange = new Range(range, rangeName, sheetName);
@@ -124,7 +124,7 @@ class Spreadsheet {
   }
 
   getSheetByName(name) {
-    const sheet = this.nativeSpreadheet.getSheetByName(name);
+    const sheet = this.nativeSpreadsheet.getSheetByName(name);
     const newSheet = sheet === null ? null : new Sheet(sheet);
     trace(`${this.trace}.getSheetByName("${name}") --> ${sheet === null?"null (NOT FOUND)":newSheet.trace}`);
     return newSheet;
@@ -132,16 +132,16 @@ class Spreadsheet {
   
   copy(name) {
     trace(`${this.trace}.copy(${name})`);
-    const newSpreadsheet = new Spreadsheet(this.nativeSpreadheet.copy(name));
+    const newSpreadsheet = new Spreadsheet(this.nativeSpreadsheet.copy(name));
     return newSpreadsheet;
   }
   
-  get nativeSpreadheet() { return this._nativeSpreadsheet; }
-  get activeSheet()      { return new Sheet(this.nativeSpreadheet.getActiveSheet()); }
+  get nativeSpreadsheet() { return this._nativeSpreadsheet; }
+  get activeSheet()      { return new Sheet(this.nativeSpreadsheet.getActiveSheet()); }
   get name()             { return this._name; }
-  get id()               { return this.nativeSpreadheet.getId(); }
+  get id()               { return this.nativeSpreadsheet.getId(); }
   get file()             { return new File(DriveApp.getFileById(this.id)); }
-  get url()              { return this.nativeSpreadheet.getUrl(); }
+  get url()              { return this.nativeSpreadsheet.getUrl(); }
   get parentFolder()     { return this.file.parent; }
   get trace()            { return this._trace; }
 

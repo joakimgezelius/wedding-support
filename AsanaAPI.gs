@@ -1,23 +1,63 @@
 ACCESS_TOKEN = "1/1200711887518296:7fa17fbab2b58d6deb3d3d4c0da0e39a";  // Personal access token
 WORKSPACE_ID = "1200711902496585";                                     // Hour Productions Testing
+//ASSIGNEE     = User.active.email;                                          
 
 class Asana {
 
   static getProjectUrl(method) {
-      return `${Asana.projectUrl}/${method}`;      
+    return `${Asana.projectUrl}/${method}`;      
   }
 
   static getTaskUrl(method) {
-      return `${Asana.taskUrl}/${method}`;      
+    return `${Asana.taskUrl}/${method}`;      
   } 
 
   static getSubtaskUrl(method) {
-      return `${Asana.taskUrl}/${method}/subtasks`; 
+    return `${Asana.taskUrl}/${method}/subtasks`; 
+  }
+
+  static getProjectName() {                     // Returns active spreadsheet name for project
+    return Spreadsheet.active.name;
+  }
+
+  static getProjectDueDate() {
+    let dueDate = SpreadsheetApp.getActiveSpreadsheet().getRangeByName('WeddingDate').getValue();
+    return Utilities.formatDate(dueDate, "GMT+1", "YYYY-MM-dd");
+  }
+
+  static getProjectGid() {                                      // Gets all projects details under the workspace  
+    let options = {
+    "method" : "GET",
+    "headers": {
+      "Accept": "application/json",
+      "Authorization": "Bearer " + ACCESS_TOKEN
+    }
+    };
+    let url = Asana.getProjectUrl("?workspace=1200711902496585");
+    //let response = UrlFetchApp.fetch(url,options);
+    let response = {"data":[{"gid":"1200711906671987","name":"Test API","resource_type":"project"},{"gid":"1200756401999433","name":"2021 Wedding Process ASANA upload (work in progress)","resource_type":"project"}]}
+    //trace(`response = ${response}`);
+    //let data = JSON.parse(response.getContentText());
+    //trace(`data = ${data}`);                            // returns data = [object Object]
+
+    let searchVal = Asana.getProjectName();
+    trace(`Project Name = ${searchVal}`);
+    for(let i = 0; i < response.data.length; i++) {
+      if(response.data[i].name == searchVal)
+      {
+        return response.data[i].gid;
+      }
+      else {
+        Dialog.notify("Try again!","Loop fails");
+      }
+    }
+
   }
 }
 
 Asana.projectUrl = "https://app.asana.com/api/1.0/projects";     // For basic project operations
 Asana.taskUrl    = "https://app.asana.com/api/1.0/tasks";        // For creating the task in Asana
+
 
 //=========================================================================================================
 // Wrapper for project - https://developers.asana.com/docs/projects
@@ -29,7 +69,7 @@ class Project {
     let body = {
      "data": {
        "archived": false,
-       "color": "dark-red",           // Color for icon
+       "color": "dark-red",           // Color for project icon
        "current_status": { 
           "author": {
             "name": "Furkan Shaikh"
@@ -38,13 +78,17 @@ class Project {
           "created_by": {
             "name": "Furkan Shaikh"
           },
-          "html_text": "<body>The project is for the tesing the APIs...</body>",  // Description
+          "html_text": "<body>Project created using the active spreadsheet name.</body>",  // Description
           "text": "The project is moving forward according to plan...",
-          "title": "Status Update - Aug 05 : Project to test APIs"                // Status title
+          "title": "Project created using the active spreadsheet name"                     // Status title
         },
+       //"start_on" : "",                                                                  // Project Start Date (Premium Only)
+       "due_on": Asana.getProjectDueDate(),                                                // Due Date for Project
        "html_notes": "<body>These are things we need to purchase.</body>",
-       "name": "Large Weddings",                         // name for the project
+       "name": Asana.getProjectName(),                                                     // name for the project
        "notes": "These are things we need to purchase.",
+       "owner": "joakim@gezelius.org",                                                     // owner of the project
+       //"team": "",                                                                       // team_gid 
        "public": true,
       } 
     };
@@ -57,7 +101,7 @@ class Project {
         "Authorization": "Bearer " + ACCESS_TOKEN
       }
     };      
-    let url = Asana.getProjectUrl("?workspace=1200711902496585");   //  Workspace_ID where project lies
+    let url = Asana.getProjectUrl("?workspace=1200711902496585");   // Hour Productions Testing Workspace_ID where project sits
     let response = UrlFetchApp.fetch(url,options);
     trace(`Project.create --> ${response.getContentText()}`);
     let data = JSON.parse(response.getContentText());
@@ -72,17 +116,21 @@ class Project {
           "author": {
             "name": "Furkan Shaikh"
           },
-          "color": "blue",
+          "color": "green",
           "created_by": {
             "name": "Furkan Shaikh"
           },
           "html_text": "<body>The project <strong>Status</strong> is updated...</body>",
           "text": "The project status is updated",
           "title": "Status Update - Aug 05"
-        },
+        },        
+       //"start_on" : "",                                                                  // Project Start Date (Premium Only)
+       "due_on": Asana.getProjectDueDate(),
        "html_notes": "<body>These are things we need to purchase.</body>",
-       "name": "Hour Weddings",
-       "notes": "These are things we need to purchase.",
+       "name": Asana.getProjectName(),
+       "notes": "These are things we need to purchase.",       
+       "owner": "joakim@gezelius.org",                                                     // owner of the project
+       //"team": "",                                                                       // team_gid 
        "public": true,
       } 
     };
@@ -95,7 +143,7 @@ class Project {
         "Authorization": "Bearer " + ACCESS_TOKEN
       }
     };      
-    let url = Asana.getProjectUrl("1200714734875880");
+    let url = Asana.getProjectUrl("1200714734875880");                                     // set the project_gid param
     let response = UrlFetchApp.fetch(url,options);
     trace(`Project.update --> ${response.getContentText()}`);
     let data = JSON.parse(response.getContentText());
@@ -109,7 +157,7 @@ class Project {
         "Authorization": "Bearer " + ACCESS_TOKEN
       }
     };      
-    let url = Asana.getProjectUrl("1234567890");         // Use desired {project_gid} to delete project
+    let url = Asana.getProjectUrl("");         // Use {project_gid} to delete desired project
     UrlFetchApp.fetch(url,options);
   }
 
@@ -123,25 +171,28 @@ class Project {
 class Task {
 
 static create() {
-  let body = {
+  let taskList = Range.getByName("AsanaTaskList","To Asana API");
+
+  let newTask = {
     "data": {
       "approval_status": "pending",         // approved, rejected, changes_requested, pending
       "assignee": "me",
       "assignee_status": "upcoming",        // today, later, new, inbox, upcoming
       "completed": false,
-      "due_on": "2021-08-09",
+      "due_on": "2021-08-09",               // due date
+       //"start_on": "",                    // start date (Premium)
       "html_notes": "<body>Work towards parameterisation of the API wrapper - The two main entities we will deal with in Asana are <em>Projects and Tasks</em></body>",                         // description
       "name": "Shopping in XYZ for ABC",    // task title
       "notes": "Work towards parameterisation of the API wrapper - The two main entities we will deal with in Asana are Projects and Tasks",
       "projects": [
-        "1200714734875880"                  // project_gid for creating task under it
+      //Asana.getProjectGid()               // project_gid for creating task under it
       ],
       "resource_subtype": "default_task",   //milestone, approval, section, default_task
     }
   };
   let options = {
     "method" : "POST",
-    "payload": JSON.stringify(body),
+    "payload": JSON.stringify(newTask),
     "headers": {
       "Content-Type": "application/json",
       "Accept": "application/json",

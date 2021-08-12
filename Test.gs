@@ -12,14 +12,15 @@ function onTestCase2() {        // Asana Testing
   //Project.create();
   //Project.update();
   //Project.destroy();
-  //Task.create(); 
+  Task.create(); 
   //Task.update();
   //Task.destroy(); 
-  Subtask.create();
+  //Subtask.create();
 }
 
 function onTestCase3() {        // Other Testings
   trace("onTestCase3");
-  let user = User.active;
-  trace(`${user}`);
+  //let user = User.active;
+  //trace(`${user}`);
+  Asana.getProjectGid();
 }
