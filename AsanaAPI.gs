@@ -1,4 +1,4 @@
-ACCESS_TOKEN = "1/1200711887518296:7fa17fbab2b58d6deb3d3d4c0da0e39a";  // Personal access token
+ACCESS_TOKEN = "1/1200711887518296:7fa17fbab2b58d6deb3d3d4c0da0e39a";  // Personal access token (furkan)
 WORKSPACE_ID = "1200711902496585";                                     // Hour Productions Testing
 //ASSIGNEE     = User.active.email;                                          
 
@@ -25,33 +25,30 @@ class Asana {
     return Utilities.formatDate(dueDate, "GMT+1", "YYYY-MM-dd");
   }
 
-  static getProjectGid() {                                      // Gets all projects details under the workspace  
+  static getProjectGid() {                      // Gets all projects details under the workspace & returns project_gid
     let options = {
-    "method" : "GET",
-    "headers": {
-      "Accept": "application/json",
-      "Authorization": "Bearer " + ACCESS_TOKEN
-    }
+      "method" : "GET",
+      "headers": {
+        "Accept": "application/json",
+        "Authorization": "Bearer " + ACCESS_TOKEN
+      }
     };
     let url = Asana.getProjectUrl("?workspace=1200711902496585");
-    //let response = UrlFetchApp.fetch(url,options);
-    let response = {"data":[{"gid":"1200711906671987","name":"Test API","resource_type":"project"},{"gid":"1200756401999433","name":"2021 Wedding Process ASANA upload (work in progress)","resource_type":"project"}]}
-    //trace(`response = ${response}`);
+    let response = UrlFetchApp.fetch(url,options);
+    //let response = {"data":[{"gid":"1200711906671987","name":"Test API","resource_type":"project"},{"gid":"1200756401999433","name":"2021 Wedding Process ASANA upload (work in progress)","resource_type":"project"}]}
+    trace(`response = ${response}`);
     //let data = JSON.parse(response.getContentText());
     //trace(`data = ${data}`);                            // returns data = [object Object]
 
     let searchVal = Asana.getProjectName();
-    trace(`Project Name = ${searchVal}`);
-    for(let i = 0; i < response.data.length; i++) {
+    let project_gid;
+    for(let i = 0; i < response.data.length; i++) {       // loop through the array and find the match
       if(response.data[i].name == searchVal)
       {
-        return response.data[i].gid;
-      }
-      else {
-        Dialog.notify("Try again!","Loop fails");
+        project_gid = response.data[i].gid;
       }
     }
-
+    return project_gid;
   }
 }
 
@@ -172,7 +169,7 @@ class Task {
 
 static create() {
   let taskList = Range.getByName("AsanaTaskList","To Asana API");
-
+  PROJECT_GID = Asana.getProjectGid();      // returns current project_gid for creating task under it
   let newTask = {
     "data": {
       "approval_status": "pending",         // approved, rejected, changes_requested, pending
@@ -182,12 +179,12 @@ static create() {
       "due_on": "2021-08-09",               // due date
        //"start_on": "",                    // start date (Premium)
       "html_notes": "<body>Work towards parameterisation of the API wrapper - The two main entities we will deal with in Asana are <em>Projects and Tasks</em></body>",                         // description
-      "name": "Shopping in XYZ for ABC",    // task title
+      "name": "Client receipt  1st Deposit. Add reminder for 2nd deposit",    // task title
       "notes": "Work towards parameterisation of the API wrapper - The two main entities we will deal with in Asana are Projects and Tasks",
       "projects": [
-      //Asana.getProjectGid()               // project_gid for creating task under it
+        PROJECT_GID               
       ],
-      "resource_subtype": "default_task",   //milestone, approval, section, default_task
+      "resource_subtype": "default_task",   // milestone, approval, section, default_task
     }
   };
   let options = {
@@ -202,7 +199,7 @@ static create() {
     let url = Asana.getTaskUrl("?workspace=1200711902496585");
     let response = UrlFetchApp.fetch(url,options);
     trace(`Task.create --> ${response.getContentText()}`);
-    let data = JSON.parse(response.getContentText());
+    //let data = JSON.parse(response.getContentText());
   }
 
   static update() { 

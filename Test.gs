@@ -19,8 +19,9 @@ function onTestCase2() {        // Asana Testing
 }
 
 function onTestCase3() {        // Other Testings
-  trace("onTestCase3");
+  //trace("onTestCase3");
   //let user = User.active;
   //trace(`${user}`);
   Asana.getProjectGid();
+  trace(`${Asana.getProjectGid()}`);
 }
