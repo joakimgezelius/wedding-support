@@ -2,7 +2,7 @@ ACCESS_TOKEN = "1/1200711887518296:7fa17fbab2b58d6deb3d3d4c0da0e39a";  // Person
 WORKSPACE_ID = "1200711902496585";                                     // Hour Productions Testing
 //ASSIGNEE     = User.active.email;                                          
 
-class Asana {
+class Asana { 
 
   static getProjectUrl(method) {
     return `${Asana.projectUrl}/${method}`;      
@@ -34,18 +34,16 @@ class Asana {
       }
     };
     let url = Asana.getProjectUrl("?workspace=1200711902496585");
-    let response = UrlFetchApp.fetch(url,options);
-    //let response = {"data":[{"gid":"1200711906671987","name":"Test API","resource_type":"project"},{"gid":"1200756401999433","name":"2021 Wedding Process ASANA upload (work in progress)","resource_type":"project"}]}
-    trace(`response = ${response}`);
-    //let data = JSON.parse(response.getContentText());
-    //trace(`data = ${data}`);                            // returns data = [object Object]
-
-    let searchVal = Asana.getProjectName();
+    let response = UrlFetchApp.fetch(url,options);  
+    let data = JSON.parse(response.getContentText());   
+    let projects = Array.from(data['data']);         // Creates a new shallow-copied Array instance from an array-like or iterable object.
+    trace(projects);
+    let searchVal = Asana.getProjectName();           
     let project_gid;
-    for(let i = 0; i < response.data.length; i++) {       // loop through the array and find the match
-      if(response.data[i].name == searchVal)
+    for(let i = 0; i < projects.length; i++) {       // Loop through the array and find the match
+      if( projects[i].name == searchVal)
       {
-        project_gid = response.data[i].gid;
+        project_gid = projects[i].gid;
       }
     }
     return project_gid;
@@ -168,21 +166,21 @@ class Project {
 class Task {
 
 static create() {
-  let taskList = Range.getByName("AsanaTaskList","To Asana API");
-  PROJECT_GID = Asana.getProjectGid();      // returns current project_gid for creating task under it
+  //let taskList = Range.getByName("AsanaTaskList","To Asana API");
+  let projectGid = Asana.getProjectGid();  // returns current project_gid for creating task under it
   let newTask = {
     "data": {
       "approval_status": "pending",         // approved, rejected, changes_requested, pending
       "assignee": "me",
       "assignee_status": "upcoming",        // today, later, new, inbox, upcoming
       "completed": false,
-      "due_on": "2021-08-09",               // due date
+      "due_on": "2021-08-25",               // due date
        //"start_on": "",                    // start date (Premium)
       "html_notes": "<body>Work towards parameterisation of the API wrapper - The two main entities we will deal with in Asana are <em>Projects and Tasks</em></body>",                         // description
       "name": "Client receipt  1st Deposit. Add reminder for 2nd deposit",    // task title
       "notes": "Work towards parameterisation of the API wrapper - The two main entities we will deal with in Asana are Projects and Tasks",
       "projects": [
-        PROJECT_GID               
+        projectGid               
       ],
       "resource_subtype": "default_task",   // milestone, approval, section, default_task
     }

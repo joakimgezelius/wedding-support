@@ -30,6 +30,12 @@ class Trace {
     trace("Trace cleared: " + Range.trace(traceArea));
   }
 
+  static traceObject(object) {                          // Unpacks an object to string and gives type of an object
+    let results = JSON.stringify(object);
+    let type = typeof(results);
+    trace(`results = ${results} ---> object type = ${type}`);    
+  }
+
 /*
   static showTraceSidebar() {
     var html = HtmlService.createHtmlOutputFromFile("Page")
