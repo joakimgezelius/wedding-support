@@ -51,5 +51,5 @@ function onWeddingPackagesSheetOpen(libName) {
 function onProductsSheetOpen(libName) {
   trace(`onProductsSheetOpen libName=${libName}`);
   Menu.addProductsSheetMenu(libName);
-  Menu.addWeddingMenu(libName);
+  //Menu.addWeddingPackagesMenu(libName);
 }

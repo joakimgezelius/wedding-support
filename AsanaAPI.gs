@@ -4,12 +4,16 @@ WORKSPACE_ID = "1200711902496585";                                     // Hour P
 
 class Asana { 
 
+  static get asanaTaskListRange() { 
+    return Range.getByName("AsanaTaskList", "To Asana API").loadColumnNames(); 
+  }  
+
   static getProjectUrl(method) {
-    return `${Asana.projectUrl}/${method}`;      
+    return `${Asana.projectUrl}/${method}&opt_pretty`;      
   }
 
   static getTaskUrl(method) {
-    return `${Asana.taskUrl}/${method}`;      
+    return `${Asana.taskUrl}/${method}&opt_pretty`;      
   } 
 
   static getSubtaskUrl(method) {
@@ -160,18 +164,36 @@ class Project {
 
 
 //=========================================================================================================
+// Wrapper for Subtask - https://developers.asana.com/docs/sections
+// Class Section
+
+class Section {
+  
+}
+
+function onCreateTask() {
+  trace("onCreateTask");
+  let taskList = new TaskList();
+  let taskCreator = new TaskCreator();
+  taskList.apply(taskCreator);
+}
+
+
+//=========================================================================================================
 // Wrapper for Task - https://developers.asana.com/docs/tasks
 // Class Task
 
 class Task {
 
-static create() {
-  //let taskList = Range.getByName("AsanaTaskList","To Asana API");
-  let projectGid = Asana.getProjectGid();  // returns current project_gid for creating task under it
+create(row) {
+  let projectGid = Asana.getProjectGid();   // returns current project_gid for creating task under it
   let newTask = {
     "data": {
       "approval_status": "pending",         // approved, rejected, changes_requested, pending
       "assignee": "me",
+      //"assignee_section": {
+      //  "name" : "Onboarding"
+      //},
       "assignee_status": "upcoming",        // today, later, new, inbox, upcoming
       "completed": false,
       "due_on": "2021-08-25",               // due date
@@ -193,7 +215,7 @@ static create() {
       "Accept": "application/json",
       "Authorization": "Bearer " + ACCESS_TOKEN
       }
-   };
+    };
     let url = Asana.getTaskUrl("?workspace=1200711902496585");
     let response = UrlFetchApp.fetch(url,options);
     trace(`Task.create --> ${response.getContentText()}`);
@@ -221,7 +243,7 @@ static create() {
       "Accept": "application/json",
       "Authorization": "Bearer " + ACCESS_TOKEN
       }
-   }; 
+    }; 
     let url = Asana.getTaskUrl("1200720964791004");         // task_gid to update the task
     let response = UrlFetchApp.fetch(url,options);
     trace(`Task.update --> ${response.getContentText()}`);
@@ -238,6 +260,103 @@ static create() {
     };      
     let url = Asana.getTaskUrl("1234567890");         // Use desired {task_gid} to delete task
     UrlFetchApp.fetch(url,options);
+  }
+}
+
+//=============================================================================================
+// Class TaskCreator
+//
+
+class TaskCreator {
+  constructor(forced) {
+    this.forced = forced;
+    trace("NEW " + this.trace);
+  }
+  
+  onEnd() {
+    trace("TaskCreator.onEnd");
+  }
+
+  
+  createTask(row) {
+    trace("TaskCreator.onTitle");
+    this.itemNo = 0;
+    ++this.sectionNo;
+    this.sectionTitleRange = row.range;
+    if (row.itemNo === "" || this.forced) { // Only set item number if empty (or forced)
+      row.itemNo = this.generateSectionNo();
+    }
+  }
+
+  onRow(row) {
+    ++this.itemNo;
+    trace("EventDetailsUpdater.onRow " + row.itemNo);
+    let a1_currency = row.getA1Notation("Currency");
+    let a1_quantity = row.getA1Notation("Quantity");
+    let a1_nativeUnitCost = row.getA1Notation("NativeUnitCost");
+    let a1_vat = row.getA1Notation("VAT");
+    let a1_nativeUnitCostWithVAT = row.getA1Notation("NativeUnitCostWithVAT");
+    let a1_unitCost = row.getA1Notation("UnitCost");
+    let a1_commissionPercentage = row.getA1Notation("CommissionPercentage");
+    let a1_markup = row.getA1Notation("Markup");
+    let a1_unitPrice = row.getA1Notation("UnitPrice");
+    let a1_startTime = row.getA1Notation("Time");
+    let a1_endTime = row.getA1Notation("EndTime");
+
+    if (row.itemNo === "" || this.forced) { // Only set item number if empty (or forced)
+      row.itemNo = this.generateItemNo();
+    }
+    this.setNativeUnitCost(row);
+    row.nativeUnitCostWithVAT = `=IF(OR(${a1_currency}="", ${a1_nativeUnitCost}="", ${a1_nativeUnitCost}=0), "", ${a1_nativeUnitCost}*(1+${a1_vat}))`;
+    row.getCell("NativeUnitCostWithVAT").setNumberFormat(row.currencyFormat);
+    row.unitCost = `=IF(OR(${a1_currency}="", ${a1_nativeUnitCostWithVAT}="", ${a1_nativeUnitCostWithVAT}=0), "", IF(${a1_currency}="GBP", ${a1_nativeUnitCostWithVAT}, ${a1_nativeUnitCostWithVAT} / EURGBP))`;
+    row.totalGrossCost = `=IF(OR(${a1_quantity}="", ${a1_quantity}=0, ${a1_unitCost}="", ${a1_unitCost}=0), "", ${a1_quantity} * ${a1_unitCost})`;
+    row.totalNettCost = `=IF(OR(${a1_quantity}="", ${a1_quantity}=0, ${a1_unitCost}="", ${a1_unitCost}=0), "", ${a1_quantity} * ${a1_unitCost} * (1-${a1_commissionPercentage}))`;
+    row.unitPrice = `=IF(OR(${a1_unitCost}="", ${a1_unitCost}=0), "", ${a1_unitCost} * ( 1 + ${a1_markup}))`;
+    row.totalPrice = `=IF(OR(${a1_quantity}="", ${a1_quantity}=0, ${a1_unitPrice}="", ${a1_unitPrice}=0), "", ${a1_quantity} * ${a1_unitPrice})`;
+//  row.commission = `=IF(OR(${a1_commissionPercentage}="", ${a1_commissionPercentage}=0), "", ${a1_quantity} * ${a1_unitCost} * ${a1_commissionPercentage})`;
+    if (row.isStaffTicked && (row.quantity === "")) { // Calculate quantity if staff and time fields are filled 
+      row.quantity = `=IF(OR(${a1_startTime}="", ${a1_endTime}=""), "", ((hour(${a1_endTime})*60+minute(${a1_endTime}))-(hour(${a1_startTime})*60+minute(${a1_startTime})))/60)`;
+    }
+    if (row.isInStock && this.forced) { // Set mark-up and commission for in-stock items
+      trace("- Set In Stock commision & mark-up on " + this.itemNo);
+      row.commissionPercentage = 0.5;
+      row.markup = 0;
+    }
+  }
+
+  generateSectionNo() {
+    return Utilities.formatString("#%02d", this.sectionNo);
+  }
+
+  generateItemNo() {
+    if (this.itemNo == 0) 
+      return this.generateSectionNo();
+    else
+      return Utilities.formatString("%s-%02d", this.generateSectionNo(), this.itemNo);
+  }
+
+  setNativeUnitCost(row) {
+    let budgetUnitCostCell = row.getCell("BudgetUnitCost");
+    let a1_budgetUnitCost = budgetUnitCostCell.getA1Notation();
+    let nativeUnitCost = String(row.nativeUnitCost);
+    let nativeUnitCostCell = row.getCell("NativeUnitCost");
+    let currencyFormat = row.currencyFormat;
+    //trace(`Cell: ${nativeUnitCostCell.getA1Notation()} ${currencyFormat}`);
+    budgetUnitCostCell.setNumberFormat(currencyFormat);
+    nativeUnitCostCell.setNumberFormat(currencyFormat);
+    if (nativeUnitCost === "") { // Set native unit cost equal to budget unit cost if not set 
+      //trace(`Set nativeUnitCost to =${budgetUnitCostA1}`);
+      row.nativeUnitCost = `=${a1_budgetUnitCost}`;
+      nativeUnitCostCell.setFontColor("#ccccff"); // Make text grey
+    } else {
+      //trace(`setNativeUnitCost: nativeUnitCost="${nativeUnitCost} - make it black`);
+      nativeUnitCostCell.setFontColor("#000000"); // Black
+    }
+  }
+
+  get trace() {
+    return `{EventDetailsUpdater forced=${this.forced}}`;
   }
 }
 
@@ -270,8 +389,8 @@ class Subtask {
       "Content-Type": "application/json",
       "Accept": "application/json",
       "Authorization": "Bearer " + ACCESS_TOKEN
-    }
-   };
+     }
+    };
     let url = Asana.getSubtaskUrl("1200723005936586");        // {task_gid} to add subtask under that
     let response = UrlFetchApp.fetch(url,options);
     trace(`Subtask.create --> ${response.getContentText()}`);
@@ -279,6 +398,8 @@ class Subtask {
   }
 
 }
+
+
 
 
 
