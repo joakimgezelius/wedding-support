@@ -60,6 +60,7 @@ class SupplierCostingBuilder {
   }
 
   onTitle(row) {
+    this.currentTitle = row.title;
     trace("SupplierCostingBuilder.onTitle " + this.currentTitle + " - ignore");
   }
   
@@ -95,7 +96,7 @@ class SupplierCostingBuilder {
     var totalNettCost = row.totalNettCost;
     var paymentMethod = row.paymentMethod;
     var paymentStatus = row.paymentStatus;
-    if (!row.isSubItem && Math.abs(row.nativeUnitCost) > 0.01 && row.quantity > 0) { // This not a sub-item (marked as such or with no price)
+    if (!row.isSubItem && Math.abs(row.nativeUnitCostWithVAT) > 0.01 && row.quantity > 0) { // This not a sub-item (marked as such or with no price)
       trace("SupplierCostingBuilder.onRow " + row.description);
       if (row.supplier !== this.currentSupplier) {
         this.newSupplierSection(row);
@@ -111,7 +112,7 @@ class SupplierCostingBuilder {
       targetRow.getCell(1,column++).setValue(row.location);
       targetRow.getCell(1,column++).setValue(description);
       targetRow.getCell(1,column++).setValue(row.quantity);
-      targetRow.getCell(1,column++).setValue(row.nativeUnitCost).setNumberFormat(row.currencyFormat);
+      targetRow.getCell(1,column++).setValue(row.nativeUnitCostWithVAT).setNumberFormat(row.currencyFormat);
       if (row.currency === "GBP") {
         this.currentSupplierGrossGbpSum += totalNativeGrossCost;
         ++column; // Skip EUR column

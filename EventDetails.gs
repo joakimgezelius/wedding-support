@@ -84,8 +84,9 @@ class EventRow extends RangeRow {
   get currencyFormat()      { return `${this.currencySymbol}#,##0.00`; }
   get budgetUnitCost()      { return this.get("BudgetUnitCost");  } // Accept blank
   get nativeUnitCost()      { return this.get("NativeUnitCost");  } // Accept blank
+  get nativeUnitCostWithVAT() { return this.get("NativeUnitCostWithVAT"); } // Accept blank
   get unitCost()            { return this.get("UnitCost");  } // Accept blank
-  get totalNativeGrossCost(){ return this.quantity * this.nativeUnitCost; }
+  get totalNativeGrossCost(){ return this.quantity * this.nativeUnitCostWithVAT; }
   get totalGrossCost()      { return this.get("TotalGrossCost");  } // Accept blank
   get totalNettCost()       { return this.get("TotalCost");  } // Accept blank
   get markup()              { return this.get("Markup"); } // Accept ref errors
