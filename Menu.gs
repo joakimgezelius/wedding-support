@@ -44,6 +44,23 @@ class Menu {
   trace("< Custom event menu added");
 }
 
+static addAsanaMenu(libName) {
+    trace("> Adding custom event menu");
+    let ui = SpreadsheetApp.getUi();
+    let menu = ui.createMenu("Asana" + globalLibMenuTag)
+      .addSubMenu(ui.createMenu("Project")
+                  .addItem("Make the Project", libName + ".onCreateProject")
+                  .addItem("Update the Project", libName + ".onUpdateProject")
+                  .addItem("Delete the Project", libName + ".onDestroyProject")
+                  )
+      .addSubMenu(ui.createMenu("Task")
+                  .addItem("(+) Add Tasks", libName + ".onCreateTask")
+                  .addItem("Update Tasks", libName + ".onUpdateTask")
+                  )
+  Menu.addTestItems(libName, menu).addToUi();
+  trace("< Custom event menu added");
+}
+
 static addTestMenu(libName) {
   trace("> Adding custom test menu if user is developer");
   if (User.active.isDeveloper) {

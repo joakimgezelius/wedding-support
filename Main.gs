@@ -11,6 +11,7 @@ globalLibMenuTag = ""; // Set to unique value for each library, e.g. " (Shaikh)"
 function onWeddingSheetOpen(libName) {
   trace(`onWeddingSheetOpen libName=${libName}`);
   Menu.addEventMenu(libName);
+  Menu.addAsanaMenu(libName);
 }
 
 function onRotaSheetOpen(libName) {

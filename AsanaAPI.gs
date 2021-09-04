@@ -1,6 +1,22 @@
 ACCESS_TOKEN = "1/1200711887518296:7fa17fbab2b58d6deb3d3d4c0da0e39a";  // Personal access token (furkan)
 WORKSPACE_ID = "1200711902496585";                                     // Hour Productions Testing
-//ASSIGNEE     = User.active.email;                                          
+//ASSIGNEE   = User.active.email;                                        
+
+function onCreateTask() {
+  trace("onCreateTask");
+  let taskList = new TaskList();
+  let taskCreator = new TaskCreator();
+  taskList.apply(taskCreator);
+}
+
+function onUpdateTask() {
+  trace("onUpdateTask");
+  let taskList = new TaskList();
+  let taskUpdater = new TaskUpdater();
+  taskList.apply(taskUpdater);
+}
+
+//=========================================================================================================
 
 class Asana { 
 
@@ -9,11 +25,11 @@ class Asana {
   }  
 
   static getProjectUrl(method) {
-    return `${Asana.projectUrl}/${method}&opt_pretty`;      
+    return `${Asana.projectUrl}/${method}`;      
   }
 
   static getTaskUrl(method) {
-    return `${Asana.taskUrl}/${method}&opt_pretty`;      
+    return `${Asana.taskUrl}/${method}`;      
   } 
 
   static getSubtaskUrl(method) {
@@ -29,7 +45,7 @@ class Asana {
     return Utilities.formatDate(dueDate, "GMT+1", "YYYY-MM-dd");
   }
 
-  static getProjectGid() {                      // Gets all projects details under the workspace & returns project_gid
+  static getProjectGid() {                      // Gets all projects details under the workspace & returns active project_gid
     let options = {
       "method" : "GET",
       "headers": {
@@ -41,7 +57,7 @@ class Asana {
     let response = UrlFetchApp.fetch(url,options);  
     let data = JSON.parse(response.getContentText());   
     let projects = Array.from(data['data']);         // Creates a new shallow-copied Array instance from an array-like or iterable object.
-    trace(projects);
+    //trace(projects);
     let searchVal = Asana.getProjectName();           
     let project_gid;
     for(let i = 0; i < projects.length; i++) {       // Loop through the array and find the match
@@ -52,10 +68,38 @@ class Asana {
     }
     return project_gid;
   }
+
+  static checkAsanaProjectNames() {
+    let options = {
+      "method" : "GET",
+      "headers": {
+        "Accept": "application/json",
+        "Authorization": "Bearer " + ACCESS_TOKEN
+      }
+    };
+    let url = Asana.getProjectUrl("?workspace=1200711902496585");
+    let response = UrlFetchApp.fetch(url,options);
+    let data = JSON.parse(response.getContentText());
+    let projects = Array.from(data['data']);
+    //trace(projects);
+    let searchVal = Asana.getProjectName(); 
+    let asanaProject_name;
+    for(let i = 0; i < projects.length; i++) {       // Loop through the array and find the match
+      if( projects[i].name == searchVal)
+      {
+        asanaProject_name = projects[i].name;
+      }
+    }
+    return asanaProject_name;
+  }
 }
 
 Asana.projectUrl = "https://app.asana.com/api/1.0/projects";     // For basic project operations
 Asana.taskUrl    = "https://app.asana.com/api/1.0/tasks";        // For creating the task in Asana
+
+PROJECT_GID  = Asana.getProjectGid();                            // Returns active project gid
+PROJECT_NAME = Asana.getProjectName();                           // Returns active project name
+PROJECT_DUE  = Asana.getProjectDueDate();                        // Returns active project due date
 
 
 //=========================================================================================================
@@ -63,47 +107,55 @@ Asana.taskUrl    = "https://app.asana.com/api/1.0/tasks";        // For creating
 // Class Project
 
 class Project {
-
+  
   static create() {
-    let body = {
-     "data": {
-       "archived": false,
-       "color": "dark-red",           // Color for project icon
-       "current_status": { 
-          "author": {
-            "name": "Furkan Shaikh"
+    if(Asana.checkAsanaProjectNames()) {
+      Dialog.notify("Project Already Exist!","Couldn't create "+ PROJECT_NAME +" project, Please click Ok for more details!");
+      Browser.newTab("https://app.asana.com/0/"+PROJECT_GID+"/list");
+    }
+    else {
+      Dialog.notify("Creating the Project...","Please wait creating the "+ PROJECT_NAME +" project in Asana workspace!");
+      let body = {
+      "data": {
+        "archived": false,
+        "color": "dark-red",           // Color for project icon
+        "current_status": { 
+            "author": {
+              "name": "Hour Productions"
+            },
+            "color": "green",           // Status : Green - On Track, Red - Off Track, Blue - On Hold, Yellow - At Risk 
+            "created_by": {
+              "name": "Hour Productions"
+            },
+            "html_text": "<body>Project created using the active spreadsheet name.</body>",  // Description
+            "text": "The project is moving forward according to plan...",
+            "title": "Project created using the active spreadsheet name"                     // Status title
           },
-          "color": "green",           // Status : Green - On Track, Red - Off Track, Blue - On Hold, Yellow - At Risk 
-          "created_by": {
-            "name": "Furkan Shaikh"
-          },
-          "html_text": "<body>Project created using the active spreadsheet name.</body>",  // Description
-          "text": "The project is moving forward according to plan...",
-          "title": "Project created using the active spreadsheet name"                     // Status title
-        },
-       //"start_on" : "",                                                                  // Project Start Date (Premium Only)
-       "due_on": Asana.getProjectDueDate(),                                                // Due Date for Project
-       "html_notes": "<body>These are things we need to purchase.</body>",
-       "name": Asana.getProjectName(),                                                     // name for the project
-       "notes": "These are things we need to purchase.",
-       "owner": "joakim@gezelius.org",                                                     // owner of the project
-       //"team": "",                                                                       // team_gid 
-       "public": true,
-      } 
-    };
-    let options = {
-      "method" : "POST",
-      "payload": JSON.stringify(body),
-      "headers": {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "Authorization": "Bearer " + ACCESS_TOKEN
-      }
-    };      
-    let url = Asana.getProjectUrl("?workspace=1200711902496585");   // Hour Productions Testing Workspace_ID where project sits
-    let response = UrlFetchApp.fetch(url,options);
-    trace(`Project.create --> ${response.getContentText()}`);
-    let data = JSON.parse(response.getContentText());
+        //"start_on" : "",                                                                  // Project Start Date (Premium Only)
+        "due_on": PROJECT_DUE,                                                              // Due Date for Project
+        "html_notes": "<body>These are things we need to purchase.</body>",
+        "name": PROJECT_NAME,                                                               // name for the project
+        "notes": "These are things we need to purchase.",
+        "owner": "joakim@gezelius.org",                                                     // owner of the project
+        //"team": "",                                                                       // team_gid 
+        "public": true,
+        } 
+      };
+      let options = {
+        "method" : "POST",
+        "payload": JSON.stringify(body),
+        "headers": {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "Authorization": "Bearer " + ACCESS_TOKEN
+        }
+      };      
+      let url = Asana.getProjectUrl("?workspace=1200711902496585");   // Hour Productions Testing Workspace_ID where project sits
+      let response = UrlFetchApp.fetch(url,options);
+      trace(`Project.create --> ${response.getContentText()}`);
+      //let data = JSON.parse(response.getContentText());
+      Dialog.notify("Project is created!","Please check Asana workspace for more details for project " +  PROJECT_NAME);
+    }
   }
 
   static update() {
@@ -155,72 +207,36 @@ class Project {
         "Accept": "application/json",
         "Authorization": "Bearer " + ACCESS_TOKEN
       }
-    };      
-    let url = Asana.getProjectUrl("");         // Use {project_gid} to delete desired project
+    };             
+    let url = Asana.getProjectUrl(PROJECT_GID);         
     UrlFetchApp.fetch(url,options);
+    Dialog.notify("Project Removed from Asana", PROJECT_NAME + " project is deleted from Asana workspace");
   }
 
 }
 
-
-//=========================================================================================================
-// Wrapper for Subtask - https://developers.asana.com/docs/sections
-// Class Section
-
-class Section {
-  
+function onCreateProject () {
+  trace(`onCreateProject`);
+  Project.create();
 }
 
-function onCreateTask() {
-  trace("onCreateTask");
-  let taskList = new TaskList();
-  let taskCreator = new TaskCreator();
-  taskList.apply(taskCreator);
+function onUpdateProject () {
+  trace(`onUpdateProject`);
+  Project.update();
 }
 
+function onDestroyProject () {
+  trace(`onDestroyProject`);
+  if (Dialog.confirm("To Delete Asana Project - Confirmation Required", "Are you sure you want to delete "+ PROJECT_NAME +" project from Asana workspace?") == true) {
+  Project.destroy();
+  }
+}
 
 //=========================================================================================================
 // Wrapper for Task - https://developers.asana.com/docs/tasks
 // Class Task
 
 class Task {
-
-create(row) {
-  let projectGid = Asana.getProjectGid();   // returns current project_gid for creating task under it
-  let newTask = {
-    "data": {
-      "approval_status": "pending",         // approved, rejected, changes_requested, pending
-      "assignee": "me",
-      //"assignee_section": {
-      //  "name" : "Onboarding"
-      //},
-      "assignee_status": "upcoming",        // today, later, new, inbox, upcoming
-      "completed": false,
-      "due_on": "2021-08-25",               // due date
-       //"start_on": "",                    // start date (Premium)
-      "html_notes": "<body>Work towards parameterisation of the API wrapper - The two main entities we will deal with in Asana are <em>Projects and Tasks</em></body>",                         // description
-      "name": "Client receipt  1st Deposit. Add reminder for 2nd deposit",    // task title
-      "notes": "Work towards parameterisation of the API wrapper - The two main entities we will deal with in Asana are Projects and Tasks",
-      "projects": [
-        projectGid               
-      ],
-      "resource_subtype": "default_task",   // milestone, approval, section, default_task
-    }
-  };
-  let options = {
-    "method" : "POST",
-    "payload": JSON.stringify(newTask),
-    "headers": {
-      "Content-Type": "application/json",
-      "Accept": "application/json",
-      "Authorization": "Bearer " + ACCESS_TOKEN
-      }
-    };
-    let url = Asana.getTaskUrl("?workspace=1200711902496585");
-    let response = UrlFetchApp.fetch(url,options);
-    trace(`Task.create --> ${response.getContentText()}`);
-    //let data = JSON.parse(response.getContentText());
-  }
 
   static update() { 
     let body = {
@@ -235,13 +251,13 @@ create(row) {
         "resource_subtype": "default_task",    // milestone, approval, section, default_task
       }
     };
-  let options = {
-    "method" : "PUT",
-    "payload": JSON.stringify(body),
-    "headers": {
-      "Content-Type": "application/json",
-      "Accept": "application/json",
-      "Authorization": "Bearer " + ACCESS_TOKEN
+    let options = {
+      "method" : "PUT",
+      "payload": JSON.stringify(body),
+      "headers": {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": "Bearer " + ACCESS_TOKEN
       }
     }; 
     let url = Asana.getTaskUrl("1200720964791004");         // task_gid to update the task
@@ -264,99 +280,103 @@ create(row) {
 }
 
 //=============================================================================================
-// Class TaskCreator
+// Class TaskCreator, TaskUpdater
 //
 
 class TaskCreator {
+  
   constructor(forced) {
     this.forced = forced;
     trace("NEW " + this.trace);
   }
   
   onEnd() {
-    trace("TaskCreator.onEnd");
-  }
-
-  
-  createTask(row) {
-    trace("TaskCreator.onTitle");
-    this.itemNo = 0;
-    ++this.sectionNo;
-    this.sectionTitleRange = row.range;
-    if (row.itemNo === "" || this.forced) { // Only set item number if empty (or forced)
-      row.itemNo = this.generateSectionNo();
-    }
+    trace("TaskCreator.onEnd - no-op");
   }
 
   onRow(row) {
-    ++this.itemNo;
-    trace("EventDetailsUpdater.onRow " + row.itemNo);
-    let a1_currency = row.getA1Notation("Currency");
-    let a1_quantity = row.getA1Notation("Quantity");
-    let a1_nativeUnitCost = row.getA1Notation("NativeUnitCost");
-    let a1_vat = row.getA1Notation("VAT");
-    let a1_nativeUnitCostWithVAT = row.getA1Notation("NativeUnitCostWithVAT");
-    let a1_unitCost = row.getA1Notation("UnitCost");
-    let a1_commissionPercentage = row.getA1Notation("CommissionPercentage");
-    let a1_markup = row.getA1Notation("Markup");
-    let a1_unitPrice = row.getA1Notation("UnitPrice");
-    let a1_startTime = row.getA1Notation("Time");
-    let a1_endTime = row.getA1Notation("EndTime");
-
-    if (row.itemNo === "" || this.forced) { // Only set item number if empty (or forced)
-      row.itemNo = this.generateItemNo();
+  let newTask = {
+    "data": {
+      "approval_status": "pending",         // approved, rejected, changes_requested, pending
+      "assignee": "me",                     // add monica and team to workspace
+      //"assignee_section": {
+      //  "name" : "Onboarding"
+      //},
+      "assignee_status": "upcoming",      // today, later, new, inbox, upcoming
+      "completed": false,
+      "due_on": row.dueDate,              // due date
+    //"start_on": "",                     // start date (Premium)
+      "html_notes": "<body>" + row.description + "</body>",      // description
+      "name": row.name,                   // task name
+      "notes": row.notes,                 // notes
+      "projects": [
+        PROJECT_GID               
+      ],
+      "resource_subtype": "default_task",       // Premium feature - milestone, approval, section, default_task
     }
-    this.setNativeUnitCost(row);
-    row.nativeUnitCostWithVAT = `=IF(OR(${a1_currency}="", ${a1_nativeUnitCost}="", ${a1_nativeUnitCost}=0), "", ${a1_nativeUnitCost}*(1+${a1_vat}))`;
-    row.getCell("NativeUnitCostWithVAT").setNumberFormat(row.currencyFormat);
-    row.unitCost = `=IF(OR(${a1_currency}="", ${a1_nativeUnitCostWithVAT}="", ${a1_nativeUnitCostWithVAT}=0), "", IF(${a1_currency}="GBP", ${a1_nativeUnitCostWithVAT}, ${a1_nativeUnitCostWithVAT} / EURGBP))`;
-    row.totalGrossCost = `=IF(OR(${a1_quantity}="", ${a1_quantity}=0, ${a1_unitCost}="", ${a1_unitCost}=0), "", ${a1_quantity} * ${a1_unitCost})`;
-    row.totalNettCost = `=IF(OR(${a1_quantity}="", ${a1_quantity}=0, ${a1_unitCost}="", ${a1_unitCost}=0), "", ${a1_quantity} * ${a1_unitCost} * (1-${a1_commissionPercentage}))`;
-    row.unitPrice = `=IF(OR(${a1_unitCost}="", ${a1_unitCost}=0), "", ${a1_unitCost} * ( 1 + ${a1_markup}))`;
-    row.totalPrice = `=IF(OR(${a1_quantity}="", ${a1_quantity}=0, ${a1_unitPrice}="", ${a1_unitPrice}=0), "", ${a1_quantity} * ${a1_unitPrice})`;
-//  row.commission = `=IF(OR(${a1_commissionPercentage}="", ${a1_commissionPercentage}=0), "", ${a1_quantity} * ${a1_unitCost} * ${a1_commissionPercentage})`;
-    if (row.isStaffTicked && (row.quantity === "")) { // Calculate quantity if staff and time fields are filled 
-      row.quantity = `=IF(OR(${a1_startTime}="", ${a1_endTime}=""), "", ((hour(${a1_endTime})*60+minute(${a1_endTime}))-(hour(${a1_startTime})*60+minute(${a1_startTime})))/60)`;
-    }
-    if (row.isInStock && this.forced) { // Set mark-up and commission for in-stock items
-      trace("- Set In Stock commision & mark-up on " + this.itemNo);
-      row.commissionPercentage = 0.5;
-      row.markup = 0;
-    }
-  }
-
-  generateSectionNo() {
-    return Utilities.formatString("#%02d", this.sectionNo);
-  }
-
-  generateItemNo() {
-    if (this.itemNo == 0) 
-      return this.generateSectionNo();
-    else
-      return Utilities.formatString("%s-%02d", this.generateSectionNo(), this.itemNo);
-  }
-
-  setNativeUnitCost(row) {
-    let budgetUnitCostCell = row.getCell("BudgetUnitCost");
-    let a1_budgetUnitCost = budgetUnitCostCell.getA1Notation();
-    let nativeUnitCost = String(row.nativeUnitCost);
-    let nativeUnitCostCell = row.getCell("NativeUnitCost");
-    let currencyFormat = row.currencyFormat;
-    //trace(`Cell: ${nativeUnitCostCell.getA1Notation()} ${currencyFormat}`);
-    budgetUnitCostCell.setNumberFormat(currencyFormat);
-    nativeUnitCostCell.setNumberFormat(currencyFormat);
-    if (nativeUnitCost === "") { // Set native unit cost equal to budget unit cost if not set 
-      //trace(`Set nativeUnitCost to =${budgetUnitCostA1}`);
-      row.nativeUnitCost = `=${a1_budgetUnitCost}`;
-      nativeUnitCostCell.setFontColor("#ccccff"); // Make text grey
-    } else {
-      //trace(`setNativeUnitCost: nativeUnitCost="${nativeUnitCost} - make it black`);
-      nativeUnitCostCell.setFontColor("#000000"); // Black
-    }
+  };
+  let options = {
+    "method" : "POST",
+    "payload": JSON.stringify(newTask),
+    "headers": {
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+      "Authorization": "Bearer " + ACCESS_TOKEN
+      }
+    };
+    let url = Asana.getTaskUrl("?workspace=1200711902496585");
+    UrlFetchApp.fetch(url,options);
+    //let response = UrlFetchApp.fetch(url,options);
+    //trace(`Task.create --> ${response.getContentText()}`);    // Exceeds execution time
+    //let data = JSON.parse(response.getContentText());
   }
 
   get trace() {
-    return `{EventDetailsUpdater forced=${this.forced}}`;
+    return `{TaskCreator forced=${this.forced}}`;
+  }
+}
+
+//---------------------------------------------------------------------------------------------------------
+
+class TaskUpdater {
+  
+  constructor(forced) {
+    this.forced = forced;
+    trace("NEW " + this.trace);
+  }
+  
+  onEnd() {
+    trace("TaskUpdater.onEnd - no-op");
+  }
+
+  onRow(row) {
+  let body = {
+    "data": {
+      "approval_status": "approved",         // approved, rejected, changes_requested, pending
+      "assignee": "me",
+      "assignee_status": "upcoming",         // today, later, new, inbox, upcoming
+      "due_on": row.dueDate,
+      "html_notes": "<body>"+ row.notes +"</body>",
+      "name": row.name,
+      "notes": "Work towards parameterisation of the API wrapper - The two main entities we will deal with in Asana are Projects and Tasks",
+      "resource_subtype": "default_task",    // milestone, approval, section, default_task
+    }
+  };
+  let options = {
+    "method" : "PUT",
+    "payload": JSON.stringify(body),
+    "headers": {
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+      "Authorization": "Bearer " + ACCESS_TOKEN
+      }
+    }; 
+    let url = Asana.getTaskUrl("1200720964791004");         // task_gid to update the task
+    UrlFetchApp.fetch(url,options);
+  }
+
+  get trace() {
+    return `{TaskUpdater forced=${this.forced}}`;
   }
 }
 
@@ -397,6 +417,15 @@ class Subtask {
     let data = JSON.parse(response.getContentText());
   }
 
+}
+
+
+//=========================================================================================================
+// Wrapper for Subtask - https://developers.asana.com/docs/sections
+// Class Section
+
+class Section {
+  
 }
 
 

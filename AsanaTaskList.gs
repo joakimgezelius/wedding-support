@@ -18,7 +18,7 @@ apply(handler) {
   trace(`${this.trace}.apply`);
   this.range.forEachRow((range) => {
     const row = new TaskRow(range);
-    handler.onTitle(row);
+    handler.onRow(row);
   });
   handler.onEnd();
 }
@@ -54,3 +54,6 @@ class TaskRow extends RangeRow {
   get dueDate()       { return this.get("DueDate"); }
 
 }
+
+
+
