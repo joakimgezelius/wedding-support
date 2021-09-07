@@ -4,9 +4,15 @@ WORKSPACE_ID = "1200711902496585";                                     // Hour P
 
 function onCreateTask() {
   trace("onCreateTask");
-  let taskList = new TaskList();
-  let taskCreator = new TaskCreator();
-  taskList.apply(taskCreator);
+  if(Asana.checkAsanaProjectNames()) {
+    Dialog.notify("Uploading the tasks to Asana...","Please wait this may take few minutes to upload the tasks in Asana workspace!");
+    let taskList = new TaskList();
+    let taskCreator = new TaskCreator();
+    taskList.apply(taskCreator);
+  }
+  else {
+    Dialog.notify("Project not found!", PROJECT_NAME + " project does not exist in the Asana, first make the project and try again!");
+  }
 }
 
 function onUpdateTask() {
@@ -14,6 +20,34 @@ function onUpdateTask() {
   let taskList = new TaskList();
   let taskUpdater = new TaskUpdater();
   taskList.apply(taskUpdater);
+}
+
+function onCreateProject () {
+  trace(`onCreateProject`);
+  Project.create();
+}
+
+function onUpdateProject () {
+  trace(`onUpdateProject`);  
+  if(Asana.checkAsanaProjectNames()) {
+    Project.update();
+  }
+  else {
+    Dialog.notify("Project not found!", PROJECT_NAME + " project does not exist in the Asana, first make the project and try again!");
+  }
+}
+
+function onDestroyProject () {
+  trace(`onDestroyProject`);
+  if(Asana.checkAsanaProjectNames()) {
+    if (Dialog.confirm("To Delete Asana Project - Confirmation Required", "Are you sure you want to delete "+ PROJECT_NAME +" project from Asana workspace?") == true) {
+    Project.destroy();
+    }
+  }
+  else {
+    Dialog.notify("Project not found!", PROJECT_NAME + " project does not exist in the Asana, first make the project and try again!");
+  }
+
 }
 
 //=========================================================================================================
@@ -97,7 +131,7 @@ class Asana {
 Asana.projectUrl = "https://app.asana.com/api/1.0/projects";     // For basic project operations
 Asana.taskUrl    = "https://app.asana.com/api/1.0/tasks";        // For creating the task in Asana
 
-PROJECT_GID  = Asana.getProjectGid();                            // Returns active project gid
+//PROJECT_GID  = Asana.getProjectGid();                          // Returns active project gid
 PROJECT_NAME = Asana.getProjectName();                           // Returns active project name
 PROJECT_DUE  = Asana.getProjectDueDate();                        // Returns active project due date
 
@@ -109,9 +143,10 @@ PROJECT_DUE  = Asana.getProjectDueDate();                        // Returns acti
 class Project {
   
   static create() {
+    let project_gid = Asana.getProjectGid();
     if(Asana.checkAsanaProjectNames()) {
-      Dialog.notify("Project Already Exist!","Couldn't create "+ PROJECT_NAME +" project, Please click Ok for more details!");
-      Browser.newTab("https://app.asana.com/0/"+PROJECT_GID+"/list");
+      Dialog.notify("Project Already Exist!","Couldn't make another "+ PROJECT_NAME +" project, Please click Ok for more details!");
+      Browser.newTab("https://app.asana.com/0/"+project_gid+"/list");
     }
     else {
       Dialog.notify("Creating the Project...","Please wait creating the "+ PROJECT_NAME +" project in Asana workspace!");
@@ -151,14 +186,15 @@ class Project {
         }
       };      
       let url = Asana.getProjectUrl("?workspace=1200711902496585");   // Hour Productions Testing Workspace_ID where project sits
-      let response = UrlFetchApp.fetch(url,options);
-      trace(`Project.create --> ${response.getContentText()}`);
-      //let data = JSON.parse(response.getContentText());
-      Dialog.notify("Project is created!","Please check Asana workspace for more details for project " +  PROJECT_NAME);
+      UrlFetchApp.fetch(url,options);
+      //trace(`Project.create --> ${response.getContentText()}`);
+      Dialog.notify("Project is created!","Please check Asana workspace for more details of project " +  PROJECT_NAME);
     }
   }
 
   static update() {
+    let project_gid = Asana.getProjectGid();
+    Dialog.notify("Updating the Project...","Please wait updating the "+ PROJECT_NAME +"!");
     let body = {
      "data": {
        "archived": false,
@@ -176,9 +212,9 @@ class Project {
           "title": "Status Update - Aug 05"
         },        
        //"start_on" : "",                                                                  // Project Start Date (Premium Only)
-       "due_on": Asana.getProjectDueDate(),
+       "due_on": PROJECT_DUE,
        "html_notes": "<body>These are things we need to purchase.</body>",
-       "name": Asana.getProjectName(),
+       "name": PROJECT_NAME,
        "notes": "These are things we need to purchase.",       
        "owner": "joakim@gezelius.org",                                                     // owner of the project
        //"team": "",                                                                       // team_gid 
@@ -194,13 +230,14 @@ class Project {
         "Authorization": "Bearer " + ACCESS_TOKEN
       }
     };      
-    let url = Asana.getProjectUrl("1200714734875880");                                     // set the project_gid param
-    let response = UrlFetchApp.fetch(url,options);
-    trace(`Project.update --> ${response.getContentText()}`);
-    let data = JSON.parse(response.getContentText());
+    let url = Asana.getProjectUrl(project_gid);                                     // set the project_gid param
+    UrlFetchApp.fetch(url,options);
+    //trace(`Project.update --> ${response.getContentText()}`);
+    Dialog.notify("Project is updated!","Please check Asana workspace for more details of project " +  PROJECT_NAME);
   }
 
   static destroy() {
+    let project_gid = Asana.getProjectGid();
     let options = {
       "method" : "DELETE",
       "headers": {
@@ -208,28 +245,11 @@ class Project {
         "Authorization": "Bearer " + ACCESS_TOKEN
       }
     };             
-    let url = Asana.getProjectUrl(PROJECT_GID);         
+    let url = Asana.getProjectUrl(project_gid);         
     UrlFetchApp.fetch(url,options);
     Dialog.notify("Project Removed from Asana", PROJECT_NAME + " project is deleted from Asana workspace");
   }
 
-}
-
-function onCreateProject () {
-  trace(`onCreateProject`);
-  Project.create();
-}
-
-function onUpdateProject () {
-  trace(`onUpdateProject`);
-  Project.update();
-}
-
-function onDestroyProject () {
-  trace(`onDestroyProject`);
-  if (Dialog.confirm("To Delete Asana Project - Confirmation Required", "Are you sure you want to delete "+ PROJECT_NAME +" project from Asana workspace?") == true) {
-  Project.destroy();
-  }
 }
 
 //=========================================================================================================
@@ -279,7 +299,7 @@ class Task {
   }
 }
 
-//=============================================================================================
+//=========================================================================================================
 // Class TaskCreator, TaskUpdater
 //
 
@@ -297,8 +317,8 @@ class TaskCreator {
   onRow(row) {
   let newTask = {
     "data": {
-      "approval_status": "pending",         // approved, rejected, changes_requested, pending
-      "assignee": "me",                     // add monica and team to workspace
+      "approval_status": "pending",       // approved, rejected, changes_requested, pending
+      "assignee": "me",                   // add monica and team to workspace
       //"assignee_section": {
       //  "name" : "Onboarding"
       //},
@@ -310,7 +330,7 @@ class TaskCreator {
       "name": row.name,                   // task name
       "notes": row.notes,                 // notes
       "projects": [
-        PROJECT_GID               
+        Asana.getProjectGid()               
       ],
       "resource_subtype": "default_task",       // Premium feature - milestone, approval, section, default_task
     }
@@ -328,7 +348,6 @@ class TaskCreator {
     UrlFetchApp.fetch(url,options);
     //let response = UrlFetchApp.fetch(url,options);
     //trace(`Task.create --> ${response.getContentText()}`);    // Exceeds execution time
-    //let data = JSON.parse(response.getContentText());
   }
 
   get trace() {

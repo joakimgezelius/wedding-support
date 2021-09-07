@@ -54,7 +54,7 @@ static addAsanaMenu(libName) {
                   .addItem("Delete the Project", libName + ".onDestroyProject")
                   )
       .addSubMenu(ui.createMenu("Task")
-                  .addItem("(+) Add Tasks", libName + ".onCreateTask")
+                  .addItem("Upload Tasks", libName + ".onCreateTask")
                   .addItem("Update Tasks", libName + ".onUpdateTask")
                   )
   Menu.addTestItems(libName, menu).addToUi();

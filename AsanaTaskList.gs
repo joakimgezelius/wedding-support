@@ -4,26 +4,26 @@
 
 class TaskList {
 
-constructor() {
-  trace("constructing Asana TaskList object...");
-  this.range = Asana.asanaTaskListRange;
-  this.rowCount = this.range.height;
-  trace("NEW " + this.trace);
-}
+  constructor() {
+    trace("constructing Asana TaskList object...");
+    this.range = Asana.asanaTaskListRange;
+    this.rowCount = this.range.height;
+    //trace("NEW " + this.trace);
+  }
 
-// Method apply
-// Iterate over all event rows (using Range Row Iterator), call handler methods 
+  // Method apply
+  // Iterate over all rows (using Range Row Iterator), call handler methods 
 
-apply(handler) {
-  trace(`${this.trace}.apply`);
-  this.range.forEachRow((range) => {
-    const row = new TaskRow(range);
-    handler.onRow(row);
-  });
-  handler.onEnd();
-}
+  apply(handler) {
+    trace(`${this.trace}.apply`);
+    this.range.forEachRow((range) => {
+      const row = new TaskRow(range);
+      handler.onRow(row);
+    });
+    handler.onEnd();
+  }
 
-get trace() {
+  get trace() {
     return `{Asana TaskList range=${this.range.trace} rowCount=${this.rowCount}`;
   }
 
