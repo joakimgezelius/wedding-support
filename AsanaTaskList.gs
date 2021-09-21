@@ -8,7 +8,7 @@ class TaskList {
     trace("constructing Asana TaskList object...");
     this.range = Asana.asanaTaskListRange;
     this.rowCount = this.range.height;
-    //trace("NEW " + this.trace);
+    trace("NEW " + this.trace);
   }
 
   // Method apply
@@ -28,7 +28,6 @@ class TaskList {
   }
 
 }
-
 
 //=============================================================================================
 // Class TaskRow

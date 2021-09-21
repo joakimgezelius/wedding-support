@@ -171,8 +171,8 @@ class Project {
         "html_notes": "<body>These are things we need to purchase.</body>",
         "name": PROJECT_NAME,                                                               // name for the project
         "notes": "These are things we need to purchase.",
-        "owner": "joakim@gezelius.org",                                                     // owner of the project
-        //"team": "",                                                                       // team_gid 
+        "owner": "me",                                                     // owner of the project
+        //"team": "monica@hour.events",                                                       // members to the project
         "public": true,
         } 
       };
@@ -217,7 +217,7 @@ class Project {
        "name": PROJECT_NAME,
        "notes": "These are things we need to purchase.",       
        "owner": "joakim@gezelius.org",                                                     // owner of the project
-       //"team": "",                                                                       // team_gid 
+       //"team": "",                                                                      
        "public": true,
       } 
     };
@@ -318,9 +318,9 @@ class TaskCreator {
   let newTask = {
     "data": {
       "approval_status": "pending",       // approved, rejected, changes_requested, pending
-      "assignee": "me",                   // add monica and team to workspace
-      //"assignee_section": {
-      //  "name" : "Onboarding"
+      "assignee": "me",           // add monica and team to workspace
+      //"assignee_section": {             // throws - {"errors":[{"message":"assignee_section: Not a valid GID type: object"
+        //"name" : row.section
       //},
       "assignee_status": "upcoming",      // today, later, new, inbox, upcoming
       "completed": false,
