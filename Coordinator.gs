@@ -83,6 +83,7 @@ class EventDetailsUpdater {
   onRow(row) {
     ++this.itemNo;
     trace("EventDetailsUpdater.onRow " + row.itemNo);
+    let a1_selected = row.getA1Notation("Selected");
     let a1_currency = row.getA1Notation("Currency");
     let a1_quantity = row.getA1Notation("Quantity");
     let a1_nativeUnitCost = row.getA1Notation("NativeUnitCost");
@@ -102,10 +103,10 @@ class EventDetailsUpdater {
     row.nativeUnitCostWithVAT = `=IF(OR(${a1_currency}="", ${a1_nativeUnitCost}="", ${a1_nativeUnitCost}=0), "", ${a1_nativeUnitCost}*(1+${a1_vat}))`;
     row.getCell("NativeUnitCostWithVAT").setNumberFormat(row.currencyFormat);
     row.unitCost = `=IF(OR(${a1_currency}="", ${a1_nativeUnitCostWithVAT}="", ${a1_nativeUnitCostWithVAT}=0), "", IF(${a1_currency}="GBP", ${a1_nativeUnitCostWithVAT}, ${a1_nativeUnitCostWithVAT} / EURGBP))`;
-    row.totalGrossCost = `=IF(OR(${a1_quantity}="", ${a1_quantity}=0, ${a1_unitCost}="", ${a1_unitCost}=0), "", ${a1_quantity} * ${a1_unitCost})`;
-    row.totalNettCost = `=IF(OR(${a1_quantity}="", ${a1_quantity}=0, ${a1_unitCost}="", ${a1_unitCost}=0), "", ${a1_quantity} * ${a1_unitCost} * (1-${a1_commissionPercentage}))`;
+    row.totalGrossCost = `=IF(OR(${a1_quantity}="", ${a1_quantity}=0, ${a1_unitCost}="", ${a1_unitCost}=0, ${a1_selected}=FALSE), "", ${a1_quantity} * ${a1_unitCost})`;
+    row.totalNettCost = `=IF(OR(${a1_quantity}="", ${a1_quantity}=0, ${a1_unitCost}="", ${a1_unitCost}=0, ${a1_selected}=FALSE), "", ${a1_quantity} * ${a1_unitCost} * (1-${a1_commissionPercentage}))`;
     row.unitPrice = `=IF(OR(${a1_unitCost}="", ${a1_unitCost}=0), "", ${a1_unitCost} * ( 1 + ${a1_markup}))`;
-    row.totalPrice = `=IF(OR(${a1_quantity}="", ${a1_quantity}=0, ${a1_unitPrice}="", ${a1_unitPrice}=0), "", ${a1_quantity} * ${a1_unitPrice})`;
+    row.totalPrice = `=IF(OR(${a1_quantity}="", ${a1_quantity}=0, ${a1_unitPrice}="", ${a1_unitPrice}=0, ${a1_selected}=FALSE), "", ${a1_quantity} * ${a1_unitPrice})`;
 //  row.commission = `=IF(OR(${a1_commissionPercentage}="", ${a1_commissionPercentage}=0), "", ${a1_quantity} * ${a1_unitCost} * ${a1_commissionPercentage})`;
     if (row.isStaffTicked && (row.quantity === "")) { // Calculate quantity if staff and time fields are filled 
       row.quantity = `=IF(OR(${a1_startTime}="", ${a1_endTime}=""), "", ((hour(${a1_endTime})*60+minute(${a1_endTime}))-(hour(${a1_startTime})*60+minute(${a1_startTime})))/60)`;

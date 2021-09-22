@@ -133,7 +133,7 @@ Asana.taskUrl    = "https://app.asana.com/api/1.0/tasks";        // For creating
 
 //PROJECT_GID  = Asana.getProjectGid();                          // Returns active project gid
 PROJECT_NAME = Asana.getProjectName();                           // Returns active project name
-PROJECT_DUE  = Asana.getProjectDueDate();                        // Returns active project due date
+//PROJECT_DUE  = Asana.getProjectDueDate();                      // Returns active project due date
 
 
 //=========================================================================================================
@@ -167,7 +167,7 @@ class Project {
             "title": "Project created using the active spreadsheet name"                     // Status title
           },
         //"start_on" : "",                                                                  // Project Start Date (Premium Only)
-        "due_on": PROJECT_DUE,                                                              // Due Date for Project
+        "due_on": Asana.getProjectDueDate(),                                                              // Due Date for Project
         "html_notes": "<body>These are things we need to purchase.</body>",
         "name": PROJECT_NAME,                                                               // name for the project
         "notes": "These are things we need to purchase.",
@@ -212,7 +212,7 @@ class Project {
           "title": "Status Update - Aug 05"
         },        
        //"start_on" : "",                                                                  // Project Start Date (Premium Only)
-       "due_on": PROJECT_DUE,
+       "due_on": Asana.getProjectDueDate(),
        "html_notes": "<body>These are things we need to purchase.</body>",
        "name": PROJECT_NAME,
        "notes": "These are things we need to purchase.",       
