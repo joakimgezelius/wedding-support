@@ -56,6 +56,7 @@ static addAsanaMenu(libName) {
       .addSubMenu(ui.createMenu("Task")
                   .addItem("Upload Tasks", libName + ".onCreateTask")
                   .addItem("Update Tasks", libName + ".onUpdateTask")
+                  .addItem("Delete Tasks", libName + ".onDestroyTask")
                   )
   Menu.addTestItems(libName, menu).addToUi();
   trace("< Custom event menu added");
@@ -104,7 +105,8 @@ static addDecorPriceListMenu(libName) {
   trace("> Adding custom decor price list menu");
   let ui = SpreadsheetApp.getUi();
   let menu = ui.createMenu("Decor" + globalLibMenuTag)
-      .addItem("Update Decor Price List", libName + ".onUpdateDecorPriceList");
+      .addItem("Update Decor Price List", libName + ".onUpdateDecorPriceList")
+      .addItem("Update Decor Price List (NEW)", libName + ".onUpdateNewDecorPriceList");
   Menu.addTestItems(libName, menu).addToUi();
   trace("< Custom decor price list menu added");
 }

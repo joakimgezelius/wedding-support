@@ -8,33 +8,47 @@ function onDecorPriceListPeriodChanged() {
   trace("onDecorPriceListPeriodChanged");
   Dialog.notify("Period Changed", "Sheet will be recalculated, this may take a few seconds...");
   onUpdateDecorPriceList();
+  onUpdateNewDecorPriceList();
 }
 
 function onUpdateDecorPriceList() {
   trace("onUpdateDecorPriceList");
   let clientSheetList = new ClientSheetList; // In Rota.gs
-  let eventDetails = new EventDetails;
-  let decorPriceListBuilder = new DecorPriceListBuilder(Range.getByName("DecorPriceList", "Decor Price List"));
-
-  clientSheetList.setQuery("DecorQuery",
-    "SELECT '${eventName}',Col1,Col6,Col7,Col11,Col12,Col16,Col18,Col20,Col21,Col22,Col23,Col26,Col27,Col28 WHERE Col2=true AND NOT LOWER(Col7) CONTAINS 'cancelled' AND Col16 IS NOT NULL",
-    "SELECT * WHERE Col2<>'#01' AND Col9 IS NOT NULL ORDER BY Col7");  
+  let decorPriceList = new DecorPriceList;
+  let decorPriceListBuilder = new DecorPriceListBuilder();
   
-  //trace("onUpdateDecorPriceList: apply DecorPriceListBuilder...");
-  //eventDetails.apply(decorPriceListBuilder);
+  clientSheetList.setQuery("DecorQuery",
+    "SELECT '${eventName}',Col1,Col6,Col7,Col11,Col12,Col16,Col18,Col20,Col21,Col26,Col27 WHERE Col2=true AND NOT LOWER(Col7) CONTAINS 'cancelled' AND Col16 IS NOT NULL",
+    "SELECT * WHERE Col2<>'#01' AND Col9 IS NOT NULL ORDER BY Col7"); 
+
+  decorPriceList.apply(decorPriceListBuilder); 
+}
+
+function onUpdateNewDecorPriceList() {
+  trace("onUpdateNewDecorPriceList");
+  let clientSheetList = new ClientSheetList;  
+  let decorPriceList = new DecorPriceList;
+  let decorPriceListBuilder = new DecorPriceListBuilder();
+ 
+  clientSheetList.setQuery("NewDecorQuery",
+    "SELECT '${eventName}',Col1,Col6,Col7,Col11,Col12,Col16,Col19,Col21,Col22,Col27,Col28 WHERE Col2=true AND NOT LOWER(Col7) CONTAINS 'cancelled' AND Col16 IS NOT NULL",
+    "SELECT * WHERE Col2<>'#01' AND Col9 IS NOT NULL ORDER BY Col7");   
+  
+  decorPriceList.apply(decorPriceListBuilder);
 }
 
 //----------------------------------------------------------------------------------------------
 // Decor Price List Builder
+//
 
 class DecorPriceListBuilder {
   
-  constructor(targetRange) {
-    this.targetRange = targetRange;
+  constructor(forced) {
+    this.forced = forced;
     trace("NEW " + this.trace);
   }
 
-  static formatRange(range) {
+  /*static formatRange(range) {
     trace("DecorPriceListBuilder.formatRange");
     range.breakApart().
     setFontWeight("normal").
@@ -56,11 +70,6 @@ class DecorPriceListBuilder {
     this.currentSection = 0;
     this.sectionItemCount = 0;
   }
-  
-  onEnd() {
-    trace("DecorPriceListBuilder.onEnd - trim excess lines");
-    this.targetRange.trim();
-  }
 
   onTitle(row) {
     trace("DecorPriceListBuilder.onTitle " + row.title);
@@ -78,35 +87,36 @@ class DecorPriceListBuilder {
     targetRow.merge();
     targetRow.getCell(1,1).setValue(row.title);
     DecorPriceListBuilder.formatTitle(targetRow);
+  }*/
+
+  onEnd() {
+    trace("DecorPriceListBuilder.onEnd - trim excess lines");
   }
 
   onRow(row) {
-    trace("DecorPriceListBuilder.onRow " + row.title);
-    if (row.isDecorTicked) { // This is a decor summary item
-      ++this.sectionItemCount;
-      let targetRow = this.targetRange.getNextRowAndExtend();
-      let column = 1;
-      targetRow.getCell(1,column++).setValue(row.eventName);
-      targetRow.getCell(1,column++).setValue(row.itemNo);
-      targetRow.getCell(1,column++).setValue(row.category);
-      targetRow.getCell(1,column++).setValue(row.status);
-      targetRow.getCell(1,column++).setValue(row.location);
-      targetRow.getCell(1,column++).setValue(row.supplier);
-      targetRow.getCell(1,column++).setValue(row.description);
-      targetRow.getCell(1,column++).setValue(row.currency);
-      targetRow.getCell(1,column++).setValue(row.nativeUnitCost);
-      targetRow.getCell(1,column++).setValue(row.nativeUnitCostWithVAT);
-      targetRow.getCell(1,column++).setValue(row.unitCost);  
-      targetRow.getCell(1,column++).setValue(row.totalGrossCost);
-      targetRow.getCell(1,column++).setValue(row.markup);
-      targetRow.getCell(1,column++).setValue(row.commisionPercentage);
-      targetRow.getCell(1,column++).setValue(row.unitPrice);
-      ++column;
-    }
+    trace("DecorPriceListBuilder.onRow " +  row.itemNo);
+    let a1_currency = row.getA1Notation("Currency");
+    let a1_nativeUnitCost = row.getA1Notation("NativeUnitCost");
+    let a1_vat = row.getA1Notation("VAT");
+    let a1_nativeUnitCostWithVAT = row.getA1Notation("NativeUnitCostWithVAT");
+    let a1_unitCost = row.getA1Notation("UnitCost");
+    let a1_markup = row.getA1Notation("Markup");    
+    //let a1_commissionPercentage = row.getA1Notation("CommissionPercentage");
+    //let a1_unitPrice = row.getA1Notation("UnitPrice");
+
+    row.nativeUnitCostWithVAT = `=IF(OR(${a1_currency}="", ${a1_nativeUnitCost}="", ${a1_nativeUnitCost}=0), "", ${a1_nativeUnitCost}*(1+${a1_vat}))`;
+    row.getCell("NativeUnitCostWithVAT").setNumberFormat(row.currencyFormat);
+    row.unitCost = `=IF(OR(${a1_currency}="", ${a1_nativeUnitCostWithVAT}="", ${a1_nativeUnitCostWithVAT}=0), "", IF(${a1_currency}="GBP", ${a1_nativeUnitCostWithVAT}, ${a1_nativeUnitCostWithVAT} / EURGBP))`;
+    row.unitPrice = `=IF(OR(${a1_unitCost}="", ${a1_unitCost}=0), "", ${a1_unitCost} * ( 1 + ${a1_markup}))`;
+
+  }
+
+  static get decorPriceListRange() { 
+    return Range.getByName("DecorPriceListNew", "Decor Price List (NEW)").loadColumnNames(); 
   }
   
   get trace() {
-    return `{DecorPriceListBuilder ${this.targetRange.trace}}`;
+    return `{DecorPriceListBuilder forced=${this.forced}}`;
   }
 }
 

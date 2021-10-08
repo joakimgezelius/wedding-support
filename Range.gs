@@ -38,7 +38,8 @@ class Range {
   forEachRow(callback, context = null) {
     trace(`${this.trace} forEachRow`);
     const rowCount = this.height;
-    for (let rowOffset = 0; rowOffset < rowCount; rowOffset++) {
+    let rowOffset = 0;
+    for (rowOffset; rowOffset < rowCount; ++rowOffset) {
       this._currentRowOffset = rowOffset;
       let goOn = callback(this, context);
 //    if (!goOn) break;

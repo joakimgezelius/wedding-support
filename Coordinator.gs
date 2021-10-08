@@ -48,6 +48,7 @@ class Coordinator {
 //
 
 class EventDetailsUpdater {
+  
   constructor(forced) {
     this.forced = forced;
     trace("NEW " + this.trace);

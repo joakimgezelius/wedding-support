@@ -55,4 +55,50 @@ class TaskRow extends RangeRow {
 }
 
 
+//=============================================================================================
+// Class WeddingPhaseList
+//
+
+class WeddingPhaseList {
+
+  constructor() {
+    trace("constructing Asana TaskList object...");
+    this.range = Asana.asanaWeddingPhaseRange;
+    this.rowCount = this.range.height;
+    trace("NEW " + this.trace);
+  }
+
+  // Method apply
+  // Iterate over all rows (using Range Row Iterator), call handler methods 
+
+  apply(handler) {
+    trace(`${this.trace}.apply`);
+    this.range.forEachRow((range) => {
+      const row = new PhaseRow(range);
+      handler.onRow(row);
+    });
+    handler.onEnd();
+  }
+
+  get trace() {
+    return `{Asana TaskList range=${this.range.trace} rowCount=${this.rowCount}`;
+  }
+
+}
+
+//=============================================================================================
+// Class PhaseRow
+//
+
+class PhaseRow extends RangeRow {
+
+  constructor(range, values = null) {
+    super(range, values);
+  }
+
+  get weddingPhase()   { return this.get("WeddingPhases", "string"); }
+
+}
+
+
 

@@ -12,11 +12,15 @@ function onTestCase2() {        // Asana Testing
   //Task.update();
   //Task.destroy(); 
   //Subtask.create();
+  //Asana.getTaskNames();
+  //Asana.getTaskGid();
+  Asana.getProjectSections();
 }
 
 function onTestCase3() {        // Other Testings
   trace("onTestCase3");
   //let user = User.active;
   //trace(`${user}`);
-  GoogleKeep.create();
+  //Section.create();
+  Task.create();
 }
