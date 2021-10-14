@@ -1,6 +1,5 @@
 ACCESS_TOKEN = "1/1200711887518296:7fa17fbab2b58d6deb3d3d4c0da0e39a";  // Personal access token (furkan)
-WORKSPACE_ID = "1200711902496585";                                     // Hour Productions Testing
-//ASSIGNEE   = User.active.email;                                        
+WORKSPACE_ID = "1200711902496585";                                     // Hour Productions Testing                               
 
 function onCreateTask() {
   trace("onCreateTask");
@@ -9,33 +8,64 @@ function onCreateTask() {
     let taskList = new TaskList();
     let taskCreator = new TaskCreator();
     taskList.apply(taskCreator);
+    //onCreateSubTask();
   }
   else {
     Dialog.notify("Project not found!", PROJECT_NAME + " project does not exist in the Asana, first make the project and try again!");
   }
 }
 
+function onCreateSubTask() {
+  let taskList  = new TaskList();
+  let subTaskCreator = new SubTaskCreator();
+  taskList.apply(subTaskCreator);
+}
+
 function onUpdateTask() {
   trace("onUpdateTask");
-  let taskList = new TaskList();
-  let taskUpdater = new TaskUpdater();
-  taskList.apply(taskUpdater);
+  let tasks = Asana.getTaskGid();
+  if (tasks !== null) {
+    Dialog.notify("Updating the Tasks...","Please wait it may take few minutes to update the tasks in Asana for " + PROJECT_NAME);
+    let taskList = new TaskList();
+    let taskUpdater = new TaskUpdater();
+    taskList.apply(taskUpdater);
+    Dialog.notify("Tasks are Updated!","Please check tasks are updated in Asana for " + PROJECT_NAME);
+  }
+  else {
+    Dialog.notify("No Tasks Found!", PROJECT_NAME + " project does not contain any task in the Asana yet!");
+  }
 }
 
 function onDestroyTask() {
   trace("onDestroyTask");
-  let taskList = new TaskList();
-  let taskDestroyer = new TaskDestroyer();
-  taskList.apply(taskDestroyer);
+  let tasks = Asana.getTaskGid();
+  if (tasks !== null) {
+    if (Dialog.confirm("To Delete Tasks from Asana Project - Confirmation Required", "Are you sure you want to delete?") == true) {
+      let taskList = new TaskList();
+      let taskDestroyer = new TaskDestroyer();
+      taskList.apply(taskDestroyer);  
+    }
+  }
+  else {
+    Dialog.notify("No Tasks Found!", PROJECT_NAME + " project does not contain any task in the Asana yet!");
+  }
 }
 
 function onCreateProject () {
   trace(`onCreateProject`);
-  Project.create();
-  Dialog.notify("Adding the Sections...","Please wait it will take few seconds to add sections in the Project");
-  let phaseList = new WeddingPhaseList();
-  let sectionCreator = new SectionCreator();
-  phaseList.apply(sectionCreator);
+  if(Asana.checkAsanaProjectNames()) {
+    let project_gid = Asana.getProjectGid();
+    Dialog.notify("Project Already Exist!","Couldn't make another "+ PROJECT_NAME +" project, Please click Ok for more details!");
+    Browser.newTab("https://app.asana.com/0/"+project_gid+"/list");
+  }
+  else {
+    Dialog.notify("Creating the Project...","Please wait creating the "+ PROJECT_NAME +" project in Asana workspace!");
+    Project.create();
+    Dialog.notify("Adding the Sections...","Please wait it will take few seconds to add sections in the Project");
+    let phaseList = new WeddingPhaseList();
+    let sectionCreator = new SectionCreator();
+    phaseList.apply(sectionCreator);
+  }
 }
 
 function onUpdateProject () {
@@ -216,12 +246,9 @@ class Asana {
   }
 }
 
+PROJECT_NAME = Asana.getProjectName();                           // Returns active project name
 Asana.projectUrl = "https://app.asana.com/api/1.0/projects";     // For basic project operations
 Asana.taskUrl    = "https://app.asana.com/api/1.0/tasks";        // For creating the task in Asana
-PROJECT_NAME = Asana.getProjectName();                           // Returns active project name
-//PROJECT_GID  = Asana.getProjectGid();                          // Returns active project gid
-//PROJECT_DUE  = Asana.getProjectDueDate();                      // Returns active project due date
-
 
 //=========================================================================================================
 // Wrapper for project - https://developers.asana.com/docs/projects
@@ -230,16 +257,10 @@ PROJECT_NAME = Asana.getProjectName();                           // Returns acti
 class Project {
   
   static create() {
-    let project_gid = Asana.getProjectGid();
+    
     let dueDate = Asana.getProjectDueDate();
-    if(Asana.checkAsanaProjectNames()) {
-      Dialog.notify("Project Already Exist!","Couldn't make another "+ PROJECT_NAME +" project, Please click Ok for more details!");
-      Browser.newTab("https://app.asana.com/0/"+project_gid+"/list");
-    }
-    else {
-      Dialog.notify("Creating the Project...","Please wait creating the "+ PROJECT_NAME +" project in Asana workspace!");
-      let body = {       
-       "data": {
+    let body = {       
+      "data": {
         "archived": false,
         "color": "dark-red",           // Color for project icon
         "current_status": { 
@@ -262,21 +283,20 @@ class Project {
         "owner": "me",                                                                      // owner of the project
         //"team": "monica@hour.events",                                                     // members to the project
         "public": true,
-        } 
-      };
-      let options = {
-        "method" : "POST",
-        "payload": JSON.stringify(body),
-        "headers": {
-          "Content-Type": "application/json",
-          "Accept": "application/json",
-          "Authorization": "Bearer " + ACCESS_TOKEN
-        }
-      };      
-      let url = Asana.getProjectUrl("?workspace=1200711902496585");   // Hour Productions Testing Workspace_ID where project sits
-      UrlFetchApp.fetch(url,options);
-      Dialog.notify("Project is Created!","Please check Asana workspace for more details of project " +  PROJECT_NAME);
-    }
+      } 
+    };
+    let options = {
+      "method" : "POST",
+      "payload": JSON.stringify(body),
+      "headers": {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": "Bearer " + ACCESS_TOKEN
+      }
+    };      
+    let url = Asana.getProjectUrl("?workspace=1200711902496585");   // Hour Productions Testing Workspace_ID where project sits
+    UrlFetchApp.fetch(url,options);
+    Dialog.notify("Project is Created!","Please check Asana workspace for more details of project " +  PROJECT_NAME);   
   }
 
   static update() {
@@ -351,7 +371,7 @@ class Task {
       "data" : {
         "approval_status": "pending",
         "assignee": "me",
-        "assignee_section": "1201146054403825",
+        "assignee_section": "1201147072509061",
         "assignee_status": "upcoming",
         "completed": false,
         "due_on": "2021-10-10",
@@ -374,7 +394,7 @@ class Task {
       "Authorization": "Bearer " + ACCESS_TOKEN
       }
     };
-    let url = Asana.getTaskUrl("?workspace=1200711902496585");
+    let url = Asana.getTaskUrl("1201153177857031/subtasks");
     UrlFetchApp.fetch(url,options);
   }
 
@@ -436,12 +456,8 @@ class TaskCreator {
 
   onRow(row) {
     let projectGid = Asana.getProjectGid();
-    let taskName = row.name;
-    let taskGid  = Asana.getTaskGid(taskName); 
     let taskSection = row.section;
-    let taskSectionGid = Asana.getProjectSectionGid(taskSection);       
-    let isSubtask = row.subtaskOf;
-   
+    let taskSectionGid = Asana.getProjectSectionGid(taskSection);  
     let newTask = {
       "data": {
         "approval_status": "pending",       // approved, rejected, changes_requested, pending
@@ -470,7 +486,7 @@ class TaskCreator {
       }
     };
     let url = Asana.getTaskUrl("?workspace=1200711902496585");
-    UrlFetchApp.fetch(url,options);
+    UrlFetchApp.fetch(url,options); 
   }
 
   get trace() {
@@ -478,10 +494,140 @@ class TaskCreator {
   }
 }
 
+/*class SubTaskCreator {
+
+  constructor(forced) {
+    this.forced = forced;
+    trace("NEW " + this.trace);
+  }
+  
+  onEnd() {
+    trace("SubTaskCreator.onEnd - no-op");
+  }
+
+  onRow(row) {
+    let projectGid = Asana.getProjectGid();
+    let taskName = row.name;
+    let taskGid  = Asana.getTaskGid(taskName); 
+    let taskSection = row.section;
+    let taskSectionGid = Asana.getProjectSectionGid(taskSection);   
+    let parentTask = {
+      "data" : {
+        "approval_status": "pending",
+        "assignee": "me",
+        "assignee_section": taskSectionGid,
+        "assignee_status": "upcoming",
+        "completed": false,
+        "due_on": row.dueDate,
+        "html_notes": "<body>"+ row.description +"</body>",
+        "name": row.subtaskOf,
+        "notes": row.notes,
+        //"parent": taskGid,
+        "projects": [
+          projectGid
+        ]
+      }
+    };
+    let options = {
+    "method" : "POST",
+    "payload": JSON.stringify(parentTask),
+    "headers": {
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+      "Authorization": "Bearer " + ACCESS_TOKEN
+      }
+    };
+    let url = Asana.getTaskUrl(taskGid+"/subtasks");
+    UrlFetchApp.fetch(url,options); 
+  }
+
+  get trace() {
+    return `{SubTaskCreator forced=${this.forced}}`;
+  }
+} */
+
+//---------------------------------------------------------------------------------------------------------
+
+class TaskUpdater {
+  
+  constructor(forced) {
+    this.forced = forced;
+    trace("NEW " + this.trace);
+  }
+  
+  onEnd() {
+    trace("TaskUpdater.onEnd - no-op");
+  }
+
+  onRow(row) {
+    let taskName = row.name;
+    let taskGid  = Asana.getTaskGid(taskName); 
+    let taskSection = row.section;
+    let taskSectionGid = Asana.getProjectSectionGid(taskSection);
+   
+    let newTask = {
+      "data": {
+        "approval_status": "pending",       // approved, rejected, changes_requested, pending
+        "assignee": "me",                   // add monica and team to workspace
+        "assignee_section": taskSectionGid,
+        "assignee_status": "upcoming",      // today, later, new, inbox, upcoming
+        "due_on": row.dueDate,              // due date
+        //"start_on": "",                   // start date (Premium)
+        "html_notes": "<body>" + row.description + "</body>",      // description
+        "name": row.name,                   // task name
+        "notes": row.notes,                 // notes
+        "resource_subtype": "default_task",       // Premium feature - milestone, approval, section, default_task
+      }
+    };
+    let options = {
+      "method" : "PUT",
+      "payload": JSON.stringify(newTask),
+      "headers": {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": "Bearer " + ACCESS_TOKEN
+      }
+    };
+    let url = Asana.getTaskUrl(taskGid);
+    UrlFetchApp.fetch(url,options);
+  }
+
+  get trace() {
+    return `{TaskUpdater forced=${this.forced}}`;
+  }
+}
+
 //---------------------------------------------------------------------------------------------------------
 
 class TaskDestroyer {
 
+  constructor(forced) {
+    this.forced = forced;
+    trace("NEW " + this.trace);
+  }
+  
+  onEnd() {
+    trace("TaskDestroyer.onEnd - no-op");
+  }
+
+  onRow(row) {
+    let taskName = row.name;
+    let taskGid  = Asana.getTaskGid(taskName);
+    let options = {
+      "method" : "DELETE",
+      "headers": {
+        "Accept": "application/json",
+        "muteHttpExceptions": true,
+        "Authorization": "Bearer " + ACCESS_TOKEN
+      }
+    };
+    let url = Asana.getTaskUrl(taskGid);
+    UrlFetchApp.fetch(url,options);
+  }
+
+  get trace() {
+    return `{TaskDestroyer forced=${this.forced}}`;
+  }
 
 }
 
@@ -502,9 +648,11 @@ class SectionCreator {
 
   onRow(row) {
     let projectGid = Asana.getProjectGid();
+    let sectionName= row.weddingPhase;
     let body = {
       "data": {
-        "name": row.weddingPhase
+        "name": sectionName,
+        "resource_type": "section"
       }
     };
     let options = {
@@ -515,16 +663,12 @@ class SectionCreator {
         "Accept": "application/json",
         "Authorization": "Bearer " + ACCESS_TOKEN
       }
-    }
+    };
     let url = Asana.getProjectUrl(projectGid+"/sections");
     UrlFetchApp.fetch(url,options);
   }
 
   get trace() {
-    return `{TaskCreator forced=${this.forced}}`;
+    return `{SectionCreator forced=${this.forced}}`;
   }
 }
-
-
-
-

@@ -1,10 +1,10 @@
 function onTestCase1() {        // HubSpot Testing
   trace("onTestCase1");  
   //HubSpot.listContacts(); 
-  //HubSpot.listDeals();
+  HubSpot.listDeals();
   //HubSpot.contactToDeal();
   //HubSpot.listEngagement();
-  HubSpot.masterHubspot();
+  //HubSpot.masterHubspot();
 }
 
 function onTestCase2() {        // Asana Testing
@@ -14,13 +14,11 @@ function onTestCase2() {        // Asana Testing
   //Subtask.create();
   //Asana.getTaskNames();
   //Asana.getTaskGid();
-  Asana.getProjectSections();
+  //Asana.getProjectSections();
 }
 
 function onTestCase3() {        // Other Testings
   trace("onTestCase3");
-  //let user = User.active;
-  //trace(`${user}`);
-  //Section.create();
-  Task.create();
+  HubSpot.contactToDeal();
 }
+

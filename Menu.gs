@@ -17,6 +17,7 @@ class Menu {
       .addItem("Update Account Summary", libName + ".onUpdateAccountSummary")
       .addItem("Update Supplier Costing", libName + ".onUpdateSupplierCosting")
       .addItem("Update Supplier Itinerary", libName + ".onUpdateSupplierItinerary")
+      .addItem("Update Client Data", libName + ".onUpdateClientData")
       //.addItem("Update Staff Itinerary", libName + ".onUpdateStaffItinerary")
       //.addItem("Update Rota", libName + ".onUpdateRota")
       .addSeparator()
