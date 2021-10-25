@@ -1,16 +1,16 @@
-function onUpdateSupplierItinerary() {
-  trace("onUpdateSupplierItinerary");
+function onUpdateVenueItinerary() {
+  trace("onUpdateVenueItinerary");
   let eventDetails = new EventDetails();
-  let itineraryBuilder = new SupplierItineraryBuilder(Range.getByName("SupplierItinerary", "Supplier Itinerary"));
+  let itineraryBuilder = new VenueItineraryBuilder(Range.getByName("VenueItinerary", "Venue Itinerary"));
   eventDetails.sort(SortType.supplier);
   eventDetails.apply(itineraryBuilder);
 }
 
 
 //=============================================================================================
-// Class SupplierItineraryBuilder
+// Class VenueItineraryBuilder
 //
-class SupplierItineraryBuilder {
+class VenueItineraryBuilder {
   
   constructor(targetRange) {
     this.targetRange = targetRange;
@@ -18,7 +18,7 @@ class SupplierItineraryBuilder {
   }
 
   static formatRange(range) {
-    trace("SupplierItineraryBuilder.formatRange");  
+    trace("VenueItineraryBuilder.formatRange");  
     range.setFontWeight("normal")
     .setFontSize(10)
     .breakApart()
@@ -27,25 +27,25 @@ class SupplierItineraryBuilder {
   };
   
   onBegin() {
-    trace("SupplierItineraryBuilder.onBegin - reset context " + this.trace);
+    trace("VenueItineraryBuilder.onBegin - reset context " + this.trace);
     // Delete all but the first two rows in the target range
-    this.targetRange.minimizeAndClear(SupplierItineraryBuilder.formatRange);
+    this.targetRange.minimizeAndClear(VenueItineraryBuilder.formatRange);
   }
   
   onEnd() {
-    trace("SupplierItineraryBuilder.onEnd - trim excess lines");
+    trace("VenueItineraryBuilder.onEnd - trim excess lines");
     this.targetRange.trim();
   }
 
   onTitle(row) {
-    trace("SupplierItineraryBuilder.onTitle - ignore row: " + row.title);
+    trace("VenueItineraryBuilder.onTitle - ignore row: " + row.title);
   }
 
   onRow(row) {
-    if (row.supplier != "") { // This is a supplier itinerary item
-      trace("SupplierItineraryBuilder.onRow Ticked: " + row.description);
+    if (row.isVenueTicked) { // This is an itinerary item
+      trace("VenueItineraryBuilder.onRow Ticked: " + row.description);
       let targetRow = this.targetRange.getNextRowAndExtend();
-      //trace("SupplierItineraryBuilder.onRow got target row: " + Range.trace(targetRow));
+      //trace("VenueItineraryBuilder.onRow got target row: " + Range.trace(targetRow));
       let column = 2;
       targetRow.getCell(1,column++).setValue(row.date);
       targetRow.getCell(1,column++).setValue(row.time);
@@ -54,11 +54,11 @@ class SupplierItineraryBuilder {
       targetRow.getCell(1,column++).setValue(row.supplier);
       targetRow.getCell(1,column++).setValue(row.description);
     } else {
-      trace("SupplierItineraryBuilder.onRow Unticked, ignore: " + row.description);
+      trace("VenueItineraryBuilder.onRow Unticked, ignore: " + row.description);
     }
   }
 
   get trace() {
-    return `{SupplierItineraryBuilder ${this.targetRange.trace}}`;
+    return `{VenueItineraryBuilder ${this.targetRange.trace}}`;
   }
 }
