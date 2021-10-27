@@ -1,7 +1,7 @@
 function onTestCase1() {        // HubSpot Testing
   trace("onTestCase1");  
   //HubSpot.listContact(); 
-  //HubSpot.listDeals();
+  //HubSpot.listDeal();
   //HubSpot.contactToDeal();
   HubSpot.dealToContact();
   //HubSpot.listEngagement();

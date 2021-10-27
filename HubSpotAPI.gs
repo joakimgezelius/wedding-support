@@ -1,7 +1,7 @@
 function onUpdateClientData() {
   trace("onUpdateClientData");
   HubSpot.listDeal();
-  HubSpot.listContact();
+  HubSpot.dealToContact();
 }
 
 //----------------------------------------------------------------------------------------
@@ -11,9 +11,9 @@ function onUpdateClientData() {
 
 class HubSpot {
 
-  static listContact() {
+  static listContact(contactId) {
     trace("listContact");
-    let contactId = Range.getByName("HubSpotContact","Client Data").values;
+    //let contactId = Range.getByName("HubSpotContact","Client Data").values;
     let url = "https://api.hubapi.com/crm/v3/objects/contacts/"+contactId+"?properties=hs_object_id,firstname,lastname,createdate,email,hs_email_domain,phone,annualrevenue,how_many_people_in_total_including_the_couple_will_be_at_the_ceremony_and_or_the_celebration_,asana_link,hs_lifecyclestage_customer_date,hs_lifecyclestage_lead_date,hs_lifecyclestage_marketingqualifiedlead_date,hs_lifecyclestage_salesqualifiedlead_date,hs_lifecyclestage_subscriber_date,hs_lifecyclestage_evangelist_date,hs_lifecyclestage_opportunity_date,hs_lifecyclestage_other_date,city,company,hs_object_id,country,date,date_worked,do_you_agree_to_special_terms_in_the_event_of_a_coronavirus_event,hs_content_membership_email_confirmed,event_start_time,industry,is_there_any_food_that_you_dislike,is_your_kitchen_fulled_equipped_and_functional,jobtitle,kitchen,kitchen_1,lastmodifieddate,hs_latest_sequence_ended_date,hs_latest_sequence_enrolled,hs_latest_sequence_enrolled_date,lifecyclestage,hs_marketable_status,hs_marketable_reason_id,hs_marketable_reason_type,hs_marketable_until_renewal,mobilephone,numemployees,hs_sequences_enrolled_count,hs_createdate,hs_persona,zip,hs_language,salutation,state,address,hs_content_membership_registration_email_sent_at,time_sheet,twitterhandle,website,what_the_occasion&archived=false&hapikey=0020bf99-6b2a-4887-90af-adac067aacba";
     let response = UrlFetchApp.fetch(url);
     let data = JSON.parse(response.getContentText());
@@ -23,7 +23,7 @@ class HubSpot {
     let header = [ "First Name", "Last Name", "Create Date", "Email", "Email Domain", "Phone", "Annual Revenue", "Guests", "Asana Link", "Became a Customer Date", "Became a Lead Date", "Became a Marketing Qualified Lead Date", "Became a Sales Qualified Lead Date",  "Became a Subscriber Date",  "Became an Evangelist Date",  "Became an Opportunity Date",  "Became an Other Lifecycle Date", "City", "Company Name", "Contact ID", "Country/Region", "Date", "Date Worked", "Agree to Special Terms", "Email Confirmed", "Event Start Time", "Industry", "Is there any food you dislike", "Is your kitchen fulled equipped & functional", "Job Title", "Kitchen", "Kitchen 1", "Last Modified Date", "Last Sequence Ended Date", "Last Sequence Enrolled", "Last Sequence Enrolled Date", "Lifecycle Stage", "Marketing Contact Status", "Marketing Contact Status Source Name", "Marketing Contact Status Source Type", "Marketing Contact Until Next Update", "Mobile Phone Number", "Number of Employees", "Number of Sequences Enrolled", "Object Create Date/Time", "Persona", "Postal Code", "Preferred Language", "Salutation", "State/Region", "Street Address", "Time Registration Email Was Sent", "Time Sheet", "Twitter Username", "Website", "What the Occasion"]; 
     let items = [header];
     items.push([ result['properties'].firstname, result['properties'].lastname, result['properties'].createdate, result['properties'].email, result['properties'].hs_email_domain, result['properties'].phone,  result['properties'].annualrevenue,  result['properties'].how_many_people_in_total_including_the_couple_will_be_at_the_ceremony_and_or_the_celebration_,  result['properties'].asana_link, result['properties'].hs_lifecyclestage_customer_date,  result['properties'].hs_lifecyclestage_lead_date, result['properties'].hs_lifecyclestage_marketingqualifiedlead_date,  result['properties'].hs_lifecyclestage_salesqualifiedlead_date,  result['properties'].hs_lifecyclestage_subscriber_date,  result['properties'].hs_lifecyclestage_evangelist_date,  result['properties'].hs_lifecyclestage_opportunity_date,  result['properties'].hs_lifecyclestage_other_date,  result['properties'].city,  result['properties'].company,  result['properties'].hs_object_id,  result['properties'].country,  result['properties'].date,  result['properties'].date_worked, result['properties'].do_you_agree_to_special_terms_in_the_event_of_a_coronavirus_event,  result['properties'].hs_content_membership_email_confirmed,  result['properties'].event_start_time,  result['properties'].industry,  result['properties'].is_there_any_food_that_you_dislike,  result['properties'].is_your_kitchen_fulled_equipped_and_functional,  result['properties'].jobtitle,  result['properties'].kitchen,  result['properties'].kitchen_1,  result['properties'].lastmodifieddate,  result['properties'].hs_latest_sequence_ended_date,  result['properties'].hs_latest_sequence_enrolled,  result['properties'].hs_latest_sequence_enrolled_date,  result['properties'].lifecyclestage,  result['properties'].hs_marketable_status,  result['properties'].hs_marketable_reason_id,  result['properties'].hs_marketable_reason_type,  result['properties'].hs_marketable_until_renewal,  result['properties'].mobilephone,  result['properties'].numemployees,  result['properties'].hs_sequences_enrolled_count, result['properties'].hs_createdate, result['properties'].hs_persona, result['properties'].zip, result['properties'].hs_language, result['properties'].salutation, result['properties'].state, result['properties'].address, result['properties'].hs_content_membership_registration_email_sent_at, result['properties'].time_sheet, result['properties'].twitterhandle, result['properties'].website, result['properties'].what_the_occasion]);
-    sheet.getRange(12,1,items.length,items[0].length).setValues(items);
+    sheet.getRange(10,19,items.length,items[0].length).setValues(items);
   }
 
   static listContacts() {
@@ -69,7 +69,7 @@ class HubSpot {
     let header = ["Amount", "Close Date", "Create Date", "Deal Name", "Deal Description", "Deal Owner", "Deal Type", "Deal Stage", "Departure Date", "Forecast Amount", "Forecast Category", "Forecast Probabilty", "HubSpot Team", "Last Modified Date", "Next Step", "Number of Contacts", "Priority", "Pipeline"];
     let items = [header];
     items.push([ result['properties'].amount, result['properties'].closedate, result['properties'].createdate,   result['properties'].dealname, result['properties'].description, result['properties'].hubspot_owner_id, result['properties'].dealtype, result['properties'].dealstage, result['properties'].departure_date, result['properties'].hs_forecast_amount, result['properties'].hs_manual_forecast_category, result['properties'].hs_forecast_probability, result['properties'].hubspot_team_id, result['properties'].hs_lastmodifieddate, result['properties'].hs_next_step, result['properties'].num_associated_contacts, result['properties'].priority, result['properties'].pipeline]);
-    sheet.getRange(9,1,items.length,items[0].length).setValues(items);
+    sheet.getRange(10,1,items.length,items[0].length).setValues(items);
   }
 
   static listDeals() {
@@ -104,8 +104,10 @@ class HubSpot {
     let url = "https://api.hubapi.com/crm/v3/objects/deals/"+dealId+"/associations/contacts?hapikey=0020bf99-6b2a-4887-90af-adac067aacba"
     let response = UrlFetchApp.fetch(url);
     let data = JSON.parse(response.getContentText());
-    let results = data['results'];
-    console.log(results);
+    let result = data['results'];
+    console.log(result); 
+    let contactId =                 // need to place the id which we get in result
+    HubSpot.listContact(contactId);
   }
 
   static listEngagement() {
@@ -127,7 +129,7 @@ class HubSpot {
     return `${HubSpot.baseUrl}/${method}&hapikey=${HubSpot.key}`; // for Contacts & Deals
  }
 
-} // User
+}
 
 HubSpot.baseUrl = "https://api.hubapi.com/crm/v3/objects";
 HubSpot.key = "0020bf99-6b2a-4887-90af-adac067aacba";
