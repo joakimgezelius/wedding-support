@@ -13,7 +13,6 @@ class HubSpot {
 
   static listContact(contactId) {
     trace("listContact");
-    //let contactId = Range.getByName("HubSpotContact","Client Data").values;
     let url = "https://api.hubapi.com/crm/v3/objects/contacts/"+contactId+"?properties=hs_object_id,firstname,lastname,createdate,email,hs_email_domain,phone,annualrevenue,how_many_people_in_total_including_the_couple_will_be_at_the_ceremony_and_or_the_celebration_,asana_link,hs_lifecyclestage_customer_date,hs_lifecyclestage_lead_date,hs_lifecyclestage_marketingqualifiedlead_date,hs_lifecyclestage_salesqualifiedlead_date,hs_lifecyclestage_subscriber_date,hs_lifecyclestage_evangelist_date,hs_lifecyclestage_opportunity_date,hs_lifecyclestage_other_date,city,company,hs_object_id,country,date,date_worked,do_you_agree_to_special_terms_in_the_event_of_a_coronavirus_event,hs_content_membership_email_confirmed,event_start_time,industry,is_there_any_food_that_you_dislike,is_your_kitchen_fulled_equipped_and_functional,jobtitle,kitchen,kitchen_1,lastmodifieddate,hs_latest_sequence_ended_date,hs_latest_sequence_enrolled,hs_latest_sequence_enrolled_date,lifecyclestage,hs_marketable_status,hs_marketable_reason_id,hs_marketable_reason_type,hs_marketable_until_renewal,mobilephone,numemployees,hs_sequences_enrolled_count,hs_createdate,hs_persona,zip,hs_language,salutation,state,address,hs_content_membership_registration_email_sent_at,time_sheet,twitterhandle,website,what_the_occasion&archived=false&hapikey=0020bf99-6b2a-4887-90af-adac067aacba";
     let response = UrlFetchApp.fetch(url);
     let data = JSON.parse(response.getContentText());
@@ -100,14 +99,23 @@ class HubSpot {
   }
 
   static dealToContact() {
+    trace("dealToContact")
     let dealId = Range.getByName("HubSpotDeal","Client Data").values;
     let url = "https://api.hubapi.com/crm/v3/objects/deals/"+dealId+"/associations/contacts?hapikey=0020bf99-6b2a-4887-90af-adac067aacba"
     let response = UrlFetchApp.fetch(url);
     let data = JSON.parse(response.getContentText());
-    let result = data['results'];
-    console.log(result); 
-    let contactId =                 // need to place the id which we get in result
-    HubSpot.listContact(contactId);
+    let result = Array.from(data['results']);
+    console.log(result);
+    let contactId, i = 0;
+    let rl = result.length;
+    for(i; i < rl; ++i) {
+      if( result[i].type == "deal_to_contact")
+      {
+        contactId = result[i].id;        
+        trace(`${contactId}`);
+        HubSpot.listContact(contactId);
+      }
+    }
   }
 
   static listEngagement() {
