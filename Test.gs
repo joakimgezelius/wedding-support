@@ -3,9 +3,10 @@ function onTestCase1() {        // HubSpot Testing
   //HubSpot.listContact(); 
   //HubSpot.listDeal();
   //HubSpot.contactToDeal();
-  HubSpot.dealToContact();
+  //HubSpot.dealToContact();
   //HubSpot.listEngagement();
   //HubSpot.masterHubspot();
+  HubSpot.getClientData();
 }
 
 function onTestCase2() {        // Asana Testing
