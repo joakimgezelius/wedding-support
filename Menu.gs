@@ -173,6 +173,7 @@ static addEnqiriesMenu(libName) {
     trace("> Adding custom products menu");
     let ui = SpreadsheetApp.getUi();
     let menu = ui.createMenu("Products" + globalLibMenuTag)
+        .addItem("Force-Update Price List", libName + ".onUpdatePriceListForced")
         .addItem("Refresh Price List", libName + ".onRefreshPriceList")
         .addItem("Update Packages", libName + ".onUpdatePackages")
         .addSubMenu(ui.createMenu("Export")

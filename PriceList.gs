@@ -1,57 +1,10 @@
-PriceListSpreadsheetId = "1lunFhyOgQL1au5JmwWoLSuebPgxLwXqymzGc5FJJ-IU";
-PriceListRangeName = "PriceList";
+//PriceListSpreadsheetId = "1lunFhyOgQL1au5JmwWoLSuebPgxLwXqymzGc5FJJ-IU";
+//PriceListRangeName = "PriceList";
 
-function onRefreshPriceList() {
-  trace("onRefreshPriceList");
-}
-
-function onUpdatePackages() {
-  trace("onUpdatePackages");
-//  if (Dialog.confirm("Forced Coordinator Update - Confirmation Required", "Are you sure you want to force-update the coordinator? It will overwrite row numbers and formulas, make sure the sheet is sorted properly!") == true) {
-//  }
-}
-
-function onPriceListClearExport() {
-  trace("onPriceListClearExport");
-  let priceListExport = new PriceListExport("Export");
-  priceListExport.clear();
-}
-
-function onPriceListClearSelectionTicks() {
-  trace("onPriceListClearSelectionTicks");
-  let priceList = new PriceList();
-  if (Dialog.confirm("Clear Selection Ticks", 'Are you sure you want to clear all ticks in the "Selected for Quote" column?') == true) {
-    priceList.clearSelectionTicks();
-  }
-}
-
-function onPriceListExportTicked() {
-  trace("onPriceListExport");
-  let priceList = new PriceList("PriceList");
-  let priceListExport = new PriceListExport("Export");
-  priceList.apply(priceListExport);
-}
-
-function onPriceListExportSelection() {
-  trace("onPriceListExport");
-  let priceList = new PriceList("PriceList");
-  let priceListExport = new PriceListExport("Export");
-  priceList.apply(priceListExport);
-}
-
-function onImportPriceList() {
-  trace("onImportPriceList");
-  let source = PriceList.sheet;
-  let destination = SpreadsheetApp.getActiveSpreadsheet();
-  source.copyTo(destination).activate();
-}
-
-
-//================================================================================================
 
 class PriceList {
   
-  constructor(rangeName = PriceListRangeName) {
+  /*constructor(rangeName = PriceListRangeName) {
     this.range = Range.getByName(rangeName).loadColumnNames();
     trace("NEW " + this.trace);
   }
@@ -110,20 +63,47 @@ class PriceList {
 
   get trace() {
     return "{PriceList " + this.range.trace + "}";
+  }*/
+  
+  constructor() {
+    trace("constructing PriceList object...");
+    this.range = Range.getByName("EventDetails", "Coordinator").loadColumnNames();;
+    this.rowCount = this.range.height;
+    trace("NEW " + this.trace);
   }
 
+  // Method apply
+  // Iterate over all event rows (using Range Row Iterator), call handler methods 
+  //
+  apply(handler) {
+    trace(`${this.trace}.apply`);
+    handler.onBegin();
+    this.range.forEachRow((range) => {
+      const row = new EventRow(range);
+      if (row.isTitle) {
+        handler.onTitle(row);
+      } else {
+        handler.onRow(row);
+      }
+    });
+    handler.onEnd();
+  }
+  
+  get trace() {
+    return `{PriceList range=${this.range.trace} rowCount=${this.rowCount}`;
+  }
 } // PriceList
 
-PriceList._spreadsheet = null;
-PriceList._sheet = null;
+//PriceList._spreadsheet = null;
+//PriceList._sheet = null;
 
 
 //================================================================================================
 
 class PriceListRow extends EventRow {
 
-  constructor(range) {
-    super(range);
+  constructor(range, values = null) {
+    super(range, values);
   }
 
   get isSelected()      { return this.get("Selected"); } // Accept blank
