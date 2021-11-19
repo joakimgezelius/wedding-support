@@ -5,9 +5,9 @@ const SortType = { time: "time", supplier: "supplier", supplier_location: "suppl
 
 class EventDetails {
   
-  constructor() {
+  constructor(rangeName = "EventDetails") { // NOTE: EventDetails is the default range name in the client sheet coordinator, we however also use this class to manage price lists.
     trace("constructing EventDetails object...");
-    this.range = Coordinator.eventDetailsRange;
+    this.range = Range.getByName(rangeName).loadColumnNames();
     this.rowCount = this.range.height;
     //this.values = this.range.values;     // NOTE: indexed from [0][0]
     trace("NEW " + this.trace);

@@ -1,10 +1,10 @@
-//PriceListSpreadsheetId = "1lunFhyOgQL1au5JmwWoLSuebPgxLwXqymzGc5FJJ-IU";
-//PriceListRangeName = "PriceList";
+PriceListSpreadsheetId = "1lunFhyOgQL1au5JmwWoLSuebPgxLwXqymzGc5FJJ-IU";
+PriceListRangeName = "PriceList";
 
 
 class PriceList {
   
-  /*constructor(rangeName = PriceListRangeName) {
+  constructor(rangeName = PriceListRangeName) {
     this.range = Range.getByName(rangeName).loadColumnNames();
     trace("NEW " + this.trace);
   }
@@ -63,35 +63,8 @@ class PriceList {
 
   get trace() {
     return "{PriceList " + this.range.trace + "}";
-  }*/
-  
-  constructor() {
-    trace("constructing PriceList object...");
-    this.range = Range.getByName("EventDetails", "Coordinator").loadColumnNames();;
-    this.rowCount = this.range.height;
-    trace("NEW " + this.trace);
-  }
-
-  // Method apply
-  // Iterate over all event rows (using Range Row Iterator), call handler methods 
-  //
-  apply(handler) {
-    trace(`${this.trace}.apply`);
-    handler.onBegin();
-    this.range.forEachRow((range) => {
-      const row = new EventRow(range);
-      if (row.isTitle) {
-        handler.onTitle(row);
-      } else {
-        handler.onRow(row);
-      }
-    });
-    handler.onEnd();
   }
   
-  get trace() {
-    return `{PriceList range=${this.range.trace} rowCount=${this.rowCount}`;
-  }
 } // PriceList
 
 //PriceList._spreadsheet = null;

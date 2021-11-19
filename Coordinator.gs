@@ -33,16 +33,6 @@ function onCheckCoordinator() {
 }
 
 
-class Coordinator {
-  static get eventDetailsRange() { return Range.getByName("EventDetails", "Coordinator").loadColumnNames(); }  
-  
-  //constructor() {
-    //this.range = 
-  //}
-  
-}
-
-
 //=============================================================================================
 // Class EventDetailsUpdater
 //
