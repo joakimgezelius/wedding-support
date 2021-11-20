@@ -100,7 +100,8 @@ class EventRow extends RangeRow {
   get paymentMethod()       { return this.get("PaymentMethod", "string"); }
   get paymentStatus()       { return this.get("PaymentStatus", "string"); }
   get links()               { return this.get("Links", "string"); }
-
+  get isSelected()          { return this.get("Selected"); } // Accept blank
+ 
   set itemNo(value)         { this.set("ItemNo", value); }
   set category(value)       { this.set("Category", value); }
   set supplier(value)       { this.set("Supplier", value); }
@@ -117,6 +118,7 @@ class EventRow extends RangeRow {
   set totalPrice(value)     { this.set("TotalPrice", value); }
   set commissionPercentage(value) { this.set("CommissionPercentage", value); }
   set commission(value)     { this.set("Commission", value); }
+  set isSelected(value) { this.set("Selected", value); }
 
   compare(other, type) { // To support sorting of rows
     let result = 0;

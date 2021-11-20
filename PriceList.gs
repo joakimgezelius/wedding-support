@@ -1,10 +1,7 @@
-PriceListSpreadsheetId = "1lunFhyOgQL1au5JmwWoLSuebPgxLwXqymzGc5FJJ-IU";
-PriceListRangeName = "PriceList";
-
 
 class PriceList {
   
-  constructor(rangeName = PriceListRangeName) {
+  /*constructor(rangeName = PriceListRangeName) {
     this.range = Range.getByName(rangeName).loadColumnNames();
     trace("NEW " + this.trace);
   }
@@ -63,26 +60,32 @@ class PriceList {
 
   get trace() {
     return "{PriceList " + this.range.trace + "}";
+  }*/
+  
+  constructor() {
+    trace("constructing PriceList object...");
+    this.range = Range.getByName().loadColumnNames();
+    this.rowCount = this.range.height;
+    trace("NEW " + this.trace);
+  }
+
+  // Method apply
+  // Iterate over all event rows (using Range Row Iterator), call handler methods 
+  //
+  apply(handler) {
+    trace(`${this.trace}.apply`);
+    handler.onBegin();
+    this.range.forEachRow((range) => {
+      const row = new PriceListRow(range);
+      handler.onRow(row);
+    });
+    handler.onEnd();
   }
   
+  get trace() {
+    return `{PriceList range=${this.range.trace} rowCount=${this.rowCount}`;
+  }
 } // PriceList
-
-//PriceList._spreadsheet = null;
-//PriceList._sheet = null;
-
-
-//================================================================================================
-
-class PriceListRow extends EventRow {
-
-  constructor(range, values = null) {
-    super(range, values);
-  }
-
-  get isSelected()      { return this.get("Selected"); } // Accept blank
-  set isSelected(value) { this.set("Selected", value); }
-  
-} // PriceListRow
 
 
 //================================================================================================
