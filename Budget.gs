@@ -82,8 +82,7 @@ class BudgetBuilder {
     const totalPrice = row.totalPrice;
     const category = row.category; 
     if (Math.abs(totalPrice) > 0 && 
-        category != "Labour" && 
-        category != "Transport" &&
+        category != "Labour" &&
         category != "Styling"
     ) { // This is an item for the invoice
       trace("BudgetBuilder.onRow " + row.description);
