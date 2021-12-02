@@ -62,18 +62,19 @@ class EventDetailsUpdater {
   }
   
   onTitle(row) {
+    this.sectionString = row.itemNo;
     trace("EventDetailsUpdater.onTitle " + row.itemNo + " " + row.title);
     this.itemNo = 0;
     ++this.sectionNo;
     this.sectionTitleRange = row.range;
-    if (row.itemNo === "" || this.forced) { // Only set item number if empty (or forced)
+    if (row.itemNo === "" || this.forced) { // Only set item number if empty (or forced)    
       row.itemNo = this.generateSectionNo();
     }
   }
 
   onRow(row) {
+    trace("EventDetailsUpdater.onRow " +  row.itemNo + " " + this.sectionString);   // tracing this.sectionString for #NN rows
     ++this.itemNo;
-    trace("EventDetailsUpdater.onRow " + row.itemNo);
     let a1_selected = row.getA1Notation("Selected");
     let a1_currency = row.getA1Notation("Currency");
     let a1_quantity = row.getA1Notation("Quantity");
@@ -85,7 +86,7 @@ class EventDetailsUpdater {
     let a1_markup = row.getA1Notation("Markup");
     let a1_unitPrice = row.getA1Notation("UnitPrice");
     let a1_startTime = row.getA1Notation("Time");
-    let a1_endTime = row.getA1Notation("EndTime");
+    let a1_endTime = row.getA1Notation("EndTime");    
 
     if (row.itemNo === "" || this.forced) { // Only set item number if empty (or forced)
       row.itemNo = this.generateItemNo();
@@ -109,8 +110,14 @@ class EventDetailsUpdater {
     }
   }
 
-  generateSectionNo() {
-    return Utilities.formatString("#%02d", this.sectionNo);
+  generateSectionNo() { 
+    let defaultSection = "NN";
+    if(this.sectionString == 0) {
+      return Utilities.formatString("#%s%01d", defaultSection, this.sectionNo);
+    }
+    else {
+    return Utilities.formatString("%s", this.sectionString);
+    }
   }
 
   generateItemNo() {
