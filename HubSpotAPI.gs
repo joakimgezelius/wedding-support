@@ -27,8 +27,8 @@ class HubSpot {
     for(i; i < rl; ++i) {
       if(results[i].invoice_no == invoiceNo) {
         dealId = results[i].id;
-        trace(`${dealId}`);
-        //HubSpot.listDeal(dealId);
+        trace(`Found Deal ID: ${dealId}`);
+        //HubSpot.listDeal(dealId);         //pass para to static function
         //HubSpot.dealToContact(dealId);         
       }
     }
@@ -158,6 +158,20 @@ class HubSpot {
 
   static getUrl(method) {
     return `${HubSpot.baseUrl}/${method}&hapikey=${HubSpot.key}`; // for Contacts & Deals
+ }
+
+ static getHubspotContactProps() {
+   let url = "https://api.hubapi.com/properties/v1/contacts/properties?hapikey="+HubSpot.key;
+   let response = UrlFetchApp.fetch(url);
+   let data = JSON.parse(response.getContentText());
+   console.log(data);
+ }
+
+ static getHubspotDealProps() {
+   let url = "https://api.hubapi.com/properties/v1/deals/properties?hapikey="+HubSpot.key;
+   let response = UrlFetchApp.fetch(url);
+   let data = JSON.parse(response.getContentText());
+   console.log(data);
  }
 
 }

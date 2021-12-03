@@ -6,7 +6,8 @@ function onTestCase1() {        // HubSpot Testing
   //HubSpot.dealToContact();
   //HubSpot.listEngagement();
   //HubSpot.masterHubspot();
-  HubSpot.getClientData();
+  //HubSpot.getClientData();
+  HubSpot.getHubspotContactProps();
 }
 
 function onTestCase2() {        // Asana Testing
@@ -21,6 +22,5 @@ function onTestCase2() {        // Asana Testing
 
 function onTestCase3() {        // Other Testings
   trace("onTestCase3");
-  onUpdatePriceListForced();
 }
 
