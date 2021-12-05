@@ -62,18 +62,19 @@ class EventDetailsUpdater {
   }
   
   onTitle(row) {
-    this.sectionString = row.itemNo;
     trace("EventDetailsUpdater.onTitle " + row.itemNo + " " + row.title);
     this.itemNo = 0;
-    ++this.sectionNo;
     this.sectionTitleRange = row.range;
-    if (row.itemNo === "" || this.forced) { // Only set item number if empty (or forced)    
-      row.itemNo = this.generateSectionNo();
+    if (row.itemNo === "") { // Only set item id (itemNo) field if empty, if so generate a string on the format #NN   
+      this.sectionId = this.generateSectionId();
+      row.itemNo = this.sectionId;
+    } else {
+      this.sectionId = row.itemNo; // Pick up the section ID to use throughout the section
     }
   }
 
   onRow(row) {
-    trace("EventDetailsUpdater.onRow " +  row.itemNo + " " + this.sectionString);   // tracing this.sectionString for #NN rows
+    trace("EventDetailsUpdater.onRow " + row.sectionId + " " + this.itemNo);
     ++this.itemNo;
     let a1_selected = row.getA1Notation("Selected");
     let a1_currency = row.getA1Notation("Currency");
@@ -89,7 +90,7 @@ class EventDetailsUpdater {
     let a1_endTime = row.getA1Notation("EndTime");    
 
     if (row.itemNo === "" || this.forced) { // Only set item number if empty (or forced)
-      row.itemNo = this.generateItemNo();
+      row.itemNo = this.generateItemId();
     }
     this.setNativeUnitCost(row);
     row.nativeUnitCostWithVAT = `=IF(OR(${a1_currency}="", ${a1_nativeUnitCost}="", ${a1_nativeUnitCost}=0), "", ${a1_nativeUnitCost}*(1+${a1_vat}))`;
@@ -110,21 +111,13 @@ class EventDetailsUpdater {
     }
   }
 
-  generateSectionNo() { 
-    let defaultSection = "NN";
-    if(this.sectionString == 0) {
-      return Utilities.formatString("#%s%01d", defaultSection, this.sectionNo);
-    }
-    else {
-    return Utilities.formatString("%s", this.sectionString);
-    }
+  generateSectionId() {
+    ++this.sectionNo;
+    return Utilities.formatString("#%02d", this.sectionNo);
   }
 
-  generateItemNo() {
-    if (this.itemNo == 0) 
-      return this.generateSectionNo();
-    else
-      return Utilities.formatString("%s-%02d", this.generateSectionNo(), this.itemNo);
+  generateItemId() {
+    return Utilities.formatString("%s-%02d", this.sectionId, this.itemNo);
   }
 
   setNativeUnitCost(row) {

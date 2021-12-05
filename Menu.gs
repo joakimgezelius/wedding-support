@@ -186,6 +186,16 @@ static addEnqiriesMenu(libName) {
     trace("< Custom products menu added");
   }
 
+  static addUtilitiesSheetMenu(libName) {
+    trace("> Adding custom utilities menu");
+    let ui = SpreadsheetApp.getUi();
+    let menu = ui.createMenu("Utilities" + globalLibMenuTag)
+        .addItem("Get file info", libName + ".onGetFileInfo")
+        .addItem("Move to Shared Drive", libName + ".onMoveToSharedDrive")
+    Menu.addTestItems(libName, menu).addToUi();
+    trace("< Custom products menu added");
+  }
+
   static addTestItems(libName, menu) {
     return /*User.active.isDeveloper*/ true ? 
       menu

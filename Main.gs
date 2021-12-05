@@ -11,7 +11,7 @@ globalLibMenuTag = ""; // Set to unique value for each library, e.g. " (Shaikh)"
 function onWeddingSheetOpen(libName) {
   trace(`onWeddingSheetOpen libName=${libName}`);
   Menu.addEventMenu(libName);
-  Menu.addAsanaMenu(libName);
+//Menu.addAsanaMenu(libName);
 }
 
 function onRotaSheetOpen(libName) {
@@ -52,5 +52,9 @@ function onWeddingPackagesSheetOpen(libName) {
 function onProductsSheetOpen(libName) {
   trace(`onProductsSheetOpen libName=${libName}`);
   Menu.addProductsSheetMenu(libName);
-  //Menu.addWeddingPackagesMenu(libName);
+}
+
+function onUtilitiesSheetOpen(libName) {
+  trace(`onUtilitiesSheetOpen libName=${libName}`);
+  Menu.addUtilitiesSheetMenu(libName);
 }
