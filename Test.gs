@@ -7,7 +7,6 @@ function onTestCase1() {        // HubSpot Testing
   //HubSpot.listEngagement();
   //HubSpot.masterHubspot();
   //HubSpot.getClientData();
-  HubSpot.getHubspotContactProps();
 }
 
 function onTestCase2() {        // Asana Testing
