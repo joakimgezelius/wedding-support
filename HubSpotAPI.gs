@@ -1,6 +1,5 @@
  function onUpdateClientData() {
-  trace("onUpdateClientData");
-  Dialog.notify("Updating Client Data...","Please wait updating Client Data from HubSpot!");
+  trace("onUpdateClientData");  
   HubSpot.getClientData();
 }
 
@@ -34,16 +33,25 @@ class HubSpot {
   static listDeals() {
     let url = HubSpot.getUrl("deals?limit=100&properties=hs_object_id,amount,closedate,createdate,dealname,description,hubspot_owner_id,dealstage,dealtype,departure_date,hs_forecast_amount,hs_manual_forecast_category,hs_forecast_probability,hubspot_team_id,hs_lastmodifieddate,hs_next_step,num_associated_contacts,hs_priority,pipeline&archived=false");
     let response = UrlFetchApp.fetch(url);
-    trace(`HubSpot.listDeals --> ${response.getContentText()}`);
+    //trace(`HubSpot.listDeals --> ${response.getContentText()}`);
     let data = JSON.parse(response.getContentText());
     let results = data['results'];
     let paging = data.paging.next;
     let sheet = SpreadsheetApp.getActiveSheet();
-    let header = ["Deal ID","Amount", "Close Date", "Create Date", "Deal Name", "Deal Description", "Deal Owner", "Deal Type", "Deal Stage", "Departure Date", "Forecast Amount", "Forecast Category", "Forecast Probabilty", "HubSpot Team", "Last Modified Date", "Next Step", "Number of Contacts", "Priority", "Pipeline","Paging After","Paging Link"];
+    let header = ["Deal ID", "Amount", "Close Date", "Create Date", "Deal Name", "Deal Description", "Deal Owner", "Deal Type", "Deal Stage", "Departure Date", "Forecast Amount", "Forecast Category", "Forecast Probabilty", "HubSpot Team", "Last Modified Date", "Next Step", "Number of Contacts", "Priority", "Pipeline"];
     let items = [header];
     results.forEach(function (result) {
-    items.push([ result['properties'].hs_object_id, result['properties'].amount, result['properties'].closedate, result['properties'].createdate, result['properties'].dealname, result['properties'].description, result['properties'].hubspot_owner_id, result['properties'].dealtype, result['properties'].dealstage, result['properties'].departure_date, result['properties'].hs_forecast_amount, result['properties'].hs_manual_forecast_category, result['properties'].hs_forecast_probability, result['properties'].hubspot_team_id, result['properties'].hs_lastmodifieddate, result['properties'].hs_next_step, result['properties'].num_associated_contacts, result['properties'].priority, result['properties'].pipeline, paging.after, paging.link+"&hapikey=0020bf99-6b2a-4887-90af-adac067aacba"]);
+    if(result['properties'].dealstage !== "closedlost") {
+      items.push([ result['properties'].hs_object_id, result['properties'].amount, result['properties'].closedate, result['properties'].createdate, result['properties'].dealname, result['properties'].description, result['properties'].hubspot_owner_id, result['properties'].dealtype, result['properties'].dealstage, result['properties'].departure_date, result['properties'].hs_forecast_amount, result['properties'].hs_manual_forecast_category, result['properties'].hs_forecast_probability, result['properties'].hubspot_team_id, result['properties'].hs_lastmodifieddate, result['properties'].hs_next_step, result['properties'].num_associated_contacts, result['properties'].priority, result['properties'].pipeline]);      
+      }
     });
+    /*let apiCall = function(url) {
+      let response = UrlFetchApp.fetch(url);
+      let data = JSON.parse(response);
+      return data;
+    };
+    apiCall(paging.link);*/
+    trace(`Paging After : ${ paging.after}, Link : ${ paging.link+"&hapikey=0020bf99-6b2a-4887-90af-adac067aacba" }`);
     sheet.getRange(3,1,items.length,items[0].length).setValues(items);
   }
 
@@ -130,6 +138,7 @@ class HubSpot {
     trace("getClientData");
     let dealId = Range.getByName("HubSpotDeal","Client Data").values;
     trace(`Deal ID : ${dealId}`);
+    Dialog.notify("Updating Client Data...","Please wait updating Client Data from HubSpot!");
     let url = "https://api.hubapi.com/crm/v3/objects/deals/"+dealId+"?properties=hs_object_id,invoice_id,estimate_id,amount,closedate,createdate,dealname,description,hubspot_owner_id,dealstage,dealtype,departure_date,hs_forecast_amount,hs_manual_forecast_category,hs_forecast_probability,hubspot_team_id,hs_lastmodifieddate,hs_next_step,num_associated_contacts,hs_priority,pipeline&archived=false&hapikey=0020bf99-6b2a-4887-90af-adac067aacba";
     let response = UrlFetchApp.fetch(url);
     let data = JSON.parse(response.getContentText());
