@@ -116,7 +116,7 @@ class Asana {
   }
 
   static getProjectName() {                     // Returns active spreadsheet name for project
-    return Spreadsheet.active.name;
+    return "n/a" ; // Spreadsheet.active.name;  NOTE: the way this is coded it causes a static object to be created at load time, let's try to avoid that
   }
 
   static getProjectDueDate() {

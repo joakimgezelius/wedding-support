@@ -63,6 +63,8 @@
 
 
 function ImportJSON(url, query, options) {
+  trace(`ImportJSON(${url}, ${query}, ${options})`);
+  //return "foo";
   return JSONImporter.import(url, query, options);
 }
 
@@ -106,9 +108,11 @@ class JSONImporter {
    * @return a two-dimensional array containing the data, with the first row containing headers
    **/
   static import(url, query, options, includeFunc = JSONImporter.includeXPath, transformFunc = JSONImporter.defaultTransform) {
+    trace(`> JSONImporter.import(${url}, ${query}, ${options}), fetching data...`);
     var jsondata = UrlFetchApp.fetch(url);
+    trace(`  JSONImporter.import, got JSON data, parse to JS object...`);
     var object = JSON.parse(jsondata.getContentText());
-    
+    trace(`  JSONImporter.import, JSON data parsed to oject, transform...`);
     return JSONImporter.parseJSONObject(object, query, options, includeFunc, transformFunc);
   }
 

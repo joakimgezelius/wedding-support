@@ -7,6 +7,7 @@
 //  ScriptID (Shaikh): 1uWdnau49TWbINbe_I4eY_JJDswE_J2hQiEB-iKu35-DpdIJf0-EdOn6P
 
 globalLibMenuTag = ""; // Set to unique value for each library, e.g. " (Shaikh)"
+globalLibId = "Prod";
 
 function onWeddingSheetOpen(libName) {
   trace(`onWeddingSheetOpen libName=${libName}`);
@@ -55,6 +56,6 @@ function onProductsSheetOpen(libName) {
 }
 
 function onUtilitiesSheetOpen(libName) {
-  trace(`onUtilitiesSheetOpen libName=${libName}`);
+  trace(`onUtilitiesSheetOpen libName=${libName} LibId=${globalLibId}`);
   Menu.addUtilitiesSheetMenu(libName);
 }

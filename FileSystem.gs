@@ -61,12 +61,14 @@ class Folder {
     trace(`> Folder.copyTo(${destination.trace}) this=${this.trace}`);
     let copy = destination.createFolder(name); // Create a copy of this folder inside the destination folder
     // here, loop over files, and copy them over
+    // https://developers.google.com/apps-script/reference/drive/folder#getFiles()
     let files = this.nativeFolder.getFiles();
     while (files.hasNext()) {                  // Determines whether calling next() will return an item.
       let file = new File(files.next());       // Gets the next item in the collection of files.      
       file.copyTo(copy);                       // Copy to the newly created folder
     }
     // next, loop over folders, and recursively copy them over
+    // https://developers.google.com/apps-script/reference/drive/folder#getfolders
     let folders =  this.nativeFolder.getFolders();
     while (folders.hasNext()) {                     
       let folder = new Folder(folders.next()); 
@@ -76,22 +78,23 @@ class Folder {
     return copy;
   }
 
-  recursiveWalk() {
-    trace(`> Folder.recursiveWalk ${this.trace}`);    
+  recursiveWalk(array = [], level = 0) {
+    trace(`> Folder.recursiveWalk ${this.trace}`);
+    // https://developers.google.com/apps-script/reference/drive/folder#getfolders
+    let subFolders =  this.nativeFolder.getFolders();
+    while (subFolders.hasNext()) {                    // Determines whether calling next() will return an item                 
+      let subFolder = new Folder(subFolders.next());  // Gets the next item in the collection of folders
+      trace(`  found subfolder: ${subFolder.name}`);
+      subFolder.recursiveWalk(array, level + 1);
+    }
     // https://developers.google.com/apps-script/reference/drive/folder#getFiles()
     let files = this.nativeFolder.getFiles();
     while (files.hasNext()) {                 // Determines whether calling next() will return an item.
       let file = new File(files.next());      // Gets the next item in the collection of files.
       trace(`  found file: ${file.name}`);
     } 
-    // https://developers.google.com/apps-script/reference/drive/folder#getfolders
-    let subFolders =  this.nativeFolder.getFolders();
-    while (subFolders.hasNext()) {                     
-      let subFolder = new Folder(subFolders.next());    
-      trace(`  found subfolder: ${subFolder.name}`);
-      subFolder.recursiveWalk();
-    }
-    trace(`< Folder.recursiveWalk ${this.trace}`);   
+    trace(`< Folder.recursiveWalk ${this.trace}`);
+    return array;
   }
 
   createFolder(name) {
