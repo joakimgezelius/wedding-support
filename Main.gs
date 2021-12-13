@@ -6,7 +6,7 @@
 //  ScriptID (Jithin): 1mXJiRin063xGwitgWu-0-rUepMTe_GTO1A-oJ5vJnTtIlZLZPnVhpd76
 //  ScriptID (Shaikh): 1uWdnau49TWbINbe_I4eY_JJDswE_J2hQiEB-iKu35-DpdIJf0-EdOn6P
 
-globalLibMenuTag = ""; // Set to unique value for each library, e.g. " (Shaikh)"
+globalLibMenuTag = " (Shaikh)"; // Set to unique value for each library, e.g. " (Shaikh)"
 
 function onWeddingSheetOpen(libName) {
   trace(`onWeddingSheetOpen libName=${libName}`);

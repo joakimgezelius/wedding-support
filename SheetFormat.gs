@@ -91,37 +91,97 @@ function onFormatCoordinator() {
   trace("onFormatCoordinator");
   let eventDetails = new EventDetails();
   let eventDetailsFormater = new EventDetailsFormater(false);
-  let range = Coordinator.eventDetailsRange;
 
   // https://developers.google.com/apps-script/reference/spreadsheet/range#shiftRowGroupDepth(Integer)  
   // range.nativeRange.shiftRowGroupDepth(-3);          // Removes all the grouping depth in range EventDetails by Delta -3
   // range.nativeRange.shiftRowGroupDepth(1);           // Creates grouping depth for found items range by Delta 1
-  range.forEachRow((range) => {
+  
+  /*range.forEachRow((range) => {
       const row = new EventRow(range);
       if (row.isTitle) {
-       range.nativeRange.shiftRowGroupDepth(1);
+       
       } 
-    });
+    });*/
 
-  /*
-  let itemRows = 
-  for (let i=1; i <= itemRows; i++) {
+  // Adds the rule once on run Format coordinator 
+  let sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Coordinator");
+  let numRows = sheet.getLastRow();
+  let rangeToFormat = sheet.getRange("A21:AO"+numRows);
+  let rule1 = SpreadsheetApp.newConditionalFormatRule()
+      .whenFormulaSatisfied('=$F21="TITLE"')
+      .setFontColor('#FFFFFF')
+      .setBackground('#666666')
+      .setRanges([rangeToFormat])
+      .build();
+  let ruleTitleRow = sheet.getConditionalFormatRules();
+  ruleTitleRow.push(rule1); 
+  sheet.setConditionalFormatRules(ruleTitleRow);
 
-  }*/
+  let rule2 = SpreadsheetApp.newConditionalFormatRule()
+      .whenFormulaSatisfied('=$F21<>"TITLE"')
+      .setFontColor('#666666')
+      .setBackground('#FFFFFF')
+      .setRanges([rangeToFormat])
+      .build();
+  let ruleItemRow = sheet.getConditionalFormatRules();
+  ruleItemRow.push(rule2);
+  sheet.setConditionalFormatRules(ruleItemRow); 
 
-  /*
-  const row = new EventRow(range);
-  if(row.isTitle) {
-    range.setFontColors('#FFFFFF').setFontSizes(10).setBackgroundColor('#666666');
-  }*/
+  /*let range = Range.getByName("EventDetails","Coordinator");
+  let column = range.getColumn();  
+  let sheet = range.getSheet();
+
+  // Get all Sheet rules and iterate through them
+  let rules = sheet.getConditionalFormatRules();
+  let newRules = [];
+  newRules = newRules.concat(rules);
+
+  for (let r = 0; r < rules.length; r++) {
+    let rule = rules[r];
+    // Get condition for each rule
+    let booleanCondition = rule.getBooleanCondition();
+
+    // Get the ranges to which each rule applies and iterate through
+    let ranges = rule.getRanges();
+    for (let i = 0; i < ranges.length; i++) {
+      let ruleColumn = ranges[i].getColumn();  
+      let ruleRow = ranges[i].getRow();  
+
+      // If condition isn't null and edited column is the same as the one in the range, add rule
+      if((ruleColumn == column) && (ruleRow == 1) && (booleanCondition != null)) {        
+        let rule1 = SpreadsheetApp.newConditionalFormatRule()
+            .whenFormulaSatisfied('=$F21="TITLE"')
+            .setFontColor('#FFFFFF')
+            .setBackground('#666666')
+            .setRanges([range])
+            .build();
+        newRules.push(rule1);
+
+        let rule2 = SpreadsheetApp.newConditionalFormatRule()
+            .whenFormulaSatisfied('=$F21<>"TITLE"')
+            .setFontColor('#666666')
+            .setBackground('#FFFFFF')
+            .setRanges([range])
+            .build();
+        newRules.push(rule2);
+      }
+    }
+  }
+ 
+  sheet.setConditionalFormatRules(newRules);*/
 
   eventDetails.apply(eventDetailsFormater);
 }
 
 
+//=============================================================================================
+// Class EventDetailsFormater
+//
+
 class EventDetailsFormater {
   constructor(forced) {
     this.forced = forced;
+    this.range = Range.getByName("EventDetails","Coordinator");    
     trace("NEW " + this.trace);
   }
 
@@ -138,13 +198,12 @@ class EventDetailsFormater {
 
   finalizeSectionFormatting() {
     if (this.sectionNo > 1) {// This is not the first title row
-
+     
     }
   }
   
   onTitle(row) {
-    trace("EventDetailsFormater.onTitle " + row.itemNo + " " + row.title);
-
+    trace("EventDetailsFormater.onTitle " + row.itemNo + " " + row.title);  
   }
 
   onRow(row) {
