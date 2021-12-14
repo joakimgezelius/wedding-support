@@ -102,22 +102,29 @@ function onFormatCoordinator() {
        
       } 
     });*/
+  
+  let source = SpreadsheetApp.openById(TemplateSpreadsheetId).getSheetByName("Coordinator");
+  let target = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Coordinator");
+  target.clearConditionalFormatRules();                           // Removes all the conditional formatting rules from the sheet
+  let rules = source.getConditionalFormatRules();                 // Gets all the conditional formatting rules from the sheet
+  target.setConditionalFormatRules(rules);                        // Adds new conditional formatting rules
 
-  // Adds the rule once on run Format coordinator 
+  /* Adds the rule once on run Format coordinator 
   let sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Coordinator");
+  //sheet.clearConditionalFormatRules();                          // Removes all the conditional formatting rules from the sheet
   let numRows = sheet.getLastRow();
-  let rangeToFormat = sheet.getRange("A21:AO"+numRows);
-  let rule1 = SpreadsheetApp.newConditionalFormatRule()
+  let rangeToFormat = sheet.getRange("A21:AO"+numRows);           // Includes rows in entire sheet excluding First Title row i.e A20
+  let rule1 = SpreadsheetApp.newConditionalFormatRule()           // If the row is title row
       .whenFormulaSatisfied('=$F21="TITLE"')
       .setFontColor('#FFFFFF')
       .setBackground('#666666')
       .setRanges([rangeToFormat])
       .build();
   let ruleTitleRow = sheet.getConditionalFormatRules();
-  ruleTitleRow.push(rule1); 
+  ruleTitleRow.push(rule1);   
   sheet.setConditionalFormatRules(ruleTitleRow);
 
-  let rule2 = SpreadsheetApp.newConditionalFormatRule()
+  let rule2 = SpreadsheetApp.newConditionalFormatRule()           // If the row is not title row
       .whenFormulaSatisfied('=$F21<>"TITLE"')
       .setFontColor('#666666')
       .setBackground('#FFFFFF')
@@ -125,50 +132,7 @@ function onFormatCoordinator() {
       .build();
   let ruleItemRow = sheet.getConditionalFormatRules();
   ruleItemRow.push(rule2);
-  sheet.setConditionalFormatRules(ruleItemRow); 
-
-  /*let range = Range.getByName("EventDetails","Coordinator");
-  let column = range.getColumn();  
-  let sheet = range.getSheet();
-
-  // Get all Sheet rules and iterate through them
-  let rules = sheet.getConditionalFormatRules();
-  let newRules = [];
-  newRules = newRules.concat(rules);
-
-  for (let r = 0; r < rules.length; r++) {
-    let rule = rules[r];
-    // Get condition for each rule
-    let booleanCondition = rule.getBooleanCondition();
-
-    // Get the ranges to which each rule applies and iterate through
-    let ranges = rule.getRanges();
-    for (let i = 0; i < ranges.length; i++) {
-      let ruleColumn = ranges[i].getColumn();  
-      let ruleRow = ranges[i].getRow();  
-
-      // If condition isn't null and edited column is the same as the one in the range, add rule
-      if((ruleColumn == column) && (ruleRow == 1) && (booleanCondition != null)) {        
-        let rule1 = SpreadsheetApp.newConditionalFormatRule()
-            .whenFormulaSatisfied('=$F21="TITLE"')
-            .setFontColor('#FFFFFF')
-            .setBackground('#666666')
-            .setRanges([range])
-            .build();
-        newRules.push(rule1);
-
-        let rule2 = SpreadsheetApp.newConditionalFormatRule()
-            .whenFormulaSatisfied('=$F21<>"TITLE"')
-            .setFontColor('#666666')
-            .setBackground('#FFFFFF')
-            .setRanges([range])
-            .build();
-        newRules.push(rule2);
-      }
-    }
-  }
- 
-  sheet.setConditionalFormatRules(newRules);*/
+  sheet.setConditionalFormatRules(ruleItemRow); */
 
   eventDetails.apply(eventDetailsFormater);
 }
