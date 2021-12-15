@@ -106,8 +106,48 @@ function onFormatCoordinator() {
   let source = SpreadsheetApp.openById(TemplateSpreadsheetId).getSheetByName("Coordinator");
   let target = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Coordinator");
   target.clearConditionalFormatRules();                           // Removes all the conditional formatting rules from the sheet
+  target.clearFormats();                                          // Clears the sheet of formatting, while preserving contents.
   let rules = source.getConditionalFormatRules();                 // Gets all the conditional formatting rules from the sheet
   target.setConditionalFormatRules(rules);                        // Adds new conditional formatting rules
+  
+  
+  let sheetValues = source.getDataRange().getValues();
+  let sheetBG     = source.getDataRange().getBackgrounds();
+  let sheetFC     = source.getDataRange().getFontColors();
+  let sheetFF     = source.getDataRange().getFontFamilies();
+  let sheetFL     = source.getDataRange().getFontLines();
+  let sheetFFa    = source.getDataRange().getFontFamilies();
+  let sheetFSz    = source.getDataRange().getFontSizes();
+  let sheetFSt    = source.getDataRange().getFontStyles();
+  let sheetFW     = source.getDataRange().getFontWeights();
+  let sheetHA     = source.getDataRange().getHorizontalAlignments();
+  let sheetVA     = source.getDataRange().getVerticalAlignments();
+  let sheetNF     = source.getDataRange().getNumberFormats();
+  let sheetWR     = source.getDataRange().getWraps();
+  let sheetTR     = source.getDataRange().getTextRotations();
+  let sheetDir    = source.getDataRange().getTextDirections();
+  let sheetNotes  = source.getDataRange().getNotes();
+
+  target.getRange(1,1,sheetValues.length,sheetValues[0].length)
+    .setBackgrounds(sheetBG)
+    .setFontColors(sheetFC)
+    .setFontFamilies(sheetFF)
+    .setFontLines(sheetFL)
+    .setFontFamilies(sheetFFa)
+    .setFontSizes(sheetFSz)
+    .setFontStyles(sheetFSt)
+    .setFontWeights(sheetFW)
+    .setHorizontalAlignments(sheetHA)
+    .setVerticalAlignments(sheetVA)
+    .setNumberFormats(sheetNF)
+    .setWraps(sheetWR)
+    .setTextRotations(sheetTR)
+    .setTextDirections(sheetDir)
+    .setNotes(sheetNotes);
+
+  //let width = source.getColumnWidth(sheetValues.length);
+  //target.setColumnWidth(sheetValues.length,width);
+
 
   /* Adds the rule once on run Format coordinator 
   let sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Coordinator");
