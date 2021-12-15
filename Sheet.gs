@@ -16,14 +16,6 @@ class Sheet {
   }
 
   /*
-  static getCleared(name) {
-    let sheet = Spreadsheet.active.getSheetByName(name);
-    if (sheet === null) {
-    }
-    return sheet;
-  }
-  */
-  /*
   static saveRangeAsSpreadsheet() { 
     let sheet = SpreadsheetApp.getActiveSpreadsheet();
     let range = sheet.getRange("Sheet1!A1:B3");
@@ -48,14 +40,15 @@ class Sheet {
   copyTo(destination)         { this.nativeSheet.copyTo(destination); return this; }
   activate()                  { this.nativeSheet.activate; return this; }
   
-  get nativeSheet() { return this._nativeSheet; }
-  get name()        { return this.nativeSheet === null ? "NULL" : this.nativeSheet.getName(); }
-  get maxColumns()  { return this.nativeSheet.getMaxColumns(); }
-  get maxRows()     { return this.nativeSheet.getMaxRows(); }
-  get selection()   { return this.nativeSheet.getSelection(); }
-  get activeRange() { return new Range(this.nativeSheet.getActiveRange()); }
-  get fullRange()   { return new Range(this.nativeSheet.getRange(1, 1, this.maxRows, this.maxColumns)); }
-  get trace()       { return this._trace; }
+  get nativeSheet()      { return this._nativeSheet; }
+  get name()             { return this.nativeSheet === null ? "NULL" : this.nativeSheet.getName(); }
+  get maxColumns()       { return this.nativeSheet.getMaxColumns(); }
+  get maxRows()          { return this.nativeSheet.getMaxRows(); }
+  get selection()        { return this.nativeSheet.getSelection(); }
+  get activeRange()      { return new Range(this.nativeSheet.getActiveRange()); } // The active range is the range selected
+  get currentCell()      { return new Range(this.nativeSheet.getCurrentCell()); } // The current cell is the cell having focus
+  get fullRange()        { return new Range(this.nativeSheet.getRange(1, 1, this.maxRows, this.maxColumns)); }
+  get trace()            { return this._trace; }
 
 } // Sheet
 
@@ -92,6 +85,10 @@ class Spreadsheet {
     let spreadsheet = new Spreadsheet(newSpreadsheet);
     trace(`< Spreadsheet.openByUrl(${url}) --> ${spreadsheet.trace}`);
     return spreadsheet;
+  }
+
+  static get currentCellValue() {
+    return SpreadsheetApp.getCurrentCell().getValues()[1,1];
   }
 
   setActive() {
@@ -137,13 +134,13 @@ class Spreadsheet {
   }
   
   get nativeSpreadsheet() { return this._nativeSpreadsheet; }
-  get activeSheet()      { return new Sheet(this.nativeSpreadsheet.getActiveSheet()); }
-  get name()             { return this._name; }
-  get id()               { return this.nativeSpreadsheet.getId(); }
-  get file()             { return new File(DriveApp.getFileById(this.id)); }
-  get url()              { return this.nativeSpreadsheet.getUrl(); }
-  get parentFolder()     { return this.file.parent; }
-  get trace()            { return this._trace; }
+  get activeSheet()       { return new Sheet(this.nativeSpreadsheet.getActiveSheet()); }
+  get name()              { return this._name; }
+  get id()                { return this.nativeSpreadsheet.getId(); }
+  get file()              { return new File(DriveApp.getFileById(this.id)); }
+  get url()               { return this.nativeSpreadsheet.getUrl(); }
+  get parentFolder()      { return this.file.parent; }
+  get trace()             { return this._trace; }
 
 } // Spreadsheet
 

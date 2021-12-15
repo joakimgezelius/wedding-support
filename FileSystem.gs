@@ -17,14 +17,22 @@ class Folder {
     return folder;
   }  
 
-  static getByUrl(url) {        
+  static getByUrl(url) {
     trace(`> Folder.getByUrl(${url})`);
-    let folderId = File.getIdFromUrl(url);
+    let folderId = Folder.getIdFromUrl(url);
     let folder = Folder.getById(folderId);
     trace(`< Folder.getByUrl(${url}) --> ${folder.trace}`);
     return folder;
   }
 
+  static getIdFromUrl(url) {
+    // Extract the file id with regular expression, as follows:
+    // [-\w]  This matches hyphen and the w character class (A-Za-z0-9_)
+    // {19,}  Quantifier matching any sequence of 19+ occurrances of [-\w]
+    // Reference: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
+    return url.match(/[-\w]{19,}/);   
+  }
+  
   getSubfolder(name) { // NOTE: we assume there is at most one subfolder with the given name in the folder
     // https://developers.google.com/apps-script/reference/drive/folder#getFoldersByName(String)
     let nativeFolderIterator = this.nativeFolder.getFoldersByName(name);
@@ -143,7 +151,11 @@ class File {
   }
 
   static getIdFromUrl(url) {
-    return url.match(/[-\w]{25,}/);   //returns the file/folder id with regular expression
+    // Extract the file id with regular expression, as follows:
+    // [-\w]  This matches hyphen and the w character class (A-Za-z0-9_)
+    // {25,}  Quantifier matching any sequence of 25+ occurrances of [-\w]
+    // Reference: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions
+    return url.match(/[-\w]{25,}/);   
   }  
   
   copyTo(folder, newName = this.name) {

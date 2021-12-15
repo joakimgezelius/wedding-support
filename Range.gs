@@ -7,7 +7,7 @@ class Range {
     this._nativeRange = nativeRange;
     this._name = name;
     this._sheet = new Sheet(nativeRange.getSheet());
-    this._values = this.nativeRange.getValues();  // Note: we cache this as we need to allow the array to me sorted
+    this._values = this.nativeRange.getValues();  // Note: we cache this as we need to allow the array to be sorted
     this._sheetName = this.sheet.name;
     this._currentRowOffset = 0;
     this._currentColumnOffset = 0;

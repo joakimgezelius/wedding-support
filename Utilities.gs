@@ -1,7 +1,22 @@
+function WalkFolder(folderUrl) {
+  trace(`WalkFolder(${folderUrl})`);
+  let folder = Folder.getByUrl(folderUrl);
+  return folder.trace;
+}
 
 function onGetFileInfo() {
   trace("onGetFileInfo");
-  Dialog.notify("onGetFileInfo", "onGetFileInfo")
+  let currentSheet = Spreadsheet.active;
+  let url = "foo";//Spreadsheet.currentCellValue;
+  Dialog.notify("onGetFileInfo", url);
+}
+
+function GetFileIdFromUrl(url) {
+  return File.getIdFromUrl(url);
+}
+
+function GetFolderIdFromUrl(url) {
+  return Folder.getIdFromUrl(url);
 }
 
 function onMoveToSharedDrive() {

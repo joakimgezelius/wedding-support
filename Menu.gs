@@ -190,7 +190,7 @@ static addEnqiriesMenu(libName) {
     trace("> Adding custom utilities menu");
     let ui = SpreadsheetApp.getUi();
     let menu = ui.createMenu("Utilities" + globalLibMenuTag)
-        .addItem("Get file info", libName + ".onGetFileInfo")
+        .addItem("Get file/folder info", libName + ".onGetFileInfo")
         .addItem("Move to Shared Drive", libName + ".onMoveToSharedDrive")
     Menu.addTestItems(libName, menu).addToUi();
     trace("< Custom products menu added");
