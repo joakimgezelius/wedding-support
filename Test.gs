@@ -21,5 +21,7 @@ function onTestCase2() {        // Asana Testing
 
 function onTestCase3() {        // Other Testings
   trace("onTestCase3");
+  let hubSpotDataDictionary = HubSpotDataDictionary.current;
+  let hubSpotDataDictionary2 = HubSpotDataDictionary.current;
 }
 

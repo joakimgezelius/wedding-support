@@ -9,7 +9,7 @@ class ClientData {
       // Iterate over the named Client Data properties, and add an associative record for each non-empty value.
       values.forEach(item => 
         { 
-          // Assumes id's are in colun 0, values in column 3
+          // Assumes id's are in column 0, values in column 3
           let propertyId = item[0];
           let propertyValue = item[3];
           if (propertyId !== "" && propertyValue !== "") {

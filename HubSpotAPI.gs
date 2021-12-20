@@ -158,6 +158,27 @@ class HubSpot {
   }  
 }
 
+class HubSpotDataDictionary {
+
+  constructor() {
+    trace("> NEW HubSpotDataDictionary, loading dictionary...");
+    let dataDictionarySheet = Spreadsheet.openById(HubSpot.dataDictionarySheetId);
+    this.summaryContactPropertyIds = dataDictionarySheet.getRangeByName("SummaryContactPropertyIds").values;
+    this.summaryDealPropertyIds = dataDictionarySheet.getRangeByName("SummaryDealPropertyIds").values;
+    this.detailedContactPropertyIds = dataDictionarySheet.getRangeByName("DetailedContactPropertyIds").values;
+    this.detailedDealPropertyIds = dataDictionarySheet.getRangeByName("DetailedDealPropertyIds").values;
+
+    this.detailedContactPropertyIds.forEach( item => { if (item[0] !== "") trace(`item: ${item[0]}`); } );
+    trace("< NEW HubSpotDataDictionary, dictionary loaded.");
+  }
+
+  static get current() {
+    return HubSpotDataDictionary.singleton ?? (HubSpotDataDictionary.singleton = new HubSpotDataDictionary);
+  }
+
+}
+
 HubSpot.baseUrl = "https://api.hubapi.com/crm/v3/objects";
 HubSpot.key = "0020bf99-6b2a-4887-90af-adac067aacba";
+HubSpot.dataDictionarySheetId = "1C_uOMH30siZLSGzYOziBfcl_lx5ZZRYCBv7fqpegGEk";
 
