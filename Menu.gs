@@ -64,10 +64,9 @@ static addAsanaMenu(libName) {
 }
 
 static addTestMenu(libName) {
-  trace("> Adding custom test menu if user is developer");
-  if (User.active.isDeveloper) {
+  trace("> Adding custom test menu for developer");
     let ui = SpreadsheetApp.getUi();
-    ui.createMenu("Test" + globalLibMenuTag)
+    let menu = ui.createMenu("Test" + globalLibMenuTag)
 /*
     .addSubMenu(ui.createMenu("Testing")
       .addItem("Clear", libName + ".onClearCoordinatorSummary")
@@ -79,9 +78,8 @@ static addTestMenu(libName) {
       .addSeparator()
     )
     */
-      .addToUi();
+    Menu.addTestItems(libName, menu).addToUi();
     trace("< Custom  test menu added");
-  }
 }
 
 static addEventCoordinationMenu(libName) {

@@ -59,3 +59,8 @@ function onUtilitiesSheetOpen(libName) {
   trace(`onUtilitiesSheetOpen libName=${libName} LibId=${globalLibId}`);
   Menu.addUtilitiesSheetMenu(libName);
 }
+
+function onTestMenu(libName) {
+  trace(`onTestOpen libName=${libName}`);
+  Menu.addTestMenu(libName);
+}
