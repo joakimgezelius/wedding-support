@@ -188,8 +188,10 @@ static addEnqiriesMenu(libName) {
     trace("> Adding custom utilities menu");
     let ui = SpreadsheetApp.getUi();
     let menu = ui.createMenu("Utilities" + globalLibMenuTag)
-        .addItem("Get file/folder info", libName + ".onGetFileInfo")
-        .addItem("Move to Shared Drive", libName + ".onMoveToSharedDrive")
+        .addItem("Get File Info", libName + ".onGetFileInfo")                             // Utilities.gs
+        .addItem("Get Folder Info", libName + ".onGetFolderInfo")                         // Utilities.gs
+        .addItem("Move to Shared Drive", libName + ".onMoveToSharedDrive")                // Utilities.gs
+        .addItem("Transfer File/Folder Ownership", libName + ".onTransferFileOwnership")  // Utilities.gs
     Menu.addTestItems(libName, menu).addToUi();
     trace("< Custom products menu added");
   }

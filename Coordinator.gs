@@ -221,3 +221,15 @@ class EventDetailsChecker {
     return "{EventDetailsChecker}";
   }
 }
+
+
+class PriceListPackage {
+  constructor() {
+    ;
+
+  }
+}
+
+function onInsertPackage() {
+  ;
+}

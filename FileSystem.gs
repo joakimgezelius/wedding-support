@@ -5,9 +5,21 @@ class Folder {
   
   constructor(nativeFolder) {
     this._nativeFolder = nativeFolder;
-    this._trace = `{Folder ${this.id} "${this.name}"}`;
+    this._path = this.getPath();
+    this._trace = `{Folder ${this.id} "${this.path}"}`;
     trace(`NEW ${this.trace}`);
   } 
+
+  getPath() {
+    let fullName = this.name;
+    let parents = this.parents;
+    while (parents.hasNext()) { // We're not yet at the top, keep going up
+      let parent = parents.next();
+      fullName = parent.getName() + "/" + fullName;
+      parents = parent.getParents();
+    }
+    return fullName;
+  }
 
   static getById(folderId) {
     trace(`> Folder.getById(${folderId})`);
@@ -19,9 +31,14 @@ class Folder {
 
   static getByUrl(url) {
     trace(`> Folder.getByUrl(${url})`);
-    let folderId = Folder.getIdFromUrl(url);
-    let folder = Folder.getById(folderId);
-    trace(`< Folder.getByUrl(${url}) --> ${folder.trace}`);
+    let folder = null;
+    try {
+      let folderId = Folder.getIdFromUrl(url);
+      folder = Folder.getById(folderId);
+    } catch (error) {
+      trace(`Caught exception: "${error}"`);     
+    }
+    trace(`< Folder.getByUrl(${url}) --> ${folder !== null ? folder.trace : "null"}`);
     return folder;
   }
 
@@ -118,6 +135,7 @@ class Folder {
   get id()           { return this.nativeFolder.getId(); }
   get url()          { return this.nativeFolder.getUrl(); }
   get name()         { return this.nativeFolder.getName(); }
+  get path()         { return this._path; }
   get trace()        { return this._trace; }
 
 } // Folder
@@ -144,9 +162,14 @@ class File {
 
   static getByUrl(url) { 
     trace(`> File.getByUrl(${url})`);
-    let fileId = File.getIdFromUrl(url);
-    let file = File.getById(fileId);
-    trace(`< File.getByUrl(${url}) --> ${file.trace}`);
+    let file = null;
+    try {
+      let fileId = File.getIdFromUrl(url);
+      file = File.getById(fileId);
+    } catch (error) {
+      trace(`Caught exception: "${error}"`);     
+    }
+    trace(`< File.getByUrl(${url}) --> ${file !== null ? file.trace : "null"}`);
     return file;
   }
 
@@ -175,3 +198,41 @@ class File {
      
 } // File
 
+//----------------------------------------------------------------------------------------
+// Wrapper for https://developers.google.com/drive/api/v3/reference/drives
+//
+
+class SharedDrive {
+
+  constructor(id, name) {
+    this._id = id;
+    this._name = name;
+    this._trace = `{SharedDrive ${name}, id=${id}}`;
+    trace("NEW " + this.trace);
+  }
+
+  get id()    { return this._id; }
+  get name()  { return this._name; }
+  get trace() { return this._trace; }
+
+  static get list() {
+    // List of shared drives, as an array of {  id, name } elements:
+    //  inspiration: https://yagisanatode.com/2021/07/26/get-a-list-of-google-shared-drives-by-id-and-name-in-google-apps-script/
+    let list = Drive.Drives.list().items.map(drive => ({id:drive.id,name:drive.name}));
+    return list;
+  }
+
+  static GetById(lookup) {
+    let list = SharedDrive.list;
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find
+    let drive = list.find( ({ id }) => id === lookup );
+    return new SharedDrive(drive.id, drive.name);
+  }
+  static GetByName(lookup) {
+    let list = SharedDrive.list;
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find
+    let drive = list.find( ({ name }) => name === lookup );
+    return new SharedDrive(drive.id, drive.name);
+  }
+
+}

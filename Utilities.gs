@@ -6,22 +6,36 @@ function WalkFolder(folderUrl) {
 
 function onGetFileInfo() {
   trace("onGetFileInfo");
-  let currentSheet = Spreadsheet.active;
-  let url = "foo";//Spreadsheet.currentCellValue;
-  Dialog.notify("onGetFileInfo", url);
+  let url = Range.getByName("FileUrl").value;
+  let file = File.getByUrl(url);
+  if (file !== null) {
+    Dialog.notify("File Info", file.trace);      
+  } else {
+    Dialog.notify("File Info", `${url} is not a valid file URL`);
+  }
 }
 
-function GetFileIdFromUrl(url) {
-  return File.getIdFromUrl(url);
-}
-
-function GetFolderIdFromUrl(url) {
-  return Folder.getIdFromUrl(url);
+function onGetFolderInfo() {
+  trace("onGetFolderInfo");
+  let drives = SharedDrive.list;
+  SharedDrive.GetById("0AIvL-1_7EwaoUk9PVA");
+  let url = Range.getByName("SourceFolderUrl").value;
+  let folder = Folder.getByUrl(url);
+  if (folder !== null) {
+    Dialog.notify("Folder Info", folder.trace);
+  } else {
+    Dialog.notify("Folder Info", `${url} is not a valid file URL`);     
+  }
 }
 
 function onMoveToSharedDrive() {
   trace("onMoveToSharedDrive");
   Dialog.notify("onMoveToSharedDrive", "onMoveToSharedDrive")
+}
+
+function onTransferFileOwnership() {
+  trace("onTransferFileOwnership");
+  Dialog.notify("onTransferFileOwnership", "onTransferFileOwnership")
 }
 
 class TypeUtils {
