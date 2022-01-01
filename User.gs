@@ -5,19 +5,18 @@ class User {
 
   constructor(nativeUser) {
     this._nativeUser = nativeUser;
-    this._email = nativeUser.getEmail();
+    this._email = nativeUser?.getEmail() ?? "-";
     this._isDeveloper = User.developers.includes(this.email.toLowerCase());
     this._trace = `{User ${this.email} (${this.isDeveloper ? "" : "not "}deveoloper)}`;
     trace(`NEW ${this.trace}`);
   }
 
   static get active() {
-    if (User._active === null) {
-      User._active = new User(Session.getActiveUser());
-    }
-    let user = User._active;
-    trace(`User.getActive --> ${user.trace}`);
-    return user;
+    return User._active ?? (User._active =  new User(Session.getActiveUser()));
+  }
+
+  equals(otherUser) {
+    return this.nativeUser === otherUser.nativeUser;
   }
 
   get nativeUser()  { return this._nativeUser; }
@@ -33,5 +32,6 @@ User.developers = [
   "joakim.gezelius@gmail.com", 
   "iamfurkanshaikh@gmail.com", 
   "monica@hour.events",
+  "it@hour.events",
   ];
 

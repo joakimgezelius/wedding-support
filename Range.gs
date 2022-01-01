@@ -18,6 +18,7 @@ class Range {
   clear() {
     trace(`clear ${this.trace}`);
     this.nativeRange.setValue("");
+    this._values = this.nativeRange.getValues();
   }
 
   static getByName(rangeName, sheetName = "") {
@@ -61,7 +62,7 @@ class Range {
   get currentRowIsEmpty()   { return !this.currentRowValues.join(""); }
   get currentColumnOffset() { return this._currentColumnOffset; }
 
-    
+  set values(values)        { this.nativeRange.setValues(values); }     
   // 
   //  Dynamic Range Features
   //

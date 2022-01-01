@@ -17,15 +17,22 @@ function onGetFileInfo() {
 
 function onGetFolderInfo() {
   trace("onGetFolderInfo");
-  let drives = SharedDrive.list;
-  SharedDrive.GetById("0AIvL-1_7EwaoUk9PVA");
+  let folderInfoRange = Range.getByName("FolderInfo");
+  folderInfoRange.clear();
+  // Get a two-dimensional array representing the values of the range:
+  // https://developers.google.com/apps-script/reference/spreadsheet/range?hl=en#getvalues
+  let folderInfo = folderInfoRange.values; 
+  let row = 0;
   let url = Range.getByName("SourceFolderUrl").value;
   let folder = Folder.getByUrl(url);
   if (folder !== null) {
-    Dialog.notify("Folder Info", folder.trace);
+    folderInfo[row++][0] = folder.path;
+    folder.recursiveWalk(folderInfo, row, 2);
   } else {
-    Dialog.notify("Folder Info", `${url} is not a valid file URL`);     
+    folderInfo[row++][0] = `${url} is not a valid file URL`;
   }
+  // https://developers.google.com/apps-script/reference/spreadsheet/range?hl=en#setvaluesvalues
+  folderInfoRange.values = folderInfo;
 }
 
 function onMoveToSharedDrive() {

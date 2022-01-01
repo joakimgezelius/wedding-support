@@ -5,18 +5,26 @@ class Folder {
   
   constructor(nativeFolder) {
     this._nativeFolder = nativeFolder;
+    this._name = this.nativeFolder.getName();
+    if (!this.parents.hasNext() && this.name === "Drive") { // This is the root in a shared drive)
+      this._name = SharedDrive.GetById(nativeFolder.getId()).name;
+    }
     this._path = this.getPath();
     this._trace = `{Folder ${this.id} "${this.path}"}`;
     trace(`NEW ${this.trace}`);
   } 
 
   getPath() {
-    let fullName = this.name;
+    let fullName = "/" + this.name;
     let parents = this.parents;
-    while (parents.hasNext()) { // We're not yet at the top, keep going up
+    while (parents.hasNext()) { // We're not yet at the root, keep going up the hierarchy (down the tree)
       let parent = parents.next();
-      fullName = parent.getName() + "/" + fullName;
+      let name = parent.getName();
       parents = parent.getParents();
+      if (!parents.hasNext() && name === "Drive") { // We've reached the root in a shared drive
+        name = SharedDrive.GetById(parent.getId()).name;
+      }
+      fullName = "/" + name + fullName;
     }
     return fullName;
   }
@@ -103,23 +111,66 @@ class Folder {
     return copy;
   }
 
-  recursiveWalk(array = [], level = 0) {
+  recursiveWalk(infoArray, row = 0, level = 0, newOwner = null) {
     trace(`> Folder.recursiveWalk ${this.trace}`);
     // https://developers.google.com/apps-script/reference/drive/folder#getfolders
     let subFolders =  this.nativeFolder.getFolders();
     while (subFolders.hasNext()) {                    // Determines whether calling next() will return an item                 
       let subFolder = new Folder(subFolders.next());  // Gets the next item in the collection of folders
+      trace(`- found subfolder: ${subFolder.name}`);
+      infoArray[row][level] = subFolder.name + "/";
+      Folder.applyOperation(subFolder, infoArray, row, newOwner);
+      row = subFolder.recursiveWalk(infoArray, ++row, level + 1, newOwner);
+    }
+    // https://developers.google.com/apps-script/reference/drive/folder#getFiles()
+    let files = this.nativeFolder.getFiles();
+    while (files.hasNext()) {                 // Determines whether calling next() will return an item.
+      let file = new File(files.next());      // Gets the next item in the collection of files.
+      trace(`- found file: ${file.name}`);
+      infoArray[row][level] = file.name;
+      Folder.applyOperation(file, infoArray, row, newOwner);
+    }
+    trace(`< Folder.recursiveWalk ${this.trace}`);
+    return row;
+  }
+
+  static applyOperation(object, infoArray, row, newOwner) {
+    let me = User.active.email;
+    if (object.owner.email == me) { // We're the owner of the file, meaning operations can be applied...
+      if (newOwner != null) {
+        //object.owner = newOwner;
+        infoArray[row][0] = "me -> ${newOwner}";
+      } else {
+        infoArray[row][0] = "me";
+      }
+    } else {
+      infoArray[row][0] = object.owner.email;
+    }
+  }
+
+  recursiveTransferOwnership(newOwner) {
+    trace(`> Folder.recursiveTransferOwnership ${this.trace} to ${newOwner}`);
+    let me = User.active.email;
+    let subFolders =  this.nativeFolder.getFolders();
+    while (subFolders.hasNext()) {                    // Determines whether calling next() will return an item                 
+      let subFolder = new Folder(subFolders.next());  // Gets the next item in the collection of folders
       trace(`  found subfolder: ${subFolder.name}`);
-      subFolder.recursiveWalk(array, level + 1);
+      infoArray[row][level] = subFolder.name + "/";
+      infoArray[row][0] = subFolder.owner.email == me ? "me" : subFolder.owner.email;
+      ++row;
+      row = subFolder.listRecursive(infoArray, row, level + 1, action);
     }
     // https://developers.google.com/apps-script/reference/drive/folder#getFiles()
     let files = this.nativeFolder.getFiles();
     while (files.hasNext()) {                 // Determines whether calling next() will return an item.
       let file = new File(files.next());      // Gets the next item in the collection of files.
       trace(`  found file: ${file.name}`);
-    } 
+      infoArray[row++][level] = file.name;
+      //infoArray[row][0] = file.owner == me ? me : subFolder.owner);
+    }
     trace(`< Folder.recursiveWalk ${this.trace}`);
-    return array;
+    return row;
+
   }
 
   createFolder(name) {
@@ -134,9 +185,15 @@ class Folder {
   get parent()       { return new Folder(this.parents.next()); }  
   get id()           { return this.nativeFolder.getId(); }
   get url()          { return this.nativeFolder.getUrl(); }
-  get name()         { return this.nativeFolder.getName(); }
+  get name()         { return this._name; }
   get path()         { return this._path; }
+  get owner()        { return new User(this.nativeFolder.getOwner()); }
   get trace()        { return this._trace; }
+
+  set owner(emailAddress) {
+    trace `set owner of ${this.trace} to ${emailAddress}`
+    this.nativeFolder.setOwner(emailAddress);
+  }
 
 } // Folder
 
@@ -187,15 +244,20 @@ class File {
     return new File(newFile);
   }
   
-  
   get nativeFile() { return this._nativeFile; }
   get parent()     { return new Folder(this.parents.next()); }  
   get parents()    { return this.nativeFile.getParents(); }
   get id()         { return this.nativeFile.getId(); }
   get url()        { return this.nativeFile.getUrl(); }
   get name()       { return this.nativeFile.getName(); }
+  get owner()      { return new User(this.nativeFolder.getOwner()); }
   get trace()      { return this._trace; }
-     
+
+  set owner(emailAddress) {
+    trace `set owner of ${this.trace} to ${emailAddress}`
+    this.nativeFile.setOwner(emailAddress);
+  }
+
 } // File
 
 //----------------------------------------------------------------------------------------

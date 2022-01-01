@@ -118,7 +118,7 @@ class EventRow extends RangeRow {
   set totalPrice(value)     { this.set("TotalPrice", value); }
   set commissionPercentage(value) { this.set("CommissionPercentage", value); }
   set commission(value)     { this.set("Commission", value); }
-  set isSelected(value) { this.set("Selected", value); }
+  set isSelected(value)     { this.set("Selected", value); }
 
   compare(other, type) { // To support sorting of rows
     let result = 0;
