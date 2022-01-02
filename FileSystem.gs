@@ -148,7 +148,7 @@ class Folder {
   get url()          { return this.nativeFolder.getUrl(); }
   get name()         { return this._name; }
   get path()         { return this._path; }
-  get owner()        { return new User(this.nativeFolder.getOwner()); }
+  get owner()        { return this.nativeFolder.getOwner()?.getEmail() ?? null; } // Owner email address
   get trace()        { return this._trace; }
 
   set owner(emailAddress) {
@@ -158,39 +158,6 @@ class Folder {
 
 } // Folder
 
-class RecursiveWalkerActionContext {
-  constructor(infoArray, rowOffset = 0, columnOffset = 0, newOwner = null) {
-    this.infoArray = infoArray;
-    this.newOwner = newOwner;
-    this.rowOffset = rowOffset;
-    this.columnOffset = columnOffset;
-    this.me = User.active.email;
-    trace(`NEW ${this.trace}`);
-  }
-
-  get trace() { return `RecursiveWalkerActionContext offsets: ${this.rowOffset} ${this.columnOffset} me: ${this.me} newOwner: ${this.newOwner ?? "-"}` }
-
-  action(object, itemCount, level) {
-    let row = itemCount + this.rowOffset;
-    if (object.owner.email == this.me) { // We're the owner of the file, meaning operations can be applied...
-      if (this.newOwner != null) {
-        //object.owner = newOwner;
-        this.infoArray[row][0] = "me -> ${this.newOwner}";
-      } else {
-        this.infoArray[row][0] = "me";
-      }
-    } else {
-      this.infoArray[row][0] = object.owner.email;
-    }
-    let column = level + this.columnOffset;
-    if (object instanceof Folder) {
-      this.infoArray[row][column] = object.name + "/";
-    } else { // Else it is a file
-      this.infoArray[row][column] = object.name;
-    }
-  }
-
-}
 
 //----------------------------------------------------------------------------------------
 // Wrapper for https://developers.google.com/apps-script/reference/drive/file
@@ -244,7 +211,7 @@ class File {
   get id()         { return this.nativeFile.getId(); }
   get url()        { return this.nativeFile.getUrl(); }
   get name()       { return this.nativeFile.getName(); }
-  get owner()      { return new User(this.nativeFolder.getOwner()); }
+  get owner()      { return this.nativeFile.getOwner()?.getEmail() ?? null; } // Owner email address
   get trace()      { return this._trace; }
 
   set owner(emailAddress) {

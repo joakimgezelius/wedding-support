@@ -12,6 +12,17 @@ function onGetFileInfo() {
 
 function onGetFolderInfo() {
   trace("onGetFolderInfo");
+  applyFolderAction();
+}
+
+function onTransferFileOwnership() {
+  trace("onTransferFileOwnership");
+  let newOwner = Range.getByName("NewOwner").value;
+  applyFolderAction(newOwner);
+}
+
+function applyFolderAction(newOwner = null) {
+  trace("onGetFolderInfo");
   let folderInfoRange = Range.getByName("FolderInfo");
   folderInfoRange.clear();
   // Get a two-dimensional array representing the values of the range:
@@ -22,10 +33,13 @@ function onGetFolderInfo() {
   let folder = Folder.getByUrl(url);
   if (folder !== null) {
     folderInfo[row++][0] = folder.path;
-    let context = new RecursiveWalkerActionContext(folderInfo, row, 2);
-    folder.recursiveWalk(context);
+    if (newOwner !== null && Dialog.confirm("Transfer Ownership", `Are you sure you want to recursively transfer ownership of ${folder.path} to ${newOwner}?`)) {
+      let context = new RecursiveWalkerActionContext(folderInfo, row, 2, newOwner);
+      folder.recursiveWalk(context);
+    }
   } else {
-    folderInfo[row++][0] = `${url} is not a valid file URL`;
+    //folderInfo[row++][0] = `${url} is not a valid folder URL`;
+    Error.fatal(`${url} is not a valid folder URL`);
   }
   // https://developers.google.com/apps-script/reference/spreadsheet/range?hl=en#setvaluesvalues
   folderInfoRange.values = folderInfo;
@@ -36,9 +50,38 @@ function onMoveToSharedDrive() {
   Dialog.notify("onMoveToSharedDrive", "onMoveToSharedDrive")
 }
 
-function onTransferFileOwnership() {
-  trace("onTransferFileOwnership");
-  Dialog.notify("onTransferFileOwnership", "onTransferFileOwnership")
+class RecursiveWalkerActionContext {
+  constructor(infoArray, rowOffset = 0, columnOffset = 0, newOwner = null) {
+    this.infoArray = infoArray;
+    this.newOwner = newOwner;
+    this.rowOffset = rowOffset;
+    this.columnOffset = columnOffset;
+    this.me = User.active.email;
+    trace(`NEW ${this.trace}`);
+  }
+
+  get trace() { return `RecursiveWalkerActionContext offsets: ${this.rowOffset} ${this.columnOffset} me: ${this.me} newOwner: ${this.newOwner ?? "-"}` }
+
+  action(object, itemCount, level) {
+    let row = itemCount + this.rowOffset;
+    if (object.owner == this.me) { // We're the owner of the file, meaning operations can be applied...
+      if (this.newOwner != null) {
+        //object.owner = newOwner;
+        this.infoArray[row][0] = `me -> ${this.newOwner}`;
+      } else {
+        this.infoArray[row][0] = "me";
+      }
+    } else {
+      this.infoArray[row][0] = object.owner ?? "-";
+    }
+    let column = level + this.columnOffset;
+    if (object instanceof Folder) {
+      this.infoArray[row][column] = object.name + "/";
+    } else { // Else it is a file
+      this.infoArray[row][column] = object.name;
+    }
+  }
+
 }
 
 class TypeUtils {
