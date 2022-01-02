@@ -111,66 +111,27 @@ class Folder {
     return copy;
   }
 
-  recursiveWalk(infoArray, row = 0, level = 0, newOwner = null) {
-    trace(`> Folder.recursiveWalk ${this.trace}`);
+  // Generic recursive folder tree walker, pass in a context object that defines the actions taken
+  //
+  recursiveWalk(context, itemCount = 0, level = 0) {
+    trace(`> Folder.recursiveWalk ${this.trace} level ${level}`);
     // https://developers.google.com/apps-script/reference/drive/folder#getfolders
     let subFolders =  this.nativeFolder.getFolders();
     while (subFolders.hasNext()) {                    // Determines whether calling next() will return an item                 
       let subFolder = new Folder(subFolders.next());  // Gets the next item in the collection of folders
-      trace(`- found subfolder: ${subFolder.name}`);
-      infoArray[row][level] = subFolder.name + "/";
-      Folder.applyOperation(subFolder, infoArray, row, newOwner);
-      row = subFolder.recursiveWalk(infoArray, ++row, level + 1, newOwner);
+      trace(`Folder.recursiveWalk (level ${level}) found subfolder (item ${itemCount}): ${subFolder.name}`);
+      context.action(subFolder, itemCount++, level);
+      itemCount = subFolder.recursiveWalk(context, itemCount, level + 1);
     }
     // https://developers.google.com/apps-script/reference/drive/folder#getFiles()
     let files = this.nativeFolder.getFiles();
     while (files.hasNext()) {                 // Determines whether calling next() will return an item.
       let file = new File(files.next());      // Gets the next item in the collection of files.
-      trace(`- found file: ${file.name}`);
-      infoArray[row][level] = file.name;
-      Folder.applyOperation(file, infoArray, row, newOwner);
+      trace(`Folder.recursiveWalk (level ${level}) found file (item ${itemCount}): ${file.name}`);
+      context.action(file, itemCount++, level);
     }
-    trace(`< Folder.recursiveWalk ${this.trace}`);
-    return row;
-  }
-
-  static applyOperation(object, infoArray, row, newOwner) {
-    let me = User.active.email;
-    if (object.owner.email == me) { // We're the owner of the file, meaning operations can be applied...
-      if (newOwner != null) {
-        //object.owner = newOwner;
-        infoArray[row][0] = "me -> ${newOwner}";
-      } else {
-        infoArray[row][0] = "me";
-      }
-    } else {
-      infoArray[row][0] = object.owner.email;
-    }
-  }
-
-  recursiveTransferOwnership(newOwner) {
-    trace(`> Folder.recursiveTransferOwnership ${this.trace} to ${newOwner}`);
-    let me = User.active.email;
-    let subFolders =  this.nativeFolder.getFolders();
-    while (subFolders.hasNext()) {                    // Determines whether calling next() will return an item                 
-      let subFolder = new Folder(subFolders.next());  // Gets the next item in the collection of folders
-      trace(`  found subfolder: ${subFolder.name}`);
-      infoArray[row][level] = subFolder.name + "/";
-      infoArray[row][0] = subFolder.owner.email == me ? "me" : subFolder.owner.email;
-      ++row;
-      row = subFolder.listRecursive(infoArray, row, level + 1, action);
-    }
-    // https://developers.google.com/apps-script/reference/drive/folder#getFiles()
-    let files = this.nativeFolder.getFiles();
-    while (files.hasNext()) {                 // Determines whether calling next() will return an item.
-      let file = new File(files.next());      // Gets the next item in the collection of files.
-      trace(`  found file: ${file.name}`);
-      infoArray[row++][level] = file.name;
-      //infoArray[row][0] = file.owner == me ? me : subFolder.owner);
-    }
-    trace(`< Folder.recursiveWalk ${this.trace}`);
-    return row;
-
+    trace(`< Folder.recursiveWalk ${this.trace}  level ${level} -> itemCount: ${itemCount}`);
+    return itemCount;
   }
 
   createFolder(name) {
@@ -197,6 +158,39 @@ class Folder {
 
 } // Folder
 
+class RecursiveWalkerActionContext {
+  constructor(infoArray, rowOffset = 0, columnOffset = 0, newOwner = null) {
+    this.infoArray = infoArray;
+    this.newOwner = newOwner;
+    this.rowOffset = rowOffset;
+    this.columnOffset = columnOffset;
+    this.me = User.active.email;
+    trace(`NEW ${this.trace}`);
+  }
+
+  get trace() { return `RecursiveWalkerActionContext offsets: ${this.rowOffset} ${this.columnOffset} me: ${this.me} newOwner: ${this.newOwner ?? "-"}` }
+
+  action(object, itemCount, level) {
+    let row = itemCount + this.rowOffset;
+    if (object.owner.email == this.me) { // We're the owner of the file, meaning operations can be applied...
+      if (this.newOwner != null) {
+        //object.owner = newOwner;
+        this.infoArray[row][0] = "me -> ${this.newOwner}";
+      } else {
+        this.infoArray[row][0] = "me";
+      }
+    } else {
+      this.infoArray[row][0] = object.owner.email;
+    }
+    let column = level + this.columnOffset;
+    if (object instanceof Folder) {
+      this.infoArray[row][column] = object.name + "/";
+    } else { // Else it is a file
+      this.infoArray[row][column] = object.name;
+    }
+  }
+
+}
 
 //----------------------------------------------------------------------------------------
 // Wrapper for https://developers.google.com/apps-script/reference/drive/file

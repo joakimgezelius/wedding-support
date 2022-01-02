@@ -62,7 +62,7 @@ class Range {
   get currentRowIsEmpty()   { return !this.currentRowValues.join(""); }
   get currentColumnOffset() { return this._currentColumnOffset; }
 
-  set values(values)        { this.nativeRange.setValues(values); }     
+  set values(values)        { this.nativeRange.setValues(this._values = values); }     
   // 
   //  Dynamic Range Features
   //

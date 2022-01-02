@@ -1,8 +1,3 @@
-function WalkFolder(folderUrl) {
-  trace(`WalkFolder(${folderUrl})`);
-  let folder = Folder.getByUrl(folderUrl);
-  return folder.trace;
-}
 
 function onGetFileInfo() {
   trace("onGetFileInfo");
@@ -27,7 +22,8 @@ function onGetFolderInfo() {
   let folder = Folder.getByUrl(url);
   if (folder !== null) {
     folderInfo[row++][0] = folder.path;
-    folder.recursiveWalk(folderInfo, row, 2);
+    let context = new RecursiveWalkerActionContext(folderInfo, row, 2);
+    folder.recursiveWalk(context);
   } else {
     folderInfo[row++][0] = `${url} is not a valid file URL`;
   }
