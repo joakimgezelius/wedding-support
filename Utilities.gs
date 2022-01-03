@@ -21,47 +21,50 @@ function onTransferFileOwnership() {
   applyFolderAction(newOwner);
 }
 
-function applyFolderAction(newOwner = null) {
+function onMoveToSharedDrive() {
+  trace("onMoveToSharedDrive");
+  let destinationFolderUrl = Range.getByName("DestinationFolderUrl").value;
+  let destinationFolder = Folder.getByUrl(destinationFolderUrl);
+  if (destinationFolder == null)
+    Error.fatal(`"${destinationFolderUrl}" is not a valid folder URL`);
+  applyFolderAction(null, destinationFolder);
+}
+
+function applyFolderAction(newOwner = null, destinationFolder = null) {
   trace("onGetFolderInfo");
   let folderInfoRange = Range.getByName("FolderInfo");
   folderInfoRange.clear();
   // Get a two-dimensional array representing the values of the range:
   // https://developers.google.com/apps-script/reference/spreadsheet/range?hl=en#getvalues
   let folderInfo = folderInfoRange.values; 
-  let row = 0;
-  let url = Range.getByName("SourceFolderUrl").value;
-  let folder = Folder.getByUrl(url);
-  if (folder !== null) {
-    folderInfo[row++][0] = folder.path;
-    if (newOwner !== null && Dialog.confirm("Transfer Ownership", `Are you sure you want to recursively transfer ownership of ${folder.path} to ${newOwner}?`)) {
-      let context = new RecursiveWalkerActionContext(folderInfo, row, 2, newOwner);
-      folder.recursiveWalk(context);
-    }
-  } else {
-    //folderInfo[row++][0] = `${url} is not a valid folder URL`;
-    Error.fatal(`${url} is not a valid folder URL`);
+  let sourceFolderUrl = Range.getByName("SourceFolderUrl").value;
+  let sourceFolder = Folder.getByUrl(sourceFolderUrl);
+  if (sourceFolder == null)
+    Error.fatal(`"${sourceFolderUrl}" is not a valid folder URL`); // here we break out in case of an error
+  folderInfo[0][0] = sourceFolder.path;
+  if (newOwner == null || Dialog.confirm("Transfer Ownership", `Are you sure you want to recursively transfer ownership of ${sourceFolder.path} to ${newOwner}?`)) {
+    let context = new RecursiveWalkerActionContext(folderInfo, 1, 2, newOwner, destinationFolder);
+    sourceFolder.recursiveWalk(context);  
   }
   // https://developers.google.com/apps-script/reference/spreadsheet/range?hl=en#setvaluesvalues
   folderInfoRange.values = folderInfo;
 }
 
-function onMoveToSharedDrive() {
-  trace("onMoveToSharedDrive");
-  Dialog.notify("onMoveToSharedDrive", "onMoveToSharedDrive")
-}
-
 class RecursiveWalkerActionContext {
-  constructor(infoArray, rowOffset = 0, columnOffset = 0, newOwner = null) {
+  constructor(infoArray, rowOffset = 0, columnOffset = 0, newOwner = null, destinationFolder = null) {
     this.infoArray = infoArray;
-    this.newOwner = newOwner;
     this.rowOffset = rowOffset;
     this.columnOffset = columnOffset;
+    this.newOwner = newOwner;
+    this.destinationFolder = destinationFolder;
     this.me = User.active.email;
     trace(`NEW ${this.trace}`);
   }
 
   get trace() { return `RecursiveWalkerActionContext offsets: ${this.rowOffset} ${this.columnOffset} me: ${this.me} newOwner: ${this.newOwner ?? "-"}` }
 
+  // The action method is called from folder.recursiveWalk for each file and folder found as the folder structure is recursively traversed
+  //
   action(object, itemCount, level) {
     let row = itemCount + this.rowOffset;
     if (object.owner == this.me) { // We're the owner of the file, meaning operations can be applied...
