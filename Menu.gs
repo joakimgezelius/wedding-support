@@ -68,14 +68,14 @@ class Menu {
     trace("< Custom  test menu added");
   }
 
-  /*static addEventCoordinationMenu(libName) {
+  static addEventCoordinationMenu(libName) {
     trace("> Adding custom event coordination menu");
     let ui = SpreadsheetApp.getUi();
     let menu = ui.createMenu("Events" + globalLibMenuTag)
         .addItem("Update Coordination Sheet", libName + ".onUpdateCoordinationSheet");
     Menu.addTestItems(libName, menu).addToUi();
     trace("< Custom event coordination menu added");
-  }*/
+  }
 
   static addRotaMenu(libName) {           // In Rota.gs
     trace("> Adding custom rota menu");

@@ -34,7 +34,7 @@ function onUpdateCoordinationSheet() {
     "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' ORDER BY Col5");
 
   clientSheetList.setQuery("ThingsToBuyQuery",
-    "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col11,Col12,Col34,Col13,Col18,Col16 WHERE Col7='To Buy'", 
+    "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col11,Col12,Col34,Col13,Col18,Col16 WHERE Col7='To Buy' OR Col7='To Collect'", 
     "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' ORDER BY Col5");
 
   clientSheetList.setQuery("TransportationQuery",
@@ -50,7 +50,7 @@ function onUpdateCoordinationSheet() {
     "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' ORDER BY Col5");
 
   clientSheetList.setQuery("ThingsInShopQuery",
-    "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col11,Col12,Col13,Col18,Col16 WHERE Col7 CONTAINS 'Shop'", 
+    "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col11,Col12,Col13,Col18,Col16 WHERE Col7 CONTAINS 'Shop' or Col7 CONTAINS 'Gibraltar'",
     "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' ORDER BY Col5");
 
   clientSheetList.setQuery("RotaQuery",

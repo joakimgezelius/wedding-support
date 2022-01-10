@@ -91,6 +91,7 @@ function onFormatCoordinator() {
   trace("onFormatCoordinator");
   let eventDetails = new EventDetails();
   let eventDetailsFormater = new EventDetailsFormater(false);
+  eventDetails.apply(eventDetailsFormater);
 
   // https://developers.google.com/apps-script/reference/spreadsheet/range#shiftRowGroupDepth(Integer)  
   // range.nativeRange.shiftRowGroupDepth(-3);          // Removes all the grouping depth in range EventDetails by Delta -3
@@ -103,15 +104,16 @@ function onFormatCoordinator() {
       } 
     });*/
   
-  let source = SpreadsheetApp.openById(TemplateSpreadsheetId).getSheetByName("Coordinator");
-  let target = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Coordinator");
-  target.clearConditionalFormatRules();                           // Removes all the conditional formatting rules from the sheet
-  target.clearFormats();                                          // Clears the sheet of formatting, while preserving contents.
-  let rules = source.getConditionalFormatRules();                 // Gets all the conditional formatting rules from the sheet
-  target.setConditionalFormatRules(rules);                        // Adds new conditional formatting rules
+
+  let sourceSheet = SpreadsheetApp.openById(TemplateSpreadsheetId).getSheetByName("Coordinator");
+  let targetSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Coordinator");
+  targetSheet.clearConditionalFormatRules()                       // Removes all the conditional formatting rules from the sheet
+  //target.clearFormats();                                        // Clears the sheet of formatting, while preserving contents.
+  let rules = sourceSheet.getConditionalFormatRules();            // Gets all the conditional formatting rules from the sheet
+  targetSheet.setConditionalFormatRules(rules);                   // Adds new conditional formatting rules
   
   
-  let sheetValues = source.getDataRange().getValues();
+  /*let sheetValues = source.getDataRange().getValues();
   let sheetBG     = source.getDataRange().getBackgrounds();
   let sheetFC     = source.getDataRange().getFontColors();
   let sheetFF     = source.getDataRange().getFontFamilies();
@@ -143,38 +145,114 @@ function onFormatCoordinator() {
     .setWraps(sheetWR)
     .setTextRotations(sheetTR)
     .setTextDirections(sheetDir)
-    .setNotes(sheetNotes);
+    .setNotes(sheetNotes);*/
 
   //let width = source.getColumnWidth(sheetValues.length);
-  //target.setColumnWidth(sheetValues.length,width);
+  //target.setColumnWidth(sheetValues.length,width);*/
 
 
-  /* Adds the rule once on run Format coordinator 
-  let sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Coordinator");
-  //sheet.clearConditionalFormatRules();                          // Removes all the conditional formatting rules from the sheet
-  let numRows = sheet.getLastRow();
-  let rangeToFormat = sheet.getRange("A21:AO"+numRows);           // Includes rows in entire sheet excluding First Title row i.e A20
-  let rule1 = SpreadsheetApp.newConditionalFormatRule()           // If the row is title row
-      .whenFormulaSatisfied('=$F21="TITLE"')
+
+
+  /*let sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Coordinator");
+  let numRows = sheet.getMaxRows();
+  let range = sheet.getRange(5,1,numRows,36);
+  //let address = range.getA1Notation();
+  sheet.clearConditionalFormatRules();                                // Clear all rules of CF
+
+  let ruleTitle = SpreadsheetApp.newConditionalFormatRule()           // If the row is title row
+      .whenFormulaSatisfied('=$F5="TITLE"')
       .setFontColor('#FFFFFF')
       .setBackground('#666666')
-      .setRanges([rangeToFormat])
+      .setRanges([range])
       .build();
   let ruleTitleRow = sheet.getConditionalFormatRules();
-  ruleTitleRow.push(rule1);   
+  ruleTitleRow.push(ruleTitle);   
   sheet.setConditionalFormatRules(ruleTitleRow);
 
-  let rule2 = SpreadsheetApp.newConditionalFormatRule()           // If the row is not title row
-      .whenFormulaSatisfied('=$F21<>"TITLE"')
+  let ruleRow = SpreadsheetApp.newConditionalFormatRule()           // If the row is not title row
+      .whenFormulaSatisfied('=$F5<>"TITLE"')
       .setFontColor('#666666')
       .setBackground('#FFFFFF')
-      .setRanges([rangeToFormat])
+      .setRanges([range])
       .build();
   let ruleItemRow = sheet.getConditionalFormatRules();
-  ruleItemRow.push(rule2);
-  sheet.setConditionalFormatRules(ruleItemRow); */
+  ruleItemRow.push(ruleRow);
+  sheet.setConditionalFormatRules(ruleItemRow);
 
-  eventDetails.apply(eventDetailsFormater);
+  let invoiceAdd = SpreadsheetApp.newConditionalFormatRule()           
+      .whenTextContains("ADD")
+      .setFontColor('#FFFFFF')
+      .setBackground('#FF0000')
+      .setRanges([range])
+      .build();
+  let ruleInvoiceAdd = sheet.getConditionalFormatRules();
+  ruleInvoiceAdd.push(invoiceAdd);
+  sheet.setConditionalFormatRules(ruleInvoiceAdd);
+
+  let invoiceDone = SpreadsheetApp.newConditionalFormatRule()           
+      .whenTextContains("DONE")
+      .setFontColor('#666666')
+      .setBackground('#B7E1CD')
+      .setRanges([range])
+      .build();
+  let ruleInvoiceDone = sheet.getConditionalFormatRules();
+  ruleInvoiceDone.push(invoiceDone);
+  sheet.setConditionalFormatRules(ruleInvoiceDone);
+
+  let invoiceNR = SpreadsheetApp.newConditionalFormatRule()          
+      .whenTextContains("N/R")
+      .setFontColor('#666666')
+      .setBackground('#FFFFFF')
+      .setRanges([range])
+      .build();
+  let ruleInvoiceNR = sheet.getConditionalFormatRules();
+  ruleInvoiceNR.push(invoiceNR);
+  sheet.setConditionalFormatRules(ruleInvoiceNR);
+
+  let currGBP = SpreadsheetApp.newConditionalFormatRule()          
+      .whenTextContains("GBP")
+      .setFontColor('#666666')
+      .setBackground('#B7E1CD')
+      .setRanges([range])
+      .build();
+  let ruleGBP = sheet.getConditionalFormatRules();
+  ruleGBP.push(currGBP);
+  sheet.setConditionalFormatRules(ruleGBP);
+
+  let currEUR = SpreadsheetApp.newConditionalFormatRule()          
+      .whenTextContains("EUR")
+      .setFontColor('#FFFFFF')
+      .setBackground('#999999')
+      .setRanges([range])
+      .build();
+  let ruleEUR = sheet.getConditionalFormatRules();
+  ruleEUR.push(currEUR);
+  sheet.setConditionalFormatRules(ruleEUR);*/
+
+
+
+  //experiment to get all rules and store in variable and then remove those all and concat new rules with existingrules and clear all rules and add again
+  /*let conditionalFormatRules = sheet.getConditionalFormatRules();
+  let existingRules = sheet.getConditionalFormatRules();
+  let removedRules = [];
+  let index = 0;
+  let ruleLength = existingRules.length;
+  for (index; index < ruleLength; ++index) {
+    let ranges = conditionalFormatRules[index].getRanges();
+    let j = 0;
+    let rangeLength = ranges.length;
+    for (j; j < rangeLength; ++j) {
+      if (ranges[j].getA1Notation() == address) {
+        removedRules.push(existingRules[index]);
+      }
+    }
+  }
+  let newRules = [];
+  let allRules = existingRules.concat(newRules);
+  //clear all rules first and then add again
+  sheet.clearConditionalFormatRules(); 
+  sheet.setConditionalFormatRules(allRules);*/
+
 }
 
 
