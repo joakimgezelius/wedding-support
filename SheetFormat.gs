@@ -107,7 +107,7 @@ function onFormatCoordinator() {
   // Conditional formmating with reference from template sheet to current sheet
   let sourceSheet = SpreadsheetApp.openById(TemplateSpreadsheetId).getSheetByName("Coordinator");
   let targetSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Coordinator");  
-  let range = targetSheet.getRange("A6:AJ"+targetSheet.getLastRow());
+  let range = targetSheet.getRange("A4:AJ"+targetSheet.getLastRow());
   targetSheet.clearConditionalFormatRules();                                        // Removes all the conditional formatting rules from the sheet
   //targetSheet.clearFormats();                                                     // Clears the sheet of formatting, while preserving contents.
   let rules = sourceSheet.getConditionalFormatRules();
