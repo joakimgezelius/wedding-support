@@ -17,16 +17,17 @@ function onUpdateRotaSheet() {
 
 
 //----------------------------------------------------------------------------------------
-// Coordination Sheet
+// Event Coordination Sheet - currently only onme sheet:
+// https://docs.google.com/spreadsheets/d/1BWwA-yRJQyUooIh5nodzTPpqcYxeFHf8-0Uo2V7JQbk/edit?pli=1#gid=233397022
 
-function onCoordinationSheetPeriodChanged() {
-  trace("onCoordinationSheetPeriodChanged");
+function onEventCoordinationSheetPeriodChanged() {
+  trace("onEventCoordinationSheetPeriodChanged");
   Dialog.notify("Period Changed", "Sheet will be recalculated, this may take a few seconds...");
-  onUpdateCoordinationSheet();
+  onUpdateEventCoordinationSheet();
 }
 
-function onUpdateCoordinationSheet() {
-  trace("onUpdateCoordinationSheet");
+function onUpdateEventCoordinationSheet() {
+  trace("onUpdateEventCoordinationSheet");
   let clientSheetList = new ClientSheetList;
 
   clientSheetList.setQuery("ThingsToOrderQuery",
@@ -54,7 +55,7 @@ function onUpdateCoordinationSheet() {
     "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' ORDER BY Col5");
 
   clientSheetList.setQuery("RotaQuery",
-    "SELECT '${eventName}',Col1,Col6,Col8,Col9,Col10,Col7,Col11,Col12,Col13,Col16 WHERE (Col4=TRUE OR Col6='Transport' OR  Col6='Rota')", //Col13 IS NOT NULL", 
+    "SELECT '${eventName}',Col1,Col6,Col8,Col9,Col10,Col7,Col11,Col12,Col13,Col16 WHERE (Col6='Transport' OR  Col6='Rota')", // Col4=TRUE OR Col13 IS NOT NULL", 
     "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' ORDER BY Col4,Col5,Col6");
 
   clientSheetList.setQuery("HotelReservationsQuery",

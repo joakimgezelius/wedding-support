@@ -72,7 +72,7 @@ class Menu {
     trace("> Adding custom event coordination menu");
     let ui = SpreadsheetApp.getUi();
     let menu = ui.createMenu("Events" + globalLibMenuTag)
-        .addItem("Update Coordination Sheet", libName + ".onUpdateCoordinationSheet");
+        .addItem("Update Event Coordination Sheet", libName + ".onUpdateEventCoordinationSheet");
     Menu.addTestItems(libName, menu).addToUi();
     trace("< Custom event coordination menu added");
   }
