@@ -12,11 +12,11 @@ class Menu {
       .addItem("Force-Update Coordinator - over-writes data", libName + ".onUpdateCoordinatorForced")   // In Coordinator.gs
       //.addItem("Check Coordinator", libName + ".onCheckCoordinator")
       .addItem("Update Budget", libName + ".onUpdateBudget")    // In Budget.gs
-      .addItem("Update Client Itinerary", libName + ".onUpdateClientItinerary") // In itinerary.gs
-      .addItem("Update Decor Summary", libName + ".onUpdateDecorSummary")       // In DecorSummary.gs
+      .addItem("Update Client Itinerary", libName + ".onUpdateClientItinerary")   // In itinerary.gs
+      .addItem("Update Decor Summary", libName + ".onUpdateDecorSummary")         // In DecorSummary.gs
       //.addItem("Update Account Summary", libName + ".onUpdateAccountSummary")
-      .addItem("Update Supplier Costing", libName + ".onUpdateSupplierCosting")  // In SupplierCosting.gs
-      .addItem("Update Client Data", libName + ".onUpdateClientData")            // In HubSpotAPI.gs
+      .addItem("Update Supplier Costing", libName + ".onUpdateSupplierCosting")   // In SupplierCosting.gs
+      .addItem("Pull Client Data From HubSpot", libName + ".onUpdateClientData")  // In HubSpotAPI.gs
       .addSeparator()
       //.addItem("Update Exchange Rates", libName + ".onUpdateExchangeRates")
       //.addSeparator()
@@ -26,8 +26,8 @@ class Menu {
                   )
       .addSeparator()*/
       //.addItem("Create New Client Sheet", libName + ".onCreateNewClientSheet")
-      .addItem("Apply Format Template", libName + ".onApplyFormat")    // In SheetFormat.gs
-      .addItem("Format Coordinator", libName + ".onFormatCoordinator");
+      .addItem("Apply Format Template", libName + ".onApplyFormat")     // In SheetFormat.gs
+      .addItem("Format Coordinator", libName + ".onFormatCoordinator"); // In SheetFormat.gs
 //      .addSeparator()
 //      .addSubMenu(ui.createMenu("Email")
 //                  .addItem("Prepare client email draft 1", libName + ".onCreateFirstEmailDraft")
