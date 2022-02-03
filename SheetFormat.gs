@@ -104,14 +104,44 @@ function onFormatCoordinator() {
       } 
   });*/
   
-  // Conditional formmating with reference from template sheet to current sheet
+  // Formmatings with reference from template sheet to Coordinator sheet
   let sourceSheet = SpreadsheetApp.openById(TemplateSpreadsheetId).getSheetByName("Coordinator");
   let targetSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Coordinator");  
   let range = targetSheet.getRange("A4:AJ"+targetSheet.getLastRow());
-  targetSheet.clearConditionalFormatRules();                                        // Removes all the conditional formatting rules from the sheet
+  targetSheet.clearConditionalFormatRules();                                      // Removes all the conditional formatting rules from the sheet
   //targetSheet.clearFormats();                                                     // Clears the sheet of formatting, while preserving contents.
+  
+  // Conditional formatting based on template sheet - Coordinator
   let rules = sourceSheet.getConditionalFormatRules();
   let newRules = [], i = 0;
+  
+  // Hard-coded formatting rule to specific range & avoid overwriting of Custom Formula rule for TITLE row
+  let rangeMarkup = targetSheet.getRange("AA4:AA" + targetSheet.getLastRow());  // For Markup
+  let ruleMarkup = SpreadsheetApp.newConditionalFormatRule()
+      .whenTextContains('%')
+      .setBackground("#D9EAD3")
+      .setFontColor("#666666")
+      .setRanges([rangeMarkup])
+      .build();
+  newRules.push(ruleMarkup);
+
+  let rangeComm = targetSheet.getRange("AB4:AB" + targetSheet.getLastRow());    // For Commision
+  let ruleComm1 = SpreadsheetApp.newConditionalFormatRule()
+      .whenTextContains('%')
+      .setBackground("#CCCCCC")
+      .setFontColor("#434343")
+      .setRanges([rangeComm])
+      .build();
+  newRules.push(ruleComm1);
+  
+  /*let ruleComm2 = SpreadsheetApp.newConditionalFormatRule()         // For commision greater than 1%
+      .whenNumberGreaterThan(1)
+      .setBackground("#FF0000")
+      .setFontColor("#FFFFFF")
+      .setRanges([rangeComm])
+      .build();
+  newRules.push(ruleComm2);*/
+
   let ruleLength = rules.length;
   for (i; i < ruleLength; ++i) {
     let rule = rules[i];
@@ -126,27 +156,28 @@ function onFormatCoordinator() {
       newRules.push(newRule);
     }
   }
-  targetSheet.setConditionalFormatRules(newRules);                                         
-  
-  
-/*let sheetValues = source.getDataRange().getValues();
-  let sheetBG     = source.getDataRange().getBackgrounds();
-  let sheetFC     = source.getDataRange().getFontColors();
-  let sheetFF     = source.getDataRange().getFontFamilies();
-  let sheetFL     = source.getDataRange().getFontLines();
-  let sheetFFa    = source.getDataRange().getFontFamilies();
-  let sheetFSz    = source.getDataRange().getFontSizes();
-  let sheetFSt    = source.getDataRange().getFontStyles();
-  let sheetFW     = source.getDataRange().getFontWeights();
-  let sheetHA     = source.getDataRange().getHorizontalAlignments();
-  let sheetVA     = source.getDataRange().getVerticalAlignments();
-  let sheetNF     = source.getDataRange().getNumberFormats();
-  let sheetWR     = source.getDataRange().getWraps();
-  let sheetTR     = source.getDataRange().getTextRotations();
-  let sheetDir    = source.getDataRange().getTextDirections();
-  let sheetNotes  = source.getDataRange().getNotes();
 
-  targetSheet.getRange(1,1,sheetValues.length,sheetValues[0].length)
+  targetSheet.setConditionalFormatRules(newRules);                                     
+  
+  // Formatting based on template sheet
+  let sheetValues = sourceSheet.getDataRange().getValues();
+  let sheetBG     = sourceSheet.getDataRange().getBackgrounds();
+  let sheetFC     = sourceSheet.getDataRange().getFontColors();
+  let sheetFF     = sourceSheet.getDataRange().getFontFamilies();
+  let sheetFL     = sourceSheet.getDataRange().getFontLines();
+  let sheetFFa    = sourceSheet.getDataRange().getFontFamilies();
+  let sheetFSz    = sourceSheet.getDataRange().getFontSizes();
+  let sheetFSt    = sourceSheet.getDataRange().getFontStyles();
+  let sheetFW     = sourceSheet.getDataRange().getFontWeights();
+  let sheetHA     = sourceSheet.getDataRange().getHorizontalAlignments();
+  let sheetVA     = sourceSheet.getDataRange().getVerticalAlignments();
+  let sheetNF     = sourceSheet.getDataRange().getNumberFormats();
+  let sheetWR     = sourceSheet.getDataRange().getWraps();
+  let sheetTR     = sourceSheet.getDataRange().getTextRotations();
+  let sheetDir    = sourceSheet.getDataRange().getTextDirections();
+  let sheetNotes  = sourceSheet.getDataRange().getNotes();
+
+  targetSheet.getRange(1,1,sheetValues.length,sheetValues[0].length)  // "A1:AJ"+targetSheet.getLastRow()
     .setBackgrounds(sheetBG)
     .setFontColors(sheetFC)
     .setFontFamilies(sheetFF)
@@ -161,10 +192,10 @@ function onFormatCoordinator() {
     .setWraps(sheetWR)
     .setTextRotations(sheetTR)
     .setTextDirections(sheetDir)
-    .setNotes(sheetNotes);*/
+    .setNotes(sheetNotes);
 
-  //let width = source.getColumnWidth(sheetValues.length);
-  //targetSheet.setColumnWidth(sheetValues.length,width);*/
+  //let width = sourceSheet.getColumnWidth(sheetValues.length);
+  //targetSheet.setColumnWidth(sheetValues.length,width);
 
 }
 
