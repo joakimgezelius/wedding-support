@@ -231,7 +231,6 @@ class PriceListPackage {
     let eventDetails = Range.getByName("EventDetails");
     let values = eventDetails.values;
   }
-
 }
 
 function onInsertPackage() {
@@ -251,12 +250,10 @@ function onInsertPackage() {
   //  - next pick up the insertion point range after insertion, and add rows to it to match the package data
   let sourceRange = Range.getByName("EventDetailsInsertionRow").extend(packageRowCount - 1); 
   sourceRange.copyTo(destinationRange, SpreadsheetApp.CopyPasteType.PASTE_VALUES);
-
+  // Alternative - try to copy directly from the price list
   let = priceListSheet = Spreadsheet.openByUrl(Spreadsheet.getCellValue("PriceListURL"));
-
-
-
-  // Alternative: copy packageRowCount rows of data from insertionRow to temporary array 
-  // copy the saved data to the insertionRow and packageRowCount rows down
-  // re-apply the formulas to the inserted rows of data
+  
+  // Finally, set the package selector to "None", so that an active choice is required to continue adding packages
+  Range.getByName("SelectedPriceListCategory").value = "None";
+  Range.getByName("SelectedPriceListPackage").value = "None";
 }

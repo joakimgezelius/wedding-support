@@ -75,7 +75,8 @@ class Range {
   get currentRowIsEmpty()   { return !this.currentRowValues.join(""); }
   get currentColumnOffset() { return this._currentColumnOffset; }
 
-  set values(values)        { this.nativeRange.setValues(this._values = values); }     
+  set values(values)        { this.nativeRange.setValues(this._values = values); }
+  set value(value)          { this.nativeRange.getCell(1, 1).setValue(value); }
   
   //========================================================================================================= 
   //  Dynamic Range Features Below
