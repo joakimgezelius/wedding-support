@@ -37,9 +37,9 @@ function onDraftSelectedEmail() {
 function onPrepareClientStructureSmallWedding() {
   trace("onPrepareClientStructureSmallWedding");
   let enquiries = new Enquiries;        
-  let sourceFolderId = "1tDi9fOQuQBZSk1z43C6aeo27dAu7WQuS";                                              // Folder ID of Small W & E's template 
-  let templateClientSheetLinkCell = Range.getByName("TemplateClientSheetSmallWedding", ParamsSheetName); // URL to the Small W & E's template
-  enquiries.selected.prepareClientStructure(sourceFolderId,templateClientSheetLinkCell);  
+  let sourceFolderId = "1tDi9fOQuQBZSk1z43C6aeo27dAu7WQuS";                                         // Folder ID of Small W & E's template 
+  let templateClientSheetLink = Spreadsheet.getCellValueLinkUrl("TemplateClientSheetSmallWedding"); // URL to the Small W & E's template
+  enquiries.selected.prepareClientStructure(sourceFolderId, templateClientSheetLink);  
 }
 
 // To Prepare Client Document Structure for Large Weddings
@@ -47,9 +47,9 @@ function onPrepareClientStructureSmallWedding() {
 function onPrepareClientStructureLargeWedding() {
   trace("onPrepareClientStructureLargeWedding");
   let enquiries = new Enquiries;
-  let sourceFolderId = "1hjGms-aGkTqdRtifqXhsF-WPN4uojs2a";                                              // Folder ID of Large W & E's template
-  let templateClientSheetLinkCell = Range.getByName("TemplateClientSheetLargeWedding", ParamsSheetName); // URL to the Large W & E's template
-  enquiries.selected.prepareClientStructure(sourceFolderId,templateClientSheetLinkCell);
+  let sourceFolderId = "1hjGms-aGkTqdRtifqXhsF-WPN4uojs2a";                                         // Folder ID of Large W & E's template
+  let templateClientSheetLink = Spreadsheet.getCellValueLinkUrl("TemplateClientSheetLargeWedding"); // URL to the Large W & E's template
+  enquiries.selected.prepareClientStructure(sourceFolderId, templateClientSheetLink);
 }
 
 //========================================================================================================
@@ -129,7 +129,7 @@ class Enquiry extends RangeRow {
     Browser.newTab(this.clientSheet.url);
   }
 
-  prepareClientStructure(sourceFolderId,templateClientSheetLinkCell) {
+  prepareClientStructure(sourceFolderId, templateClientSheetLink) {
     trace(`prepareClientStructure for ${this.trace}`);
     let destinationFolderId = "1oHr5tRJJzDq96F8mlHXf2Ikx6aE5KJKf";              // Destination - W & E's >>> 2022 Folder
     let sourceFolder = Folder.getById(sourceFolderId);
@@ -141,7 +141,6 @@ class Enquiry extends RangeRow {
       Dialog.notify("Preparing the Structure...", "Making the new Client Document Structure, This may take a few seconds...");
       sourceFolder.copyTo(destinationFolder, this.fileName);                    // Copies source folder contents to target folder 
 
-      let templateClientSheetLink = templateClientSheetLinkCell.nativeRange.getRichTextValue().getLinkUrl();
       let templateSheetFile = File.getByUrl(templateClientSheetLink);
 
       let clientFolder = destinationFolder.getSubfolder(this.fileName);         // Gets newly created client folder by name

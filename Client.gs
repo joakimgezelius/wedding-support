@@ -2,7 +2,7 @@
 function onPullClientInformation() {
   trace("onPullClientInformation");
   if (Dialog.confirm("Pull Client Information - Confirmation Required", "Are you sure you want to pull client information from form database? It will overwrite existing client information!") == true) {
-    var clientIdRange = Range.getByName("ClientId");
+    var clientId = Spreadsheet.getCellValue("ClientId");
     var client = Client.LookupById("foobar");
     trace("Current client: " + client.trace());
     Client.databaseSheet = SpreadsheetApp.openById(Client.databaseSheetId);

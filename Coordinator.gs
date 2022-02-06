@@ -47,7 +47,7 @@ class EventDetailsUpdater {
   onBegin() {
     this.itemNo = 0;
     this.sectionNo = 0;
-    this.eurGbpRate = Range.getByName("EURGBP").value;
+    this.eurGbpRate = Spreadsheet.getCellValue("EURGBP");
     trace("EventDetailsUpdater.onBegin - EURGBP=" + this.eurGbpRate);
   }
   
@@ -158,7 +158,7 @@ class EventDetailsCleaner {
   onBegin() {
     this.itemNo = 0;
     this.sectionNo = 0;
-    this.eurGbpRate = Range.getByName("EURGBP").value;
+    this.eurGbpRate = Spreadsheet.getCellValue("EURGBP");
     trace("EventDetailsCleaner.onBegin - EURGBP=" + this.eurGbpRate);
   }
   
@@ -222,14 +222,51 @@ class EventDetailsChecker {
   }
 }
 
+//=============================================================================================
+// Class PriceListPackage
+//
 
 class PriceListPackage {
   constructor() {
-    ;
-
+    let eventDetails = Range.getByName("EventDetails");
+    let values = eventDetails.values;
   }
+
 }
 
 function onInsertPackage() {
-  ;
+  trace("onInsertPackage");
+  let insertionRow = Range.getByName("EventDetailsInsertionRow"); // pick up insertion point range
+  trace(`insertionRow: ${insertionRow.trace}`);
+  let packageRowCount = Spreadsheet.getCellValue("SelectedPriceListPackageRowCount"); // pickup number of rows in package
+  trace(`packageRowCount: ${packageRowCount}`);
+  // insert packageRowCount lines from the insertionRow down - this will create space enough to paste the saved data 
+  // Use https://developers.google.com/apps-script/reference/spreadsheet/sheet#insertrowsbeforebeforeposition,-howmany
+  trace(`sheet: ${insertionRow.trace} insert ${packageRowCount} rows before row ${insertionRow.rowPosition}`)
+  insertionRow.sheet.nativeSheet.insertRowsBefore(insertionRow.rowPosition, packageRowCount);
+  // copy packageRowCount rows from the new insertion row to the old one (the insertion row has now moved down by packageRowCount lines)
+  let insertionRange = new Range(insertionRow.sheet.nativeSheet.getRange(insertionRow.rowPosition, 1, packageRowCount, insertionRow.width));
+  //insertionRange.
+  let newInsertionRow = Range.getByName("EventDetailsInsertionRow"); // pick up insertion point range after insertion
+  //insertionRow
+  let = priceListSheet = Spreadsheet.openByUrl(Spreadsheet.getCellValue("PriceListURL"));
+
+  //newInsertionRow.nativeRange.copyTo(insertionRow.nativeRange);
+
+  // Alternative: copy packageRowCount rows of data from insertionRow to temporary array 
+  // copy the saved data to the insertionRow and packageRowCount rows down
+  // re-apply the formulas to the inserted rows of data
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

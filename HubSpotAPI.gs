@@ -118,7 +118,7 @@ class HubSpot {
   static getClientData() {
     trace("getClientData");
     //try {
-      let dealId = Range.getByName("HubSpotDeal","Client Data").values;
+      let dealId = Spreadsheet.getCellValue("HubSpotDeal");
       trace(`Deal ID : ${dealId}`);
       Dialog.notify("Updating Client Data...","Please wait updating Client Data from HubSpot!");
       let url = "https://api.hubapi.com/crm/v3/objects/deals/"+dealId+"?properties=hs_object_id,invoice_id,estimate_id,amount,closedate,createdate,dealname,description,hubspot_owner_id,dealstage,dealtype,departure_date,hs_forecast_amount,hs_manual_forecast_category,hs_forecast_probability,hubspot_team_id,hs_lastmodifieddate,hs_next_step,num_associated_contacts,hs_priority,pipeline&archived=false&hapikey=0020bf99-6b2a-4887-90af-adac067aacba";

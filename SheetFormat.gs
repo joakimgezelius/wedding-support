@@ -159,7 +159,7 @@ function onFormatCoordinator() {
 
   targetSheet.setConditionalFormatRules(newRules);                                     
   
-  // Formatting based on template sheet
+  /* Formatting based on template sheet
   let sheetValues = sourceSheet.getDataRange().getValues();
   let sheetBG     = sourceSheet.getDataRange().getBackgrounds();
   let sheetFC     = sourceSheet.getDataRange().getFontColors();
@@ -192,7 +192,7 @@ function onFormatCoordinator() {
     .setWraps(sheetWR)
     .setTextRotations(sheetTR)
     .setTextDirections(sheetDir)
-    .setNotes(sheetNotes);
+    .setNotes(sheetNotes);*/
 
   //let width = sourceSheet.getColumnWidth(sheetValues.length);
   //targetSheet.setColumnWidth(sheetValues.length,width);
@@ -214,8 +214,7 @@ class EventDetailsFormater {
   onBegin() {
     this.itemNo = 0;
     this.sectionNo = 0;
-    this.eurGbpRate = Range.getByName("EURGBP").value;
-    trace("EventDetailsFormater.onBegin - EURGBP=" + this.eurGbpRate);
+    trace("EventDetailsFormater.onBegin");
   }
   
   onEnd() {

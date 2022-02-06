@@ -24,7 +24,7 @@ class Range {
   static getByName(rangeName, sheetName = "") {
     return Spreadsheet.active.getRangeByName(rangeName, sheetName);
   }
-  
+
   static trace(range) {
     return `[${range.getSheet().getName()}!${range.getA1Notation()}]`;
   }
@@ -32,7 +32,13 @@ class Range {
   getNativeRowRange(rowOffset) {
     return this.nativeRange.offset(rowOffset, 0, 1); // A range of 1 row height
   }
-    
+
+  extend(rows, columns = 0) {
+    this._nativeRange = this.nativeSheet.getRange(this.rowPosition, this.columnPosition, this.height + rows, this.width + columns);
+    this._values = this.nativeRange.getValues();
+    return this;
+  }
+
   // Iterate over all rows in the range by moving the currentRowOffset forward
   //  - call back passing "this", callee picks up current row...
   //
@@ -46,7 +52,7 @@ class Range {
 //    if (!goOn) break;
     }
   }
-    
+
   get nativeRange()         { return this._nativeRange; }
   get name()                { return this._name; }
   get trace()               { return this._trace + this._currentRowOffset + "}"; }
@@ -54,6 +60,7 @@ class Range {
   get values()              { return this._values; }
   get value()               { return this._values[0][0]; } // Helper to access first cell in range
   get height()              { return this.nativeRange.getHeight(); }
+  get width()               { return this.nativeRange.getWidth(); }
   get rowPosition()         { return this.nativeRange.getRow(); }    // Row number of the first row in the range
   get columnPosition()      { return this.nativeRange.getColumn(); } // Column number of the first column in the range
   get currentRow()          { return this.getNativeRowRange(this._currentRowOffset); } // A range of 1 row height

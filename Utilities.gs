@@ -1,7 +1,7 @@
 
 function onGetFileInfo() {
   trace("onGetFileInfo");
-  let url = Range.getByName("FileUrl").value;
+  let url = Spreadsheet.getCellValue("FileUrl");
   let file = File.getByUrl(url);
   if (file !== null) {
     Dialog.notify("File Info", file.trace);      
@@ -17,13 +17,13 @@ function onGetFolderInfo() {
 
 function onTransferFileOwnership() {
   trace("onTransferFileOwnership");
-  let newOwner = Range.getByName("NewOwner").value;
+  let newOwner = Spreadsheet.getCellValue("NewOwner");
   applyFolderAction(newOwner);
 }
 
 function onMoveToSharedDrive() {
   trace("onMoveToSharedDrive");
-  let destinationFolderUrl = Range.getByName("DestinationFolderUrl").value;
+  let destinationFolderUrl = Spreadsheet.getCellValue("DestinationFolderUrl");
   let destinationFolder = Folder.getByUrl(destinationFolderUrl);
   if (destinationFolder == null)
     Error.fatal(`"${destinationFolderUrl}" is not a valid folder URL`);
@@ -37,7 +37,7 @@ function applyFolderAction(newOwner = null, destinationFolder = null) {
   // Get a two-dimensional array representing the values of the range:
   // https://developers.google.com/apps-script/reference/spreadsheet/range?hl=en#getvalues
   let folderInfo = folderInfoRange.values; 
-  let sourceFolderUrl = Range.getByName("SourceFolderUrl").value;
+  let sourceFolderUrl = Spreadsheet.getCellValue("SourceFolderUrl");
   let sourceFolder = Folder.getByUrl(sourceFolderUrl);
   if (sourceFolder == null)
     Error.fatal(`"${sourceFolderUrl}" is not a valid folder URL`); // here we break out in case of an error

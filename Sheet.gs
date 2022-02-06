@@ -91,6 +91,20 @@ class Spreadsheet {
     return SpreadsheetApp.getCurrentCell().getValues()[1,1];
   }
 
+  static getCellValue(rangeName) {
+    let nativeRange = SpreadsheetApp.getActiveSpreadsheet().getRangeByName(rangeName);
+    let value = nativeRange.getCell(1,1).getValue();
+    trace(`Spreadsheet.getCellValue(${rangeName}) --> ${value}`);
+    return value;
+  }
+
+  static getCellValueLinkUrl(rangeName) {
+    let nativeRange = SpreadsheetApp.getActiveSpreadsheet().getRangeByName(rangeName);
+    let url = nativeRange.getCell(1,1).getRichTextValue().getLinkUrl();
+    trace(`Spreadsheet.getCellValueLinkUrl(${rangeName}) --> ${url}`);
+    return url;
+  }
+
   setActive() {
     trace(`> Spreadsheet.setActiveSpreadsheet(${this.trace})`);
     // https://developers.google.com/apps-script/reference/spreadsheet/spreadsheet-app#setActiveSpreadsheet(Spreadsheet)

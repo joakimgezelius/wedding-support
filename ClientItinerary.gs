@@ -13,9 +13,7 @@ function onUpdateClientItinerary() {
 
   try {
     // Locate named range SharedClientItineraryLink, to pick up the link to the external/shared Client Itinerary spreadsheet
-    let sharedClientItineraryLinkCell = Range.getByName("SharedClientItineraryLink", ClientItinerarySheetName);
-    // Open shared/external Client Itinerary spreadsheet by using the link in the cell SharedClientItineraryLink
-    let sharedClientItineraryLink = sharedClientItineraryLinkCell.nativeRange.getRichTextValue().getLinkUrl();
+    let sharedClientItineraryLink = Spreadsheet.getCellValueLinkUrl("SharedClientItineraryLink");
     let sharedClientItinerarySheet = Spreadsheet.openByUrl(sharedClientItineraryLink);
 
     // Locate the ClientItinerary range in the external/shared client itinerary
