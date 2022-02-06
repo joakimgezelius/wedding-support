@@ -245,28 +245,18 @@ function onInsertPackage() {
   trace(`sheet: ${insertionRow.trace} insert ${packageRowCount} rows before row ${insertionRow.rowPosition}`)
   insertionRow.sheet.nativeSheet.insertRowsBefore(insertionRow.rowPosition, packageRowCount);
   // copy packageRowCount rows from the new insertion row to the old one (the insertion row has now moved down by packageRowCount lines)
-  let insertionRange = new Range(insertionRow.sheet.nativeSheet.getRange(insertionRow.rowPosition, 1, packageRowCount, insertionRow.width));
-  //insertionRange.
-  let newInsertionRow = Range.getByName("EventDetailsInsertionRow"); // pick up insertion point range after insertion
-  //insertionRow
+  //  - first add rows to the old insertion row to form the destination range for the package, and clear it
+  let destinationRange = insertionRow.extend(packageRowCount - 1);
+  //destinationRange.clear();
+  //  - next pick up the insertion point range after insertion, and add rows to it to match the package data
+  let sourceRange = Range.getByName("EventDetailsInsertionRow").extend(packageRowCount - 1); 
+  sourceRange.copyTo(destinationRange, SpreadsheetApp.CopyPasteType.PASTE_VALUES);
+
   let = priceListSheet = Spreadsheet.openByUrl(Spreadsheet.getCellValue("PriceListURL"));
 
-  //newInsertionRow.nativeRange.copyTo(insertionRow.nativeRange);
+
 
   // Alternative: copy packageRowCount rows of data from insertionRow to temporary array 
   // copy the saved data to the insertionRow and packageRowCount rows down
   // re-apply the formulas to the inserted rows of data
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -34,9 +34,15 @@ class Range {
   }
 
   extend(rows, columns = 0) {
-    this._nativeRange = this.nativeSheet.getRange(this.rowPosition, this.columnPosition, this.height + rows, this.width + columns);
+    trace(`Range.extend ${this.trace} by ${rows} rows and ${columns} columns`);
+    this._nativeRange = this.sheet.nativeSheet.getRange(this.rowPosition, this.columnPosition, this.height + rows, this.width + columns);
     this._values = this.nativeRange.getValues();
     return this;
+  }
+
+  copyTo(destination, copyPasteType) {
+    trace(`Range.copyTo ${this.trace} to ${destination.trace}`);
+    this.nativeRange.copyTo(destination.nativeRange, copyPasteType, false);
   }
 
   // Iterate over all rows in the range by moving the currentRowOffset forward
@@ -70,8 +76,9 @@ class Range {
   get currentColumnOffset() { return this._currentColumnOffset; }
 
   set values(values)        { this.nativeRange.setValues(this._values = values); }     
-  // 
-  //  Dynamic Range Features
+  
+  //========================================================================================================= 
+  //  Dynamic Range Features Below
   //
   
   refresh() { // Reload the range - e.g. if it has changed
