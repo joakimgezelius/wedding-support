@@ -238,6 +238,8 @@ function onInsertPackage() {
   let insertionRow = Range.getByName("EventDetailsInsertionRow"); // pick up insertion point range
   trace(`insertionRow: ${insertionRow.trace}`);
   let packageRowCount = Spreadsheet.getCellValue("SelectedPriceListPackageRowCount"); // pickup number of rows in package
+  let categoryRangeName = Spreadsheet.getCellValue("SelectedPriceListCategoryRange"); // pickup price list category
+  let packageId = Spreadsheet.getCellValue("SelectedPriceListPackageId");             // pickup price list package id
   trace(`packageRowCount: ${packageRowCount}`);
   // insert packageRowCount lines from the insertionRow down - this will create space enough to paste the saved data 
   // Use https://developers.google.com/apps-script/reference/spreadsheet/sheet#insertrowsbeforebeforeposition,-howmany
@@ -250,9 +252,14 @@ function onInsertPackage() {
   //  - next pick up the insertion point range after insertion, and add rows to it to match the package data
   let sourceRange = Range.getByName("EventDetailsInsertionRow").extend(packageRowCount - 1); 
   sourceRange.copyTo(destinationRange, SpreadsheetApp.CopyPasteType.PASTE_VALUES);
-  // Alternative - try to copy directly from the price list
-  let = priceListSheet = Spreadsheet.openByUrl(Spreadsheet.getCellValue("PriceListURL"));
-  
+  // Alternative - copy directly from the price list, this way we get the formulas, formatting etc
+  // let priceListSheet = Spreadsheet.openByUrl(Spreadsheet.getCellValue("PriceListURL"));
+  // let categoryRange = priceListSheet.getRangeByName(categoryRangeName); // This gives us the selected category section of the price list
+  // let packageFirstRow = categoryRange.values.findIndex(row => row[0] == packageId); // Find the first row with the selected packageId
+  // trace(`Package ${packageId}, first row: ${packageFirstRow}`);
+  // https://developers.google.com/apps-script/reference/spreadsheet/range#offsetrowoffset,-columnoffset,-numrows
+  // let sourceRange = new Range(categoryRange.nativeRange.offset(packageFirstRow, 0, packageRowCount));
+  // sourceRange.copyTo(destinationRange, SpreadsheetApp.CopyPasteType.PASTE_VALUES);
   // Finally, set the package selector to "None", so that an active choice is required to continue adding packages
   Range.getByName("SelectedPriceListCategory").value = "None";
   Range.getByName("SelectedPriceListPackage").value = "None";
