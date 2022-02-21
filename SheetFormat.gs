@@ -105,7 +105,7 @@ function onFormatCoordinator() {
   });*/
   
   // Formmatings with reference from template sheet to Coordinator sheet
-  let sourceSheet = SpreadsheetApp.openById(TemplateSpreadsheetId).getSheetByName("Coordinator");
+  let sourceSheet = SpreadsheetApp.openById(TemplateSpreadsheetId).getSheetByName("Old Coordinator");
   let targetSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Coordinator");  
   let range = targetSheet.getRange("A4:AJ"+targetSheet.getLastRow());
   targetSheet.clearConditionalFormatRules();                                      // Removes all the conditional formatting rules from the sheet

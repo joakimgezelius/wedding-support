@@ -63,6 +63,7 @@ class EventDetailsUpdater {
   
   onTitle(row) {
     trace("EventDetailsUpdater.onTitle " + row.itemNo + " " + row.title);
+    //row.nativeRange.setFontSize(11).setBackground("d6beb7").setWrap(true).breakApart();
     this.itemNo = 0;
     this.sectionTitleRange = row.range;
     if (row.itemNo === "") { // Only set item id (itemNo) field if empty, if so generate a string on the format #NN   
@@ -228,8 +229,6 @@ class EventDetailsChecker {
 
 class PriceListPackage {
   constructor() {
-    let eventDetails = Range.getByName("EventDetails");
-    let values = eventDetails.values;
   }
 }
 
@@ -252,6 +251,12 @@ function onInsertPackage() {
   //  - next pick up the insertion point range after insertion, and add rows to it to match the package data
   let sourceRange = Range.getByName("EventDetailsInsertionRow").extend(packageRowCount - 1); 
   sourceRange.copyTo(destinationRange, SpreadsheetApp.CopyPasteType.PASTE_VALUES);
+  /*const row = new EventRow(destinationRange.nativeRange);
+  if(row.isTitle) {
+    destinationRange.nativeRange.setFontSize(11).setBackground("d6beb7").setWrap(true).breakApart();
+  }*/
+  destinationRange.nativeRange.setFontColor("#434343").setFontSize(9).setWrap(true).breakApart();
+  //destinationRange.nativeRange.shiftRowGroupDepth(1);
   // Alternative - copy directly from the price list, this way we get the formulas, formatting etc
   // let priceListSheet = Spreadsheet.openByUrl(Spreadsheet.getCellValue("PriceListURL"));
   // let categoryRange = priceListSheet.getRangeByName(categoryRangeName); // This gives us the selected category section of the price list
