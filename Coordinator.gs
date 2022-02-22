@@ -229,6 +229,7 @@ class EventDetailsChecker {
 
 class PriceListPackage {
   constructor() {
+    
   }
 }
 
@@ -236,6 +237,8 @@ function onInsertPackage() {
   trace("onInsertPackage");
   let insertionRow = Range.getByName("EventDetailsInsertionRow"); // pick up insertion point range
   trace(`insertionRow: ${insertionRow.trace}`);
+  let eventDetails = Range.getByName("EventDetails").loadColumnNames();
+  let sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Coordinator"); 
   let packageRowCount = Spreadsheet.getCellValue("SelectedPriceListPackageRowCount"); // pickup number of rows in package
   let categoryRangeName = Spreadsheet.getCellValue("SelectedPriceListCategoryRange"); // pickup price list category
   let packageId = Spreadsheet.getCellValue("SelectedPriceListPackageId");             // pickup price list package id
@@ -251,12 +254,18 @@ function onInsertPackage() {
   //  - next pick up the insertion point range after insertion, and add rows to it to match the package data
   let sourceRange = Range.getByName("EventDetailsInsertionRow").extend(packageRowCount - 1); 
   sourceRange.copyTo(destinationRange, SpreadsheetApp.CopyPasteType.PASTE_VALUES);
-  /*const row = new EventRow(destinationRange.nativeRange);
-  if(row.isTitle) {
-    destinationRange.nativeRange.setFontSize(11).setBackground("d6beb7").setWrap(true).breakApart();
-  }*/
-  destinationRange.nativeRange.setFontColor("#434343").setFontSize(9).setWrap(true).breakApart();
-  //destinationRange.nativeRange.shiftRowGroupDepth(1);
+  // Default formatting for title rows
+  eventDetails.forEachRow((range) => {
+    const row = new EventRow(range);
+    if (row.isTitle) {          
+      let rowRange = row.nativeRange.getA1Notation();
+      let borderRange = sheet.getRange(rowRange);
+      borderRange.setBorder(true, true, true, true, false, false, "#000000", SpreadsheetApp.BorderStyle.DOUBLE);
+      row.nativeRange.setFontColor("#434343").setBackground("#d6beb7").setFontSize(12);
+    }
+  });
+  // Default formatting for item rows excluding the title row we get in range & create grouping for found items range by depth 1
+  destinationRange.nativeRange.offset(1, 0, packageRowCount - 1).setFontColor("#434343").setBackground("#FFFFFF").setFontSize(9).setWrap(true).breakApart().shiftRowGroupDepth(1);  
   // Alternative - copy directly from the price list, this way we get the formulas, formatting etc
   // let priceListSheet = Spreadsheet.openByUrl(Spreadsheet.getCellValue("PriceListURL"));
   // let categoryRange = priceListSheet.getRangeByName(categoryRangeName); // This gives us the selected category section of the price list
@@ -268,4 +277,6 @@ function onInsertPackage() {
   // Finally, set the package selector to "None", so that an active choice is required to continue adding packages
   Range.getByName("SelectedPriceListCategory").value = "None";
   Range.getByName("SelectedPriceListPackage").value = "None";
+  // clears the content if there any by chance in rows below the NONE so template is clean, no data blocks the query to populate
+  eventDetails.nativeRange.offset(packageRowCount + 2,0,sheet.getLastRow()).clear({contentsOnly: true}); 
 }
