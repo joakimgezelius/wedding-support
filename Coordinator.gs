@@ -63,7 +63,6 @@ class EventDetailsUpdater {
   
   onTitle(row) {
     trace("EventDetailsUpdater.onTitle " + row.itemNo + " " + row.title);
-    //row.nativeRange.setFontSize(11).setBackground("d6beb7").setWrap(true).breakApart();
     this.itemNo = 0;
     this.sectionTitleRange = row.range;
     if (row.itemNo === "") { // Only set item id (itemNo) field if empty, if so generate a string on the format #NN   
@@ -274,9 +273,9 @@ function onInsertPackage() {
   // https://developers.google.com/apps-script/reference/spreadsheet/range#offsetrowoffset,-columnoffset,-numrows
   // let sourceRange = new Range(categoryRange.nativeRange.offset(packageFirstRow, 0, packageRowCount));
   // sourceRange.copyTo(destinationRange, SpreadsheetApp.CopyPasteType.PASTE_VALUES);
+  // clears the content if there any by chance in rows below the NONE so template is clean, no data blocks the query to populate
+  eventDetails.nativeRange.offset(packageRowCount + 2, 0, sheet.getMaxRows()).clear({contentsOnly: true}); 
   // Finally, set the package selector to "None", so that an active choice is required to continue adding packages
   Range.getByName("SelectedPriceListCategory").value = "None";
   Range.getByName("SelectedPriceListPackage").value = "None";
-  // clears the content if there any by chance in rows below the NONE so template is clean, no data blocks the query to populate
-  eventDetails.nativeRange.offset(packageRowCount + 2,0,sheet.getLastRow()).clear({contentsOnly: true}); 
 }
