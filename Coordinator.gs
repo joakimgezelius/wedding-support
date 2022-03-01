@@ -232,6 +232,13 @@ class PriceListPackage {
   }
 }
 
+function clearRows() {      // Clears the row contents below the Insertion Point
+  trace("clearRows")
+  let insertionRow = Range.getByName("EventDetailsInsertionRow");
+  let sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Coordinator");
+  insertionRow.nativeRange.offset(2, 0, sheet.getMaxRows()).clear({contentsOnly: true});
+}
+
 function onInsertPackage() {
   trace("onInsertPackage");
   let insertionRow = Range.getByName("EventDetailsInsertionRow"); // pick up insertion point range
@@ -273,9 +280,9 @@ function onInsertPackage() {
   // https://developers.google.com/apps-script/reference/spreadsheet/range#offsetrowoffset,-columnoffset,-numrows
   // let sourceRange = new Range(categoryRange.nativeRange.offset(packageFirstRow, 0, packageRowCount));
   // sourceRange.copyTo(destinationRange, SpreadsheetApp.CopyPasteType.PASTE_VALUES);
-  // clears the content if there any by chance in rows below the NONE so template is clean, no data blocks the query to populate
-  eventDetails.nativeRange.offset(packageRowCount + 2, 0, sheet.getMaxRows()).clear({contentsOnly: true}); 
   // Finally, set the package selector to "None", so that an active choice is required to continue adding packages
   Range.getByName("SelectedPriceListCategory").value = "None";
-  Range.getByName("SelectedPriceListPackage").value = "None";
+  Range.getByName("SelectedPriceListPackage").value = "None";  
+  // clears the content if there by chance in rows below the NONE so template is clean, no data blocks the query to populate
+  clearRows();
 }
