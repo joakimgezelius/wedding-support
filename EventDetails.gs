@@ -60,7 +60,7 @@ class EventRow extends RangeRow {
   get sectionNo()           { return this.get("ItemNo", "string").substr(0,3); }
   get itemNo()              { return this.get("ItemNo", "string"); }
   get isDecorTicked()       { return this.get("DecorTicked", "boolean"); }
-  get isSupplierTicked()    { return this.get("SupplierTicked", "boolean"); }
+  get isSupplierTicked()    { return this.get("VenueTicked", "boolean"); }
   get isStaffTicked()       { return this.get("StaffTicked", "boolean"); }
   get isItineraryTicked()   { return this.get("ItineraryTicked", "boolean"); }
   get isTitle()             { return this.category.toLowerCase() === "title"; }    // Is this a title row?
