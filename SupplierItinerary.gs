@@ -1,13 +1,13 @@
 function onUpdateSupplierItinerary() {
   trace("onUpdateSupplierItinerary");
   let eventDetails = new EventDetails();
-  let itineraryBuilder = new SupplierItineraryBuilder(Range.getByName("SupplierItinerary", "Supplier Itinerary"));
+  let supplierItineraryBuilder = new SupplierItineraryBuilder(Range.getByName("SupplierItinerary", "Supplier Itinerary"));
+  trace("onUpdateSupplierItinerary: apply SupplierItineraryBuilder...");
   eventDetails.sort(SortType.supplier);
-  eventDetails.apply(itineraryBuilder);
+  eventDetails.apply(supplierItineraryBuilder);
 }
 
-
-//=============================================================================================
+//==================================================================================================================
 // Class SupplierItineraryBuilder
 //
 class SupplierItineraryBuilder {
