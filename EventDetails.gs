@@ -68,6 +68,7 @@ class EventRow extends RangeRow {
   get isInStock()           { return this.category.toLowerCase() === "in stock"; }   // Is this item in stock?
   get isCancelled()         { return this.status.toLowerCase() === "cancelled"; }  // Is this item cancelled?
   get who()                 { return this.get("Who", "string"); }
+  get incharge()            { return this.get("InCharge", "string"); }
   get category()            { return this.get("Category", "string"); }
   get status()              { return this.get("Status", "string"); }
   get supplier()            { return this.get("Supplier", "string"); }
