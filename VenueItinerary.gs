@@ -3,7 +3,7 @@ function onUpdateVenueItinerary() {
   let eventDetails = new EventDetails();
   let venueItineraryBuilder = new VenueItineraryBuilder(Range.getByName("VenueItinerary", "Venue Itinerary"));
   trace("onUpdateVenueItinerary: apply VenueItineraryBuilder...");
-  //eventDetails.sort(SortType.supplier);
+  //eventDetails.sort(SortType.date);
   eventDetails.apply(venueItineraryBuilder);
 }
 
