@@ -1,7 +1,7 @@
 //=============================================================================================
 // Class EventDetails
 //
-const SortType = { time: "time", supplier: "supplier", supplier_location: "supplier_location", staff: "staff" };
+const SortType = { date: "date", time: "time", supplier: "supplier", supplier_location: "supplier_location", staff: "staff" };
 
 class EventDetails {
   
