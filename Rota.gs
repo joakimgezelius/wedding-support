@@ -11,7 +11,7 @@ function onUpdateRotaSheet() {
   trace("onUpdateRotaSheet");
   let clientSheetList = new ClientSheetList;
   clientSheetList.setQuery("RotaQuery",
-    "SELECT '${eventName}',Col1,Col6,Col8,Col9,Col10,Col7,Col11,Col12,Col13,Col16 WHERE (Col4=TRUE OR Col6='Transport' OR Col6='Rota')", //Col13 IS NOT NULL", 
+    "SELECT '${eventName}',Col1,Col6,Col8,Col9,Col10,Col7,Col11,Col12,Col13,Col16 WHERE (Col4=TRUE OR LOWER(Col6) CONTAINS 'transport' OR LOWER(Col6) CONTAINS 'rota')", //Col13 IS NOT NULL", 
     "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' ORDER BY Col4,Col5,Col6");
 }
 
@@ -31,7 +31,7 @@ function onUpdateEventCoordinationSheet() {
   let clientSheetList = new ClientSheetList;
 
   clientSheetList.setQuery("ThingsToOrderQuery",
-    "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col11,Col12,Col13,Col18,Col16 WHERE Col7='To Order'", 
+    "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col11,Col12,Col13,Col18,Col16 WHERE LOWER (Col7) CONTAINS 'to order'", 
     "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' ORDER BY Col5");
 
   clientSheetList.setQuery("ThingsOrderedQuery",
@@ -44,26 +44,26 @@ function onUpdateEventCoordinationSheet() {
 
   clientSheetList.setQuery("TransportationQuery",
     "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col9,Col10,Col11,Col12,Col13,Col16 WHERE Col6='Transport'", 
-    "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' ORDER BY Col1,Col5,Col6");
+    "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' ORDER BY Col5");
 
   clientSheetList.setQuery("ServicesQuery",
     "SELECT '${eventName}',Col1,Col6,Col8,Col9,Col10,Col7,Col11,Col12,Col13,Col16 WHERE Col6='Service'", 
     "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' AND NOT LOWER(Col7) CONTAINS 'booked' AND NOT LOWER(Col7) CONTAINS 'confirmed' AND NOT LOWER(Col7) CONTAINS 'own arrangement' ORDER BY Col4,Col5");
 
   clientSheetList.setQuery("ThingsInStoreQuery",
-    "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col11,Col12,Col13,Col18,Col16 WHERE Col7 CONTAINS 'Spain'", 
+    "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col11,Col12,Col13,Col18,Col16 WHERE LOWER(Col7) CONTAINS 'spain'", 
     "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' ORDER BY Col5");
 
   clientSheetList.setQuery("ThingsInShopQuery",
-    "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col11,Col12,Col13,Col18,Col16 WHERE Col7 CONTAINS 'Shop' or Col7 CONTAINS 'Gibraltar'",
+    "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col11,Col12,Col13,Col18,Col16 WHERE LOWER(Col7) CONTAINS 'shop' or LOWER(Col7) CONTAINS 'gibraltar'",
     "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' ORDER BY Col5");
 
   clientSheetList.setQuery("RotaQuery",
-    "SELECT '${eventName}',Col1,Col6,Col8,Col9,Col10,Col7,Col11,Col12,Col13,Col16 WHERE (Col6='Transport' OR  Col6='Rota')", // Col4=TRUE OR Col13 IS NOT NULL", 
+    "SELECT '${eventName}',Col1,Col6,Col8,Col9,Col10,Col7,Col11,Col12,Col13,Col16 WHERE (LOWER(Col6) CONTAINS 'transport' OR  LOWER(Col6) CONTAINS 'rota')", // Col4=TRUE OR Col13 IS NOT NULL", 
     "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' ORDER BY Col4,Col5,Col6");
 
   clientSheetList.setQuery("HotelReservationsQuery",
-    "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col12,Col14,Col18,Col28,Col16 WHERE Col6 CONTAINS 'Hotel'", 
+    "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col12,Col14,Col18,Col28,Col16 WHERE LOWER(Col6) CONTAINS 'hotel'", 
     "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' ORDER BY Col5");
 }
 
