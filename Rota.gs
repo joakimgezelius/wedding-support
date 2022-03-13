@@ -17,7 +17,7 @@ function onUpdateRotaSheet() {
 
 
 //----------------------------------------------------------------------------------------
-// Event Coordination Sheet - currently only onme sheet:
+// Event Coordination Sheet - currently only one sheet:
 // https://docs.google.com/spreadsheets/d/1BWwA-yRJQyUooIh5nodzTPpqcYxeFHf8-0Uo2V7JQbk/edit?pli=1#gid=233397022
 
 function onEventCoordinationSheetPeriodChanged() {
@@ -71,7 +71,10 @@ function onUpdateEventCoordinationSheet() {
 //----------------------------------------------------------------------------------------
 // ClientSheetList
 
-const ClientSheetListRangeName = "ClientSheetList";
+// ClientSheetListRangeName is the name of the named range holding the list of client sheets.
+// The first column of this range (i.e. row[0]) holds the URL of the client sheet, if not empty.
+// 
+const ClientSheetListRangeName = "ClientSheetList"; 
 
 class ClientSheetList {
 
@@ -108,40 +111,4 @@ class ClientSheetList {
   get trace() {
     return `{ClientSheetList ${this.range.trace}}`;
   }
-}
-
-
-//=============================================================================================
-// Class Rota
-//=============================================================================================
-
-class Rota {
-
-  onActivityColouring() {
-    trace("Rota.onActivityColouring ");
-  }
-
-  onSupplierColouring() {
-    trace("Rota.onSupplierColouring ");
-  }
-
-  onLocationColouring () {
-    trace("Rota.onLocationColouring ");
-  }
-
-  onPerformMagic() {
-    trace("Rota.onPerformMagic ");
-  }
-
-  static onUpdateRota() {
-    trace("Rota.onUpdateRota ");
-    //if (Dialog.confirm("Update Rota - Confirmation Required", "Are you sure you want to update the rota? It will overwrite the row numbers, make sure the sheet is sorted properly!") == true) {
-    //  trace("Rota.onUpdateRota ");
-    //}
-  }
-
-  get trace() {
-    return "{Rota}";
-  }
-
 }
