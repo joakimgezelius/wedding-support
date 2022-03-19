@@ -102,7 +102,7 @@ class SupplierCostingBuilder {
         this.newSupplierSection(row);
       }
       let description = row.description;
-      this.currentSupplierNettSum += totalNettCost;
+      this.currentSupplierNettSum += Number(totalNettCost);
       let targetRow = this.targetRange.getNextRowAndExtend();
       let column = 1;
       targetRow.getCell(1,column++).setValue(row.itemNo);
@@ -114,11 +114,11 @@ class SupplierCostingBuilder {
       targetRow.getCell(1,column++).setValue(row.quantity);
       targetRow.getCell(1,column++).setValue(row.nativeUnitCostWithVAT).setNumberFormat(row.currencyFormat);
       if (row.currency === "GBP") {
-        this.currentSupplierGrossGbpSum += totalNativeGrossCost;
+        this.currentSupplierGrossGbpSum += Number(totalNativeGrossCost);
         ++column; // Skip EUR column
         targetRow.getCell(1,column++).setValue(totalNativeGrossCost).setNumberFormat("£#,##0.00");
       } else {
-        this.currentSupplierGrossEurSum += totalNativeGrossCost;
+        this.currentSupplierGrossEurSum += Number(totalNativeGrossCost);
         targetRow.getCell(1,column++).setValue(totalNativeGrossCost).setNumberFormat("€#,##0.00");
         ++column; // Skip GBP column
       }
