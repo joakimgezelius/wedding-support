@@ -32,7 +32,7 @@ function onDraftSelectedEmail() {
   enquiries.selected.draftSelectedEmail();
 }
 
-// To Prepare Client Document Structure for Small Weddings
+/* To Prepare Client Document Structure for Small Weddings
 
 function onPrepareClientStructureSmallWedding() {
   trace("onPrepareClientStructureSmallWedding");
@@ -49,6 +49,14 @@ function onPrepareClientStructureLargeWedding() {
   let enquiries = new Enquiries;
   let sourceFolderId = "1hjGms-aGkTqdRtifqXhsF-WPN4uojs2a";                                         // Folder ID of Large W & E's template
   let templateClientSheetLink = Spreadsheet.getCellValueLinkUrl("TemplateClientSheetLargeWedding"); // URL to the Large W & E's template
+  enquiries.selected.prepareClientStructure(sourceFolderId, templateClientSheetLink);
+}*/
+
+function onPrepareClientStructure() {
+  trace("onPrepareClientStructure");
+  let enquiries = new Enquiries;
+  let sourceFolderId = "1ymnIJwPmvVC2clGJdCZZqcNwQC_gED6a";                          // Weddings & Events > Templates > Client Folder Template 2022 
+  let templateClientSheetLink = Spreadsheet.getCellValueLinkUrl("TemplateClientSheet"); // URL to the W & E's template sheet
   enquiries.selected.prepareClientStructure(sourceFolderId, templateClientSheetLink);
 }
 
@@ -158,10 +166,6 @@ class Enquiry extends RangeRow {
           let newClientSheetId = newClientSheet.id;                              // Returns the id of found file
           let clientTemplate = Spreadsheet.openById(newClientSheetId);
           clientTemplate.setActive();                                            // Sets the active spreadsheet Confirmed W & E to new client sheet
-          /*Range.getByName("EventDetailsSectionA",CoordinationSheetName).clear();
-          Range.getByName("EventDetailsSectionB",CoordinationSheetName).clear();
-          Range.getByName("EventDetailsSectionC",CoordinationSheetName).clear();
-          Range.getByName("EventDetailsSectionD",CoordinationSheetName).clear();*/      
           let newClientSheetLink = newClientSheet.url;                           // Gets the URL of newly copied template file 
           this.set("SheetLink",newClientSheetLink);                              // Sets the client sheet link to the cell in SheetLink Column
           Dialog.notify("Client Document Structure Created!","Please check column Client Sheet & Client Folder for more details.");
@@ -209,7 +213,8 @@ class Enquiry extends RangeRow {
   
   get name()            { return this.get("Name", "string"); }
   get date()            { return this.get("EventDate"); }
-  get fileName()        { return `${Utilities.formatDate(this.date, "GMT+1", "yyyy-MM-dd")} ${this.name}`; }
+  // Time-Zone Changes in the Summer Time begins and ends at 1:00 a.m ( Universal Time (GMT))
+  get fileName()        { return `${Utilities.formatDate(this.date, "GMT+2", "yyyy-MM-dd")} ${this.name}`; }  
   get sheetId()         { return this.get("SheetId", "string"); }
   get sheetLink()       { return this.get("SheetLink", "string"); }  
   get folderId()        { return this.get("FolderId", "string"); }

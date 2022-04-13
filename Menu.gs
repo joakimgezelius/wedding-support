@@ -123,10 +123,11 @@ class Menu {
     let menu = ui.createMenu("Enquiries" + globalLibMenuTag)
         .addItem("Update Enquiries", libName + ".onUpdateEnquiries")
         .addItem("Open Quote/Client Sheet", libName + ".onOpenClientSheet")
-        .addSubMenu(ui.createMenu("Prepare New Client Document Structure")
+        .addItem("Prepare New Client Document Structure", libName + ".onPrepareClientStructure")
+        /*.addSubMenu(ui.createMenu("Prepare New Client Document Structure")
           .addItem("For Small Wedding/Event", libName + ".onPrepareClientStructureSmallWedding")
-          .addItem("For Large Wedding/Event", libName + ".onPrepareClientStructureLargeWedding")
-        );
+          .addItem("For Large Wedding/Event", libName + ".onPrepareClientStructureLargeWedding")        
+        );*/
     Menu.addTestItems(libName, menu).addToUi();
     trace("< Custom enquiries menu added");
   }
