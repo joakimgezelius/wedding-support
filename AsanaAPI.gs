@@ -116,12 +116,14 @@ class Asana {
   }
 
   static getProjectName() {                     // Returns active spreadsheet name for project
-    return "n/a" ; // Spreadsheet.active.name;  NOTE: the way this is coded it causes a static object to be created at load time, let's try to avoid that
+    let spreadSheet = SpreadsheetApp.getActiveSpreadsheet();
+    return spreadSheet.getName();
+    //return "n/a" ; // Spreadsheet.active.name;  NOTE: the way this is coded it causes a static object to be created at load time, let's try to avoid that
   }
 
   static getProjectDueDate() {
     let dueDate = SpreadsheetApp.getActiveSpreadsheet().getRangeByName('WeddingDate').getValue();
-    return Utilities.formatDate(dueDate, "GMT+1", "YYYY-MM-dd");
+    return Utilities.formatDate(dueDate, "GMT+2", "YYYY-MM-dd");
   }
 
   static getProjectGid() {                      // Gets all projects details under the workspace & returns active project_gid
