@@ -53,6 +53,7 @@ class HubSpot {
     apiCall(paging.link);*/
     trace(`Paging After : ${ paging.after}, Link : ${ paging.link+"&hapikey=0020bf99-6b2a-4887-90af-adac067aacba" }`);
     sheet.getRange(3,1,items.length,items[0].length).setValues(items);
+    //if (paging) { return true};
   }
 
   static listEngagement() {
