@@ -79,8 +79,8 @@ class BudgetBuilder {
   }
 
   onRow(row) {
-    const totalPrice = row.totalPrice;
-    const category = row.category; 
+    let totalPrice = row.totalPrice;
+    let category = row.category; 
     if (Math.abs(totalPrice) > 0 && 
         category != "Labour" &&
         category != "Styling"

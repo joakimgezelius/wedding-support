@@ -12,7 +12,7 @@ globalLibId = "Prod";
 function onWeddingSheetOpen(libName) {
   trace(`onWeddingSheetOpen libName=${libName}`);
   Menu.addEventMenu(libName);
-  Menu.addAsanaMenu(libName);
+  //Menu.addAsanaMenu(libName);
 }
 
 function onRotaSheetOpen(libName) {
