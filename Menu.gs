@@ -12,11 +12,12 @@ class Menu {
       .addItem("Force-Update Coordinator - over-writes data", libName + ".onUpdateCoordinatorForced")   // In Coordinator.gs
       //.addItem("Check Coordinator", libName + ".onCheckCoordinator")
       .addItem("Update Budget", libName + ".onUpdateBudget")    // In Budget.gs
-      .addItem("Update Client Itinerary", libName + ".onUpdateClientItinerary")   // In itinerary.gs
-      .addItem("Update Decor Summary", libName + ".onUpdateDecorSummary")         // In DecorSummary.gs
-      .addItem("Update Supplier Costing", libName + ".onUpdateSupplierCosting")   // In SupplierCosting.gs      
-      .addItem("Update Venue Itinerary", libName + ".onUpdateVenueItinerary")
-      .addItem("Pull Client Data From HubSpot", libName + ".onUpdateClientData")  // In HubSpotAPI.gs
+      .addItem("Update Client Itinerary", libName + ".onUpdateClientItinerary")     // In itinerary.gs
+      .addItem("Update Decor Summary", libName + ".onUpdateDecorSummary")           // In DecorSummary.gs
+      .addItem("Update Supplier Costing", libName + ".onUpdateSupplierCosting")     // In SupplierCosting.gs      
+      .addItem("Update Supplier Venue Itinerary", libName + ".onUpdateSupplierVenueItinerary") // In VenueItinerary.gs
+      .addItem("Update Venue Itinerary", libName + ".onUpdateVenueItinerary")       // In VenueItinerary.gs
+      .addItem("Pull Client Data From HubSpot", libName + ".onUpdateClientData")    // In HubSpotAPI.gs
       .addSeparator()
       //.addItem("Update Exchange Rates", libName + ".onUpdateExchangeRates")
       //.addSeparator()

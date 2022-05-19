@@ -7,6 +7,16 @@ function onUpdateVenueItinerary() {
   eventDetails.apply(venueItineraryBuilder);
 }
 
+function onUpdateSupplierVenueItinerary() {
+  trace("onUpdateSupplierVenueItinerary");
+  let eventDetails = new EventDetails();
+  let selectedSupplier = Range.getByName("VenueItinerarySelectedSupplier").value;
+  trace(`onUpdateSupplierVenueItinerary, selectedSupplier: ${selectedSupplier}`);
+  let venueItineraryBuilder = new VenueItineraryBuilder(Range.getByName("VenueSupplierItinerary", "Venue Supplier Itinerary"), selectedSupplier);
+  trace("onUpdateSupplierVenueItinerary: apply VenueItineraryBuilder...");
+  //eventDetails.sort(SortType.date);
+  eventDetails.apply(venueItineraryBuilder);
+}
 
 //=============================================================================================
 // Class VenueItineraryBuilder
@@ -14,8 +24,9 @@ function onUpdateVenueItinerary() {
 
 class VenueItineraryBuilder {
   
-  constructor(targetRange) {
+  constructor(targetRange, selectedSupplier = null) {
     this.targetRange = targetRange;
+    this.selectedSupplier = selectedSupplier;
     trace("NEW " + this.trace);
   }
 
@@ -28,11 +39,13 @@ class VenueItineraryBuilder {
     setWrap(true);
   };
 
-  static formatTitle(range) {
+  static formatTitle(range) { 
+    // https://developers.google.com/apps-script/reference/spreadsheet/range
     range.setFontWeight("bold").
     setFontSize(14).
     setBackground("#f2f0ef").
-    setHorizontalAlignment("center");
+    setHorizontalAlignment("center").
+    setWrapStrategy(SpreadsheetApp.WrapStrategy.OVERFLOW);
   }
   
   onBegin() {
@@ -60,28 +73,35 @@ class VenueItineraryBuilder {
       }
     }
     this.sectionItemCount = 0;
-    let targetRow = this.targetRange.getNextRowAndExtend(); 
-    targetRow.merge();
-    targetRow.getCell(1,1).setValue(row.title);
+    let targetRow = this.targetRange.getNextRowAndExtend();
+    // JG: Temporary change, don't merge the cells
+    //  targetRow.merge();
+    //  targetRow.getCell(1,1).setValue(row.title);
+    targetRow.getCell(1,5).setValue(row.title);
     VenueItineraryBuilder.formatTitle(targetRow);
   }
 
   onRow(row) {
     trace("VenueItineraryBuilder.onRow " + row.title);
     if (row.isSupplierTicked) { // This is a decor summary item
-      ++this.sectionItemCount;
-      let targetRow = this.targetRange.getNextRowAndExtend();
-      let column = 2;
-      targetRow.getCell(1,column++).setValue(row.date);
-      targetRow.getCell(1,column++).setValue(row.startTime);
-      targetRow.getCell(1,column++).setValue(row.endTime);
-      targetRow.getCell(1,column++).setValue(row.location);
-      targetRow.getCell(1,column++).setValue(row.supplier);
-      targetRow.getCell(1,column++).setValue(row.description);
-      targetRow.getCell(1,column++).setValue(row.quantity);
+      if (this.selectedSupplier === null || row.supplier == this.selectedSupplier) { // Supplier filtering
+        ++this.sectionItemCount;
+        let targetRow = this.targetRange.getNextRowAndExtend();
+        let column = 2;
+        targetRow.getCell(1,column++).setValue(row.date);
+        targetRow.getCell(1,column++).setValue(row.startTime);
+        targetRow.getCell(1,column++).setValue(row.endTime);
+        targetRow.getCell(1,column++).setValue(row.location);
+        targetRow.getCell(1,column++).setValue(row.supplier);
+        targetRow.getCell(1,column++).setValue(row.description);
+        targetRow.getCell(1,column++).setValue(row.quantity);
+      }
+      else {
+        trace(` - Not matching supplier, ignore: ${row.supplier} ${row.description}`);
+      }
     }
     else {
-      trace("VenueItineraryBuilder.onRow Unticked, ignore: " + row.description);
+      trace(` - Unticked, ignore:  ${row.description}`);
     }
   }
   
