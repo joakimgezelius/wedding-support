@@ -94,7 +94,7 @@ class VenueItineraryBuilder {
         targetRow.getCell(1,column++).setValue(row.location);
         targetRow.getCell(1,column++).setValue(row.supplier);
         targetRow.getCell(1,column++).setValue(row.description);
-        targetRow.getCell(1,column++).setValue(row.quantity);
+        //targetRow.getCell(1,column++).setValue(row.quantity);
       }
       else {
         trace(` - Not matching supplier, ignore: ${row.supplier} ${row.description}`);
