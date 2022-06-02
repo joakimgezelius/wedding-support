@@ -31,7 +31,7 @@ function onUpdateEventCoordinationSheet() {
   let clientSheetList = new ClientSheetList;
 
   clientSheetList.setQuery("ThingsToOrderQuery",
-    "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col11,Col12,Col13,Col18,Col16 WHERE LOWER (Col7) CONTAINS 'to order'", 
+    "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col11,Col12,Col13,Col18,Col16 WHERE LOWER (Col7) CONTAINS 'to order' OR Col7='Ordered'", 
     "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' ORDER BY Col5");
 
   clientSheetList.setQuery("ThingsOrderedQuery",
