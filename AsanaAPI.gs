@@ -24,7 +24,7 @@ function onCreateSubTask() {
 function onUpdateTask() {
   trace("onUpdateTask");
   let tasks = Asana.getTaskGid();
-  if (tasks !== null) {
+  if (tasks != null) {
     Dialog.notify("Updating the Tasks...","Please wait it may take few minutes to update the tasks in Asana for " + PROJECT_NAME);
     let taskList = new TaskList();
     let taskUpdater = new TaskUpdater();
@@ -39,7 +39,7 @@ function onUpdateTask() {
 function onDestroyTask() {
   trace("onDestroyTask");
   let tasks = Asana.getTaskGid();
-  if (tasks !== null) {
+  if (tasks != null) {
     if (Dialog.confirm("To Delete Tasks from Asana Project - Confirmation Required", "Are you sure you want to delete?") == true) {
       let taskList = new TaskList();
       let taskDestroyer = new TaskDestroyer();

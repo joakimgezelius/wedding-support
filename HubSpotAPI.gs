@@ -36,24 +36,32 @@ class HubSpot {
     //trace(`HubSpot.listDeals --> ${response.getContentText()}`);
     let data = JSON.parse(response.getContentText());
     let results = data['results'];
-    let paging = data.paging.next;
+    let paging = data.paging.next;    
     let sheet = SpreadsheetApp.getActiveSheet();
+    //let sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("HubSpot Deals");
+    //let sheet = spreadSheet.getSheetByName("HubSpot Deals");  
+    //let range = spreadSheet.getRangeByName("DealList");
+    //let row = range.getRow();
+    //let col = range.getColumn();
+    //trace(`Row : ${row}, Column ${col}`);
     let header = ["Deal ID", "Amount", "Close Date", "Create Date", "Deal Name", "Deal Description", "Deal Owner", "Deal Type", "Deal Stage", "Departure Date", "Forecast Amount", "Forecast Category", "Forecast Probabilty", "HubSpot Team", "Last Modified Date", "Next Step", "Number of Contacts", "Priority", "Pipeline"];
     let items = [header];
     results.forEach(function (result) {
-    if(result['properties'].dealstage !== "closedlost") {
+    if(result['properties'].dealstage != "closedlost") {
       items.push([ result['properties'].hs_object_id, result['properties'].amount, result['properties'].closedate, result['properties'].createdate, result['properties'].dealname, result['properties'].description, result['properties'].hubspot_owner_id, result['properties'].dealtype, result['properties'].dealstage, result['properties'].departure_date, result['properties'].hs_forecast_amount, result['properties'].hs_manual_forecast_category, result['properties'].hs_forecast_probability, result['properties'].hubspot_team_id, result['properties'].hs_lastmodifieddate, result['properties'].hs_next_step, result['properties'].num_associated_contacts, result['properties'].priority, result['properties'].pipeline]);      
       }
     });
-    /*let apiCall = function(url) {
+    let apiCall = function(url) {
       let response = UrlFetchApp.fetch(url);
-      let data = JSON.parse(response);
+      let data = JSON.parse(response.getContentText());
       return data;
     };
-    apiCall(paging.link);*/
-    trace(`Paging After : ${ paging.after}, Link : ${ paging.link+"&hapikey=0020bf99-6b2a-4887-90af-adac067aacba" }`);
     sheet.getRange(3,1,items.length,items[0].length).setValues(items);
-    //if (paging) { return true};
+    if (paging.after != null) { 
+      trace(`Paging After : ${ paging.after}, Link : ${ paging.link+"&hapikey=0020bf99-6b2a-4887-90af-adac067aacba" }`);  
+      let nextData = apiCall(paging.link+"&hapikey=0020bf99-6b2a-4887-90af-adac067aacba");
+      Logger.log(nextData);
+    }
   }
 
   static listEngagement() {
@@ -192,7 +200,7 @@ class HubSpotDataDictionary {
     this.detailedContactPropertyIds = dataDictionarySheet.getRangeByName("DetailedContactPropertyIds").values;
     this.detailedDealPropertyIds = dataDictionarySheet.getRangeByName("DetailedDealPropertyIds").values;
 
-    this.detailedContactPropertyIds.forEach( item => { if (item[0] !== "") trace(`item: ${item[0]}`); } );
+    this.detailedContactPropertyIds.forEach( item => { if (item[0] != "") trace(`item: ${item[0]}`); } );
     trace("< NEW HubSpotDataDictionary, dictionary loaded.");
   }
 
