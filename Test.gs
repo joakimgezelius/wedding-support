@@ -20,7 +20,7 @@ function onTestCase2() {
   //set up API letiables
   let offset = 0;
   let queryParams = '&limit=100&offset=' + offset + '&properties=dealname&properties=dealstage&properties=closedate&properties=amount'
-  let url = 'https://api.hubapi.com/deals/v1/deal/paged?hapikey=0020bf99-6b2a-4887-90af-adac067aacba';
+  let url = 'https://api.hubapi.com/deals/v1/deal/paged?hapikey=d69a4027-d1cf-4730-9492-cf16faf333b1';
   let options = {
     "method": "GET",
     "muteHttpExceptions": true

@@ -88,6 +88,7 @@ class VenueItineraryBuilder {
         ++this.sectionItemCount;
         let targetRow = this.targetRange.getNextRowAndExtend();
         let column = 2;
+        targetRow.getCell(1,column++).setValue(row.itemNo);
         targetRow.getCell(1,column++).setValue(row.date);
         targetRow.getCell(1,column++).setValue(row.startTime);
         targetRow.getCell(1,column++).setValue(row.endTime);

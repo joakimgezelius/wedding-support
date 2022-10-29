@@ -210,6 +210,11 @@ class DecorSummaryBuilder {
       targetRow.getCell(1,column++).setValue(row.status);      
 //    targetRow.getCell(1,column++).setValue(row.links);
       ++column;
+      ++column;
+      ++column;
+      ++column;
+      ++column;
+      ++column;
       targetRow.getCell(1,column++).setValue(row.notes);
     }
   }

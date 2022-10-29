@@ -51,13 +51,13 @@ class HubSpot {
       return data;
     };
     apiCall(paging.link);*/
-    trace(`Paging After : ${ paging.after}, Link : ${ paging.link+"&hapikey=0020bf99-6b2a-4887-90af-adac067aacba" }`);
+    trace(`Paging After : ${ paging.after}, Link : ${ paging.link+"&hapikey=d69a4027-d1cf-4730-9492-cf16faf333b1" }`);
     sheet.getRange(3,1,items.length,items[0].length).setValues(items);
     //if (paging) { return true};
   }
 
   static listEngagement() {
-    let url = "https://api.hubapi.com/engagements/v1/engagements/paged?hapikey=0020bf99-6b2a-4887-90af-adac067aacba&limit=250";
+    let url = "https://api.hubapi.com/engagements/v1/engagements/paged?hapikey=d69a4027-d1cf-4730-9492-cf16faf333b1&limit=250";
     let response = UrlFetchApp.fetch(url);
     trace(`HubSpot.listEngagement --> ${response.getContentText()}`);
     let data = JSON.parse(response.getContentText());
@@ -88,7 +88,7 @@ class HubSpot {
   }  
 
   static contactToDeal() {
-    let url = "https://api.hubapi.com/crm/v3/objects/contacts?associations=deal&hapikey=0020bf99-6b2a-4887-90af-adac067aacba";
+    let url = "https://api.hubapi.com/crm/v3/objects/contacts?associations=deal&hapikey=d69a4027-d1cf-4730-9492-cf16faf333b1";
     let response = UrlFetchApp.fetch(url);
     trace(`HubSpot.contactToDeal --> ${response.getContentText()}`);
     let data = JSON.parse(response.getContentText());
@@ -100,7 +100,7 @@ class HubSpot {
 
   static dealToContact(dealId) {
     trace("dealToContact")
-    let url = "https://api.hubapi.com/crm/v3/objects/deals/"+dealId+"/associations/contacts?hapikey=0020bf99-6b2a-4887-90af-adac067aacba"
+    let url = "https://api.hubapi.com/crm/v3/objects/deals/"+dealId+"/associations/contacts?hapikey=d69a4027-d1cf-4730-9492-cf16faf333b1"
     let response = UrlFetchApp.fetch(url);
     let data = JSON.parse(response.getContentText());
     let result = Array.from(data['results']);
@@ -122,7 +122,7 @@ class HubSpot {
       let dealId = Spreadsheet.getCellValue("HubSpotDeal");
       trace(`Deal ID : ${dealId}`);
       Dialog.notify("Updating Client Data...","Please wait updating Client Data from HubSpot!");
-      let url = "https://api.hubapi.com/crm/v3/objects/deals/"+dealId+"?properties=hs_object_id,invoice_id,estimate_id,amount,closedate,createdate,dealname,description,hubspot_owner_id,dealstage,dealtype,departure_date,hs_forecast_amount,hs_manual_forecast_category,hs_forecast_probability,hubspot_team_id,hs_lastmodifieddate,hs_next_step,num_associated_contacts,hs_priority,pipeline&archived=false&hapikey=0020bf99-6b2a-4887-90af-adac067aacba";
+      let url = "https://api.hubapi.com/crm/v3/objects/deals/"+dealId+"?properties=hs_object_id,invoice_id,estimate_id,amount,closedate,createdate,dealname,description,hubspot_owner_id,dealstage,dealtype,departure_date,hs_forecast_amount,hs_manual_forecast_category,hs_forecast_probability,hubspot_team_id,hs_lastmodifieddate,hs_next_step,num_associated_contacts,hs_priority,pipeline&archived=false&hapikey=d69a4027-d1cf-4730-9492-cf16faf333b1";
       let response = UrlFetchApp.fetch(url);
       let data = JSON.parse(response.getContentText());
       console.log(data);
@@ -154,7 +154,7 @@ class HubSpot {
   static listContact(contactId) {
     trace("listContact");
     //try {
-      let url = "https://api.hubapi.com/crm/v3/objects/contacts/"+contactId+"?properties=invoice_no,first_conversion_date,deal_status,hubspot_owner_id,contacttype,number_of_guests__inc_the_couple_,decor,hs_object_id,firstname,lastname,meet___greet_date,meet___greet_time,event_date,confirmed_wedding_date,time_of_ceremony,confirmed_venue,venue___reception,do_you_require_witnesses_,documents_status,notes,createdate,email,hs_email_domain,phone,annualrevenue,number_of_guests,asana_link,hs_lifecyclestage_customer_date,hs_lifecyclestage_lead_date,hs_lifecyclestage_marketingqualifiedlead_date,hs_lifecyclestage_salesqualifiedlead_date,hs_lifecyclestage_subscriber_date,hs_lifecyclestage_evangelist_date,hs_lifecyclestage_opportunity_date,hs_lifecyclestage_other_date,city,company,hs_object_id,country,date,date_worked,do_you_agree_to_special_terms_in_the_event_of_a_coronavirus_event,hs_content_membership_email_confirmed,event_start_time,industry,is_there_any_food_that_you_dislike,is_your_kitchen_fulled_equipped_and_functional,jobtitle,kitchen,kitchen_1,lastmodifieddate,hs_latest_sequence_ended_date,hs_latest_sequence_enrolled,hs_latest_sequence_enrolled_date,lifecyclestage,hs_marketable_status,hs_marketable_reason_id,hs_marketable_reason_type,hs_marketable_until_renewal,mobilephone,numemployees,hs_sequences_enrolled_count,hs_createdate,hs_persona,zip,hs_language,salutation,state,address,hs_content_membership_registration_email_sent_at,time_sheet,twitterhandle,website,what_the_occasion&archived=false&hapikey=0020bf99-6b2a-4887-90af-adac067aacba";
+      let url = "https://api.hubapi.com/crm/v3/objects/contacts/"+contactId+"?properties=invoice_no,first_conversion_date,deal_status,hubspot_owner_id,contacttype,number_of_guests__inc_the_couple_,decor,hs_object_id,firstname,lastname,meet___greet_date,meet___greet_time,event_date,confirmed_wedding_date,time_of_ceremony,confirmed_venue,venue___reception,do_you_require_witnesses_,documents_status,notes,createdate,email,hs_email_domain,phone,annualrevenue,number_of_guests,asana_link,hs_lifecyclestage_customer_date,hs_lifecyclestage_lead_date,hs_lifecyclestage_marketingqualifiedlead_date,hs_lifecyclestage_salesqualifiedlead_date,hs_lifecyclestage_subscriber_date,hs_lifecyclestage_evangelist_date,hs_lifecyclestage_opportunity_date,hs_lifecyclestage_other_date,city,company,hs_object_id,country,date,date_worked,do_you_agree_to_special_terms_in_the_event_of_a_coronavirus_event,hs_content_membership_email_confirmed,event_start_time,industry,is_there_any_food_that_you_dislike,is_your_kitchen_fulled_equipped_and_functional,jobtitle,kitchen,kitchen_1,lastmodifieddate,hs_latest_sequence_ended_date,hs_latest_sequence_enrolled,hs_latest_sequence_enrolled_date,lifecyclestage,hs_marketable_status,hs_marketable_reason_id,hs_marketable_reason_type,hs_marketable_until_renewal,mobilephone,numemployees,hs_sequences_enrolled_count,hs_createdate,hs_persona,zip,hs_language,salutation,state,address,hs_content_membership_registration_email_sent_at,time_sheet,twitterhandle,website,what_the_occasion&archived=false&hapikey=d69a4027-d1cf-4730-9492-cf16faf333b1";
       let response = UrlFetchApp.fetch(url);
       let data = JSON.parse(response.getContentText());
       console.log(data);
@@ -203,6 +203,6 @@ class HubSpotDataDictionary {
 }
 
 HubSpot.baseUrl = "https://api.hubapi.com/crm/v3/objects";
-HubSpot.key = "0020bf99-6b2a-4887-90af-adac067aacba";
+HubSpot.key = "d69a4027-d1cf-4730-9492-cf16faf333b1";
 HubSpot.dataDictionarySheetId = "1C_uOMH30siZLSGzYOziBfcl_lx5ZZRYCBv7fqpegGEk";
 

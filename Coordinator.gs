@@ -76,6 +76,8 @@ class EventDetailsUpdater {
   onRow(row) {
     trace("EventDetailsUpdater.onRow " + row.sectionId + " " + this.itemNo);
     ++this.itemNo;
+    let a1_category = row.getA1Notation("Category");
+    let a1_status   = row.getA1Notation("Status");
     let a1_selected = row.getA1Notation("Selected");
     let a1_currency = row.getA1Notation("Currency");
     let a1_quantity = row.getA1Notation("Quantity");
@@ -92,6 +94,9 @@ class EventDetailsUpdater {
     if (row.itemNo === "" || this.forced) { // Only set item number if empty (or forced)
       row.itemNo = this.generateItemId();
     }
+
+    row.isStoreTicked = `=OR(${a1_category}="Stock to Buy", ${a1_status}="Store Gibraltar", ${a1_status}="Store Los Barrios", ${a1_status}="To Buy")`;
+
     this.setNativeUnitCost(row);
     row.nativeUnitCostWithVAT = `=IF(OR(${a1_currency}="", ${a1_nativeUnitCost}="", ${a1_nativeUnitCost}=0), "", ${a1_nativeUnitCost}*(1+${a1_vat}))`;
     row.getCell("NativeUnitCostWithVAT").setNumberFormat(row.currencyFormat);
@@ -101,7 +106,8 @@ class EventDetailsUpdater {
     row.unitPrice = `=IF(OR(${a1_unitCost}="", ${a1_unitCost}=0), "", ${a1_unitCost} * ( 1 + ${a1_markup}))`;
     row.totalPrice = `=IF(OR(${a1_quantity}="", ${a1_quantity}=0, ${a1_unitPrice}="", ${a1_unitPrice}=0, ${a1_selected}=FALSE), "", ${a1_quantity} * ${a1_unitPrice})`;
 //  row.commission = `=IF(OR(${a1_commissionPercentage}="", ${a1_commissionPercentage}=0), "", ${a1_quantity} * ${a1_unitCost} * ${a1_commissionPercentage})`;
-    if (row.isStaffTicked && (row.quantity === "")) { // Calculate quantity if staff and time fields are filled 
+  // Check this quantity calculation formula after StaffTicked is replaced with StoreTicked
+    if (row.isStoreTicked && (row.quantity === "")) { // Calculate quantity if staff and time fields are filled  (isStoreTicked instead StaffTicked)
       row.quantity = `=IF(OR(${a1_startTime}="", ${a1_endTime}=""), "", ((hour(${a1_endTime})*60+minute(${a1_endTime}))-(hour(${a1_startTime})*60+minute(${a1_startTime})))/60)`;
     }
     if (row.isInStock && this.forced) { // Set mark-up and commission for in-stock items

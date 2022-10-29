@@ -61,7 +61,8 @@ class EventRow extends RangeRow {
   get itemNo()              { return this.get("ItemNo", "string"); }
   get isDecorTicked()       { return this.get("DecorTicked", "boolean"); }
   get isSupplierTicked()    { return this.get("VenueTicked", "boolean"); }
-  get isStaffTicked()       { return this.get("StaffTicked", "boolean"); }
+  get isStoreTicked()       { return this.get("StoreTicked"); }      // To pick store items through query & accept it blank
+  //get isStaffTicked()     { return this.get("StaffTicked", "boolean"); }
   get isItineraryTicked()   { return this.get("ItineraryTicked", "boolean"); }
   get isTitle()             { return this.category.toLowerCase() === "title"; }    // Is this a title row?
   get isSubItem()           { return this.category.toLowerCase() === "part"; }     // Is this a sub-item?
@@ -104,7 +105,9 @@ class EventRow extends RangeRow {
   get isSelected()          { return this.get("Selected"); } // Accept blank
  
   set itemNo(value)         { this.set("ItemNo", value); }
+  set isStoreTicked(value)  { this.set("StoreTicked", value); }   // To inject query to tick true/false based on other column values
   set category(value)       { this.set("Category", value); }
+  set status(value)         { this.get("Status", value); }
   set supplier(value)       { this.set("Supplier", value); }
   set description(value)    { this.set("Description", value); }
   set quantity(value)       { this.set("Quantity", value); }
