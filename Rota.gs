@@ -31,10 +31,10 @@ function onUpdateEventCoordinationSheet() {
   let clientSheetList = new ClientSheetList;
    
   clientSheetList.setQuery("MasterQuery",
-    "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col9,Col10,Col11,Col12,Col13,Col14,Col16,Col18,Col28 WHERE Col6<>'TITLE'", 
+    "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col9,Col10,Col11,Col12,Col13,Col14,Col16,Col18,Col28 WHERE Col17=TRUE", 
     "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col4) CONTAINS 'cancelled' ORDER BY Col5");
 
-  /* clientSheetList.setQuery("ThingsToOrderQuery",
+  /*AND LOWER(Col17) CONTAINS 'true' clientSheetList.setQuery("ThingsToOrderQuery",
     "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col11,Col12,Col13,Col18,Col16 WHERE LOWER (Col7) CONTAINS 'to order' OR Col7='Ordered'", 
     "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' ORDER BY Col5");
 
