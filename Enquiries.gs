@@ -55,7 +55,7 @@ function onPrepareClientStructureLargeWedding() {
 function onPrepareClientStructure() {
   trace("onPrepareClientStructure");
   let enquiries = new Enquiries;
-  let sourceFolderId = "1ymnIJwPmvVC2clGJdCZZqcNwQC_gED6a";                          // Weddings & Events > Templates > Client Folder Template 2022 
+  let sourceFolderId = "1O_8U4tBeHc4-teA5FBItDi0z1P_FAgtF";                          // Weddings & Events > Templates > Client Folder Template 2022 
   let templateClientSheetLink = Spreadsheet.getCellValueLinkUrl("TemplateClientSheet"); // URL to the W & E's template sheet
   enquiries.selected.prepareClientStructure(sourceFolderId, templateClientSheetLink);
 }
