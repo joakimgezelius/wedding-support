@@ -30,6 +30,9 @@ function onUpdateEventCoordinationSheet() {
   trace("onUpdateEventCoordinationSheet");
   let clientSheetList = new ClientSheetList;
    
+  // Note: We now use a two-phased appraoch, first phase collects a master data set based on a query we compile in code (next couple of lines),
+  //       after which secodary queries on each tab further filters the data set.
+  //
   clientSheetList.setQuery("MasterQuery",
     "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col9,Col10,Col11,Col12,Col13,Col14,Col16,Col18,Col28,Col35 WHERE Col17=TRUE", 
     "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col4) CONTAINS 'cancelled' ORDER BY Col5");
