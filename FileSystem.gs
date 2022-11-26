@@ -141,6 +141,13 @@ class Folder {
     return new Folder(newFolder);
   }
   
+  createShortcut(targetId) {
+    trace(`createShortcut("${targetId}) in ${this.trace}`);
+    // https://developers.google.com/apps-script/reference/drive/folder#createshortcuttargetid
+    let shortcut = this._nativeFolder.createShortcut(targetId);
+    return new File(shortcut); // The shortcut is a file, even if it is a shortcut to a folder
+  }
+
   get nativeFolder() { return this._nativeFolder; }
   get parents()      { return this.nativeFolder.getParents(); }
   get parent()       { return new Folder(this.parents.next()); }  

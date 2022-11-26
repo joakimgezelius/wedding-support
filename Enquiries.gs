@@ -141,9 +141,9 @@ class Enquiry extends RangeRow {
     trace(`prepareClientStructure for ${this.trace}`);
     let sourceFolder = Folder.getById(sourceFolderId);
     //let destinationFolderId = "1oHr5tRJJzDq96F8mlHXf2Ikx6aE5KJKf";              // Destination - W & E's >>> Upcoming
-    let destinationFolderURL = Spreadsheet.getCellValueLinkUrl("ClientFoldersRoot"); // Destination - W & E's param named range ClientFoldersRoot
+    let destinationFolderLink = Spreadsheet.getCellValueLinkUrl("ClientFoldersRoot"); // Destination - W & E's param named range ClientFoldersRoot
     let destinationFolder = Folder.getByUrl(destinationFolderURL);
-    let paymentsFoldersRootURL = Spreadsheet.getCellValueLinkUrl("paymentsFoldersRoot"); // Destination - W & E's param named range PaymentsFoldersRoot
+    let paymentsFoldersRootLink = Spreadsheet.getCellValueLinkUrl("paymentsFoldersRoot"); // Destination - W & E's param named range PaymentsFoldersRoot
     let paymentsFoldersRoot = Folder.getByUrl(paymentsFoldersRootURL);
     if (destinationFolder.folderExists(this.fileName)) {
       Dialog.notify("Client folder already exists!","Please check the Weddings & Events Folder for more details.");      

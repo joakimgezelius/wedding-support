@@ -100,6 +100,7 @@ class Spreadsheet {
 
   static getCellValueLinkUrl(rangeName) {
     let nativeRange = SpreadsheetApp.getActiveSpreadsheet().getRangeByName(rangeName);
+    // https://developers.google.com/apps-script/reference/spreadsheet/rich-text-value#getLinkUrl()
     let url = nativeRange.getCell(1,1).getRichTextValue().getLinkUrl();
     trace(`Spreadsheet.getCellValueLinkUrl(${rangeName}) --> ${url}`);
     return url;
