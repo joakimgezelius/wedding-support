@@ -39,7 +39,11 @@ function onTestCase2() {
 
 function onTestCase3() {        // Other Testings
   trace("onTestCase3");
-  let hubSpotDataDictionary = HubSpotDataDictionary.current;
-  let hubSpotDataDictionary2 = HubSpotDataDictionary.current;
+  //let hubSpotDataDictionary = HubSpotDataDictionary.current;
+  //let hubSpotDataDictionary2 = HubSpotDataDictionary.current;
+  let templateFolderLink = Spreadsheet.getCellValueLinkUrl("TemplateClientFolder");     // W & E's >> Upcoming
+  let templateClientSheetLink = Spreadsheet.getCellValueLinkUrl("TemplateClientSheet"); // URL to the W & E's template sheet
+  let sourceFolder = Folder.getByUrl(templateFolderLink);
+  trace("Source Folder: " + sourceFolder);
 }
 
