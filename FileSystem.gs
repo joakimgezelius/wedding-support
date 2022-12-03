@@ -141,11 +141,18 @@ class Folder {
     return new Folder(newFolder);
   }
   
-  createShortcut(targetId) {
-    trace(`createShortcut("${targetId}) in ${this.trace}`);
+  // Create a shortcut in the folder to either a file or a folder, optionally giving it a new name
+  // usage: myFolder.createShortcut(target[, newName]);
+  //
+  createShortcut(target, shortcutName = target.name) {
+    trace(`createShortcut to ${target.trace}, name: ${shortcutName} in ${this.trace}`);
+    if (this.fileExists(shortcutName)) { // Avoid creating multiple shortcuts with the same name
+      Error.fatal(`File "${shortcutName}" already exists in folder "${this.path}"`);
+    }
     // https://developers.google.com/apps-script/reference/drive/folder#createshortcuttargetid
-    let shortcut = this._nativeFolder.createShortcut(targetId);
-    return new File(shortcut); // The shortcut is a file, even if it is a shortcut to a folder
+    let shortcut = new File(this._nativeFolder.createShortcut(target.id)); // The shortcut is a file, even if it is a shortcut to a folder
+    shortcut.name = shortcutName; // Rename the shortcut if a different name was given
+    return shortcut;
   }
 
   get nativeFolder() { return this._nativeFolder; }
@@ -159,7 +166,7 @@ class Folder {
   get trace()        { return this._trace; }
 
   set owner(emailAddress) {
-    trace `set owner of ${this.trace} to ${emailAddress}`
+    trace(`set owner of ${this.trace} to ${emailAddress}`);
     this.nativeFolder.setOwner(emailAddress);
   }
 
@@ -173,7 +180,6 @@ class File {
 
   constructor(nativeFile) {
     this._nativeFile = nativeFile;
-    this._trace = `{File ${this.id} "${this.name}"}`;
     trace("NEW " + this.trace);
   }
   
@@ -219,13 +225,20 @@ class File {
   get url()        { return this.nativeFile.getUrl(); }
   get name()       { return this.nativeFile.getName(); }
   get owner()      { return this.nativeFile.getOwner()?.getEmail() ?? null; } // Owner email address
-  get trace()      { return this._trace; }
+  get trace()      { return `{File ${this.id} "${this.name}"}`; }
 
   set owner(emailAddress) {
-    trace `set owner of ${this.trace} to ${emailAddress}`
+    trace(`set owner of ${this.trace} to ${emailAddress}`);
     this.nativeFile.setOwner(emailAddress);
   }
 
+  // name property setter function, renames the file
+  // usage: myFile.name = "new name";
+  set name(newName) {
+    // https://developers.google.com/apps-script/reference/drive/file#setName(String)
+    trace(`set name of  ${this.trace} to ${newName}`);
+    this.nativeFile.setName(newName);
+  }
 } // File
 
 //----------------------------------------------------------------------------------------
@@ -258,6 +271,7 @@ class SharedDrive {
     let drive = list.find( ({ id }) => id === lookup );
     return new SharedDrive(drive.id, drive.name);
   }
+
   static GetByName(lookup) {
     let list = SharedDrive.list;
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find

@@ -152,27 +152,26 @@ class Enquiry extends RangeRow {
     else {
       Dialog.notify("Preparing the Structure...", "Making the new Client Document Structure, This may take a few seconds...");
       sourceFolder.copyTo(destinationFolder, this.fileName);                    // Copies source folder contents to target folder
-      let paymentsFolderName =  this.fileName + " - PAYMENTS";
+      let paymentsFolderName =  this.fileName + " - Payments";
       sourceFolder.copyTo(paymentsFoldersRoot, paymentsFolderName);
 
       let templateSheetFile = File.getByUrl(templateClientSheetLink);
 
-      let clientFolder = destinationFolder.getSubfolder(this.fileName);         // Gets newly created client folder by name
-      let clientFolderLink = clientFolder.url;                                  // Gets the URL of newly created client folder 
-      this.set("FolderLink",clientFolderLink);                                  // Sets the folder link to the cell in FolderLink Column
+      let clientFolder = destinationFolder.getSubfolder(this.fileName);          // Gets newly created client folder by name
+      let clientFolderLink = clientFolder.url;                                   // Gets the URL of newly created client folder 
+      this.set("FolderLink",clientFolderLink);                                   // Sets the folder link to the cell in FolderLink Column
 
-      let paymentFolder = paymentsFoldersRoot.getSubfolder(paymentsFolderName); // Gets newly created payment folder by name
-      let paymentFolderLink = paymentFolder.url;                                // Returns URL to Payment Folder
-      this.set("PaymentLink",paymentFolderLink);                                // Sets the URL to the Master sheet
+      let paymentFolder = paymentsFoldersRoot.getSubfolder(paymentsFolderName);  // Gets newly created payment folder by name
+      let paymentFolderLink = paymentFolder.url;                                 // Returns URL to Payment Folder
+      this.set("PaymentLink",paymentFolderLink);                                 // Sets the URL to the Master sheet
 
-      //let targetFolderName = "Office Use";                                    // Folder name to look for copying the template file in it
+      //let targetFolderName = "Office Use";                                     // Folder name to look for copying the template file in it
       //let subFolder = clientFolder.getSubfolder(targetFolderName);
-      //let subFolderId = subFolder.id;                                         // Gets the id of found subfolder "Office Use"
+      //let subFolderId = subFolder.id;                                          // Gets the id of found subfolder "Office Use"
 
-      let targetFolder = clientFolder;                                          // Gets the folder by id to copy the template file in it
+      let targetFolder = clientFolder;                                           // Gets the folder by id to copy the template file in it
       if (targetFolder) {
-          let paymentFolderID = paymentFolder.id;                               // Returns ID of Payment Folder of the client
-          clientFolder.createShortcut(paymentFolderID);                         // Creates shortcut to Payment Folder in Client Folder
+          clientFolder.createShortcut(paymentFolder, "Payments");                // Creates shortcut to Payment Folder in Client Folder
           templateSheetFile.copyTo(targetFolder,this.fileName);       
           let newClientSheet = targetFolder.getFile(this.fileName);              // Gets the newly copied file with given name
           let newClientSheetId = newClientSheet.id;                              // Returns the id of found file
