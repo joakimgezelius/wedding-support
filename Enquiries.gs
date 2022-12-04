@@ -133,8 +133,7 @@ class Enquiry extends RangeRow {
     let weddingClientTemplateFile = File.getById(weddingClientTemplateSpreadsheetId);
     let clientSpreadsheetFile = weddingClientTemplateFile.copyTo(targetFolder, clientSheetName);
     this.clientSheet = Spreadsheet.openById(clientSpreadsheetFile.id);
-    this.sheetId = this.clientSheet.id;
-    this.sheetLink = `=hyperlink("${this.clientSheet.url}";"...")`;
+    this.setHyperLink("SheetLink", this.clientSheet.url, "Sheet");
     Browser.newTab(this.clientSheet.url);
   }
 
@@ -153,17 +152,17 @@ class Enquiry extends RangeRow {
       Dialog.notify("Preparing the Structure...", "Making the new Client Document Structure, This may take a few seconds...");
       sourceFolder.copyTo(destinationFolder, this.fileName);                    // Copies source folder contents to target folder
       let paymentsFolderName =  this.fileName + " - Payments";
-      sourceFolder.copyTo(paymentsFoldersRoot, paymentsFolderName);
+      paymentsFoldersRoot.createFolder(paymentsFolderName);
 
       let templateSheetFile = File.getByUrl(templateClientSheetLink);
 
       let clientFolder = destinationFolder.getSubfolder(this.fileName);          // Gets newly created client folder by name
       let clientFolderLink = clientFolder.url;                                   // Gets the URL of newly created client folder 
-      this.set("FolderLink",clientFolderLink);                                   // Sets the folder link to the cell in FolderLink Column
+      this.setHyperLink("FolderLink",clientFolderLink, "Folder");                // Sets the folder link in the cell in FolderLink Column
 
-      let paymentFolder = paymentsFoldersRoot.getSubfolder(paymentsFolderName);  // Gets newly created payment folder by name
-      let paymentFolderLink = paymentFolder.url;                                 // Returns URL to Payment Folder
-      this.set("PaymentLink",paymentFolderLink);                                 // Sets the URL to the Master sheet
+      let paymentsFolder = paymentsFoldersRoot.getSubfolder(paymentsFolderName); // Gets newly created payment folder by name
+      let paymentsFolderLink = paymentsFolder.url;                               // Returns URL to Payment Folder
+      this.setHyperLink("PaymentsLink", paymentsFolderLink, "Payments");         // Sets the URL in the Master sheet
 
       //let targetFolderName = "Office Use";                                     // Folder name to look for copying the template file in it
       //let subFolder = clientFolder.getSubfolder(targetFolderName);
@@ -171,7 +170,7 @@ class Enquiry extends RangeRow {
 
       let targetFolder = clientFolder;                                           // Gets the folder by id to copy the template file in it
       if (targetFolder) {
-          clientFolder.createShortcut(paymentFolder, "Payments");                // Creates shortcut to Payment Folder in Client Folder
+          clientFolder.createShortcut(paymentsFolder, "Payments");                // Creates shortcut to Payment Folder in Client Folder
           templateSheetFile.copyTo(targetFolder,this.fileName);       
           let newClientSheet = targetFolder.getFile(this.fileName);              // Gets the newly copied file with given name
           let newClientSheetId = newClientSheet.id;                              // Returns the id of found file
@@ -226,16 +225,13 @@ class Enquiry extends RangeRow {
   get date()            { return this.get("EventDate"); }
   // Time-Zone Changes in the Summer Time begins and ends at 1:00 a.m ( Universal Time (GMT))
   get fileName()        { return `${Utilities.formatDate(this.date, "GMT+2", "yyyy-MM-dd")} ${this.name}`; }  
-  get sheetId()         { return this.get("SheetId", "string"); }
   get sheetLink()       { return this.get("SheetLink", "string"); }  
-  get folderId()        { return this.get("FolderId", "string"); }
+  get folderLink()      { return this.get("FolderLink", "string"); }
   get folderLink()      { return this.get("FolderLink", "string"); }
   get isValid()         { return this._isValid; }
   get rowOffset()       { return this._rowOffset; }
-  set sheetId(value)    { this.set("SheetId", value); }
   set sheetLink(value)  { this.set("SheetLink", value); }
-  set folderId(value)   { this.set("FolderId", value); }
-  set folderLink(value) { this.set("FolderLink", value); }
+
 
   get trace() { return `{Enquiry #${this.rowOffset} ${this._name} ${this.isValid ? "(valid)" : "(invalid)"}}`; }
   

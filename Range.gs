@@ -284,6 +284,12 @@ class RangeRow {
     cell.setValue(value);
   }
 
+  setHyperLink(columnName, url, label = url) {
+    let value = `=hyperlink("${url}","${label}")`;
+    trace(`RangeRow.setHyperLink ${columnName} = [${url}, ${label}]`);
+    this.set(columnName, value);
+  }
+
   copyFieldTo(destination, columnName) {
     destination.set(columnName, this.get(columnName));
   }
