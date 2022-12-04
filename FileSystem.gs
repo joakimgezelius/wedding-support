@@ -239,6 +239,16 @@ class File {
     trace(`set name of  ${this.trace} to ${newName}`);
     this.nativeFile.setName(newName);
   }
+
+  grantImportAccess() {
+    // From the forums:
+    //  - https://stackoverflow.com/questions/28038768/how-to-allow-access-for-importrange-function-via-apps-script/32474761#32474761
+    //  - https://stackoverflow.com/questions/25178205/how-can-i-make-an-apps-script-to-instantly-allow-access-to-all-imported-elements
+    // https://developers.google.com/apps-script/reference/drive/file#setSharing(Access,Permission)
+    trace(`file.grantImportAccess ${this.trace}`);
+    this.nativeFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+  }
+
 } // File
 
 //----------------------------------------------------------------------------------------
