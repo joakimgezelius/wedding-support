@@ -11,19 +11,19 @@ function onUpdateEnquiries() {
   //enquiries.update(enquiriesNoReply);
 }
 
-// Open client sheet for the selected client, 
+// Open project sheet for the selected project, 
 // - create a new sheet if no such sheet exists
 //
-function onOpenClientSheet() {
-  trace("onOpenClientSheet");
+function onOpenProjectSheet() {
+  trace("onOpenProjectSheet");
   let enquiries = new Enquiries;
-  enquiries.selected.openClientSheet();
+  enquiries.selected.openProjectSheet();
 }
 
-function onCreateNewClientSheet() {
-  trace("onCreateNewClientSheet");
+function onCreateNewProjectSheet() {
+  trace("onCreateNewProjectSheet");
   let enquiries = new Enquiries;
-  enquiries.selected.createNewClientSheet();
+  enquiries.selected.createNewProjectSheet();
 }
 
 function onDraftSelectedEmail() {
@@ -32,33 +32,12 @@ function onDraftSelectedEmail() {
   enquiries.selected.draftSelectedEmail();
 }
 
-/* To Prepare Client Document Structure for Small Weddings
-
-function onPrepareClientStructureSmallWedding() {
-  trace("onPrepareClientStructureSmallWedding");
-  let enquiries = new Enquiries;        
-  let sourceFolderId = "1tDi9fOQuQBZSk1z43C6aeo27dAu7WQuS";                                         // Folder ID of Small W & E's template 
-  let templateClientSheetLink = Spreadsheet.getCellValueLinkUrl("TemplateClientSheetSmallWedding"); // URL to the Small W & E's template
-  enquiries.selected.prepareClientStructure(templateFolderLink, templateClientSheetLink);  
-}
-
-// To Prepare Client Document Structure for Large Weddings
-
-function onPrepareClientStructureLargeWedding() {
-  trace("onPrepareClientStructureLargeWedding");
+function onPrepareProjectStructure() {
+  trace("onPrepareProjectStructure");
   let enquiries = new Enquiries;
-  let sourceFolderId = "1hjGms-aGkTqdRtifqXhsF-WPN4uojs2a";                                         // Folder ID of Large W & E's template
-  let templateClientSheetLink = Spreadsheet.getCellValueLinkUrl("TemplateClientSheetLargeWedding"); // URL to the Large W & E's template
-  enquiries.selected.prepareClientStructure(templateFolderLink, templateClientSheetLink);
-}*/
-
-function onPrepareClientStructure() {
-  trace("onPrepareClientStructure");
-  let enquiries = new Enquiries;
-  //let sourceFolderId = "1O_8U4tBeHc4-teA5FBItDi0z1P_FAgtF";                         // Weddings & Events > Templates > Client Folder Template 2022 
-  let templateFolderLink = Spreadsheet.getCellValueLinkUrl("TemplateClientFolder");     // W & E's >> Upcoming
-  let templateClientSheetLink = Spreadsheet.getCellValueLinkUrl("TemplateClientSheet"); // URL to the W & E's template sheet
-  enquiries.selected.prepareClientStructure(templateFolderLink, templateClientSheetLink);
+  let templateFolderLink = Spreadsheet.getCellValueLinkUrl("TemplateProjectFolder");     // W & E's >> Upcoming
+  let templateProjectSheetLink = Spreadsheet.getCellValueLinkUrl("TemplateProjectSheet"); // URL to the W & E's template sheet
+  enquiries.selected.prepareProjectStructure(templateFolderLink, templateProjectSheetLink);
 }
 
 //========================================================================================================
@@ -123,63 +102,62 @@ class Enquiry extends RangeRow {
     trace("NEW " + this.trace);
   }
   
-  createNewClientSheet() {
-    trace(`createNewClientSheet for ${this.trace}`);
+  createNewProjectSheet() {
+    trace(`createNewProjectSheet for ${this.trace}`);
     if (!this.isValid) {
       Error.fatal("Please select a valid enquiry.");
     };
-    let clientSheetName = `${this.name} (Prospect Client)`;
+    let projectSheetName = `${this.name}`;
     //  let targetFolder = Folder.getById(enquiriesFolderId);
-    let weddingClientTemplateFile = File.getById(weddingClientTemplateSpreadsheetId);
-    let clientSpreadsheetFile = weddingClientTemplateFile.copyTo(targetFolder, clientSheetName);
-    this.clientSheet = Spreadsheet.openById(clientSpreadsheetFile.id);
-    this.setHyperLink("SheetLink", this.clientSheet.url, "Sheet");
-    Browser.newTab(this.clientSheet.url);
+    let weddingProjectTemplateFile = File.getById(weddingProjectTemplateSpreadsheetId);
+    let projectSpreadsheetFile = weddingProjectTemplateFile.copyTo(targetFolder, projectSheetName);
+    this.projectSheet = Spreadsheet.openById(projectSpreadsheetFile.id);
+    this.setHyperLink("SheetLink", this.projectSheet.url, "Sheet");
+    Browser.newTab(this.projectSheet.url);
   }
 
-  prepareClientStructure(templateFolderLink, templateClientSheetLink) {
-    trace(`prepareClientStructure for ${this.trace}`);
+  prepareProjectStructure(templateFolderLink, templateProjectSheetLink) {
+    trace(`prepareProjectStructure for ${this.trace}`);
     let sourceFolder = Folder.getByUrl(templateFolderLink);
-    //let destinationFolderId = "1oHr5tRJJzDq96F8mlHXf2Ikx6aE5KJKf";              // Destination - W & E's >>> Upcoming
-    let destinationFolderURL = Spreadsheet.getCellValueLinkUrl("ClientFoldersRoot"); // Destination - W & E's param named range ClientFoldersRoot
+    let destinationFolderURL = Spreadsheet.getCellValueLinkUrl("ProjectFoldersRoot"); // Destination - W & E's param named range ProjectFoldersRoot
     let destinationFolder = Folder.getByUrl(destinationFolderURL);
     let paymentsFoldersRootURL = Spreadsheet.getCellValueLinkUrl("PaymentsFoldersRoot"); // Destination - W & E's param named range PaymentsFoldersRoot
     let paymentsFoldersRoot = Folder.getByUrl(paymentsFoldersRootURL);
     if (destinationFolder.folderExists(this.fileName)) {
-      Dialog.notify("Client folder already exists!","Please check the Weddings & Events Folder for more details.");      
+      Dialog.notify("Project folder already exists!","Please check the Weddings & Events Folder for more details.");      
     } 
     else {
-      Dialog.notify("Preparing the Structure...", "Making the new Client Document Structure, This may take a few seconds...");
+      Dialog.notify("Preparing the Structure...", "Making the new Project Document Structure, This may take a few seconds...");
       sourceFolder.copyTo(destinationFolder, this.fileName);                    // Copies source folder contents to target folder
       let paymentsFolderName =  this.fileName + " - Payments";
       paymentsFoldersRoot.createFolder(paymentsFolderName);
 
-      let templateSheetFile = File.getByUrl(templateClientSheetLink);
+      let templateSheetFile = File.getByUrl(templateProjectSheetLink);
 
-      let clientFolder = destinationFolder.getSubfolder(this.fileName);          // Gets newly created client folder by name
-      let clientFolderLink = clientFolder.url;                                   // Gets the URL of newly created client folder 
-      this.setHyperLink("FolderLink",clientFolderLink, "Folder");                // Sets the folder link in the cell in FolderLink Column
+      let projectFolder = destinationFolder.getSubfolder(this.fileName);         // Gets newly created project folder by name
+      let projectFolderLink = projectFolder.url;                                 // Gets the URL of newly created project folder 
+      this.setHyperLink("FolderLink",projectFolderLink, "Folder");               // Sets the folder link in the cell in FolderLink Column
 
       let paymentsFolder = paymentsFoldersRoot.getSubfolder(paymentsFolderName); // Gets newly created payment folder by name
       let paymentsFolderLink = paymentsFolder.url;                               // Returns URL to Payment Folder
       this.setHyperLink("PaymentsLink", paymentsFolderLink, "Payments");         // Sets the URL in the Master sheet
 
       //let targetFolderName = "Office Use";                                     // Folder name to look for copying the template file in it
-      //let subFolder = clientFolder.getSubfolder(targetFolderName);
+      //let subFolder = projectFolder.getSubfolder(targetFolderName);
       //let subFolderId = subFolder.id;                                          // Gets the id of found subfolder "Office Use"
 
-      let targetFolder = clientFolder;                                           // Gets the folder by id to copy the template file in it
+      let targetFolder = projectFolder;                                          // Gets the folder by id to copy the template file in it
       if (targetFolder) {
-          clientFolder.createShortcut(paymentsFolder, "Payments");                // Creates shortcut to Payment Folder in Client Folder
+          projectFolder.createShortcut(paymentsFolder, "Payments");              // Creates shortcut to Payment Folder in Project Folder
           templateSheetFile.copyTo(targetFolder,this.fileName);       
-          let newClientSheet = targetFolder.getFile(this.fileName);              // Gets the newly copied file with given name
-          let newClientSheetId = newClientSheet.id;                              // Returns the id of found file
-          let clientTemplate = Spreadsheet.openById(newClientSheetId);
-          clientTemplate.setActive();                                            // Sets the active spreadsheet Confirmed W & E to new client sheet
-          let newClientSheetLink = newClientSheet.url;                           // Gets the URL of newly copied template file 
-          this.set("SheetLink",newClientSheetLink);                              // Sets the client sheet link to the cell in SheetLink Column
-          Dialog.notify("Client Document Structure Created!","Please check column Client Sheet & Client Folder for more details.");
-          Browser.newTab(newClientSheetLink);
+          let newProjectSheet = targetFolder.getFile(this.fileName);             // Gets the newly copied file with given name
+          let newProjectSheetId = newProjectSheet.id;                            // Returns the id of found file
+          let projectTemplate = Spreadsheet.openById(newProjectSheetId);
+          projectTemplate.setActive();                                           // Sets the active spreadsheet Confirmed W & E to new project sheet
+          let newProjectSheetLink = newProjectSheet.url;                         // Gets the URL of newly copied template file 
+          this.set("SheetLink",newProjectSheetLink);                             // Sets the project sheet link to the cell in SheetLink Column
+          Dialog.notify("Project Document Structure Created!","Please check column Project Sheet & Project Folder for more details.");
+          Browser.newTab(newProjectSheetLink);
        } 
        else {
           Dialog.notify("Folder not found!","Template Folder does not exist! Couldn't make a copy of template sheet, please check source folder.");
@@ -193,21 +171,21 @@ class Enquiry extends RangeRow {
     this.copyFieldsTo(destination, fields);
   }
 
-  openClientSheet() {
-    trace(`openClientSheet of ${this.trace}`);
+  openProjectSheet() {
+    trace(`openProjectSheet of ${this.trace}`);
     if (!this.isValid) {
-      Error.fatal("Please select a valid enquiry.");
+      Error.fatal("Please select a valid project.");
     }
     return;
     let sheetId = this.sheetId;
     if (sheetId === "") {
-      if (Dialog.confirm("No client sheet found", `There is no client sheet recorded for prospect ${this.name}, create one now?`) == false) {
+      if (Dialog.confirm("No project sheet found", `There is no project sheet recorded for prospect ${this.name}, create one now?`) == false) {
         return;
       }
-      this.createNewClientSheet();
+      this.createNewProjectSheet();
     } else {
-      this.clientSheet = null;
-      Browser.newTab(this.clientSheet.url);
+      this.projectSheet = null;
+      Browser.newTab(this.projectSheet.url);
     }
   }
 

@@ -118,19 +118,22 @@ class Menu {
     trace("< Custom quote menu added");
   }
 
-  static addEnqiriesMenu(libName) {               // In Enquiries.gs
-    trace("> Adding custom enquiries menu");
+  static addProjectsMenu(libName) {               // In Enquiries.gs
+    trace("> Adding custom projects menu");
     let ui = SpreadsheetApp.getUi();
-    let menu = ui.createMenu("Enquiries" + globalLibMenuTag)
+    let menu = ui.createMenu("Projects" + globalLibMenuTag)
         .addItem("Update Enquiries", libName + ".onUpdateEnquiries")
-        .addItem("Open Quote/Client Sheet", libName + ".onOpenClientSheet")
-        .addItem("Prepare New Client Document Structure", libName + ".onPrepareClientStructure")
+        .addItem("Open Project Sheet", libName + ".onOpenProjectSheet")
+        .addItem("Prepare New Project Document Structure", libName + ".onPrepareProjectStructure")
+        .addSubMenu(ui.createMenu("Project Folder Maintenance")
+          .addItem("Add payments folder & link", libName + ".onPreparePaymentsFolder")
+        );
         /*.addSubMenu(ui.createMenu("Prepare New Client Document Structure")
           .addItem("For Small Wedding/Event", libName + ".onPrepareClientStructureSmallWedding")
           .addItem("For Large Wedding/Event", libName + ".onPrepareClientStructureLargeWedding")        
         );*/
     Menu.addTestItems(libName, menu).addToUi();
-    trace("< Custom enquiries menu added");
+    trace("< Custom projects menu added");
   }
 
   static addWeddingPackagesMenu(libName) {

@@ -40,9 +40,9 @@ function onQuoteSheetOpen(libName) {
   Menu.addQuoteMenu(libName);
 }
 
-function onEnqiriesSheetOpen(libName) {
-  trace(`onEnqiriesSheetOpen libName=${libName}`);
-  Menu.addEnqiriesMenu(libName);
+function onProjectsSheetOpen(libName) {
+  trace(`onProjectsSheetOpen libName=${libName}`);
+  Menu.addProjectsMenu(libName);
 }
 
 function onWeddingPackagesSheetOpen(libName) {
