@@ -60,7 +60,7 @@ function onCreateProject () {
   }
   else {
     Dialog.notify("Creating the Project...","Please wait creating the "+ PROJECT_NAME +" project in Asana workspace!");
-    Project.create();
+    AsanaProject.create();
     Dialog.notify("Adding the Sections...","Please wait it will take few seconds to add sections in the Project");
     let phaseList = new WeddingPhaseList();
     let sectionCreator = new SectionCreator();
@@ -71,7 +71,7 @@ function onCreateProject () {
 function onUpdateProject () {
   trace(`onUpdateProject`);  
   if(Asana.checkAsanaProjectNames()) {
-    Project.update();
+    AsanaProject.update();
   }
   else {
     Dialog.notify("Project not found!", PROJECT_NAME + " project does not exist in the Asana, first make the project and try again!");
@@ -82,7 +82,7 @@ function onDestroyProject () {
   trace(`onDestroyProject`);
   if(Asana.checkAsanaProjectNames()) {
     if (Dialog.confirm("To Delete Asana Project - Confirmation Required", "Are you sure you want to delete "+ PROJECT_NAME +" project from Asana workspace?") == true) {
-    Project.destroy();
+    AsanaProject.destroy();
     }
   }
   else {
@@ -254,9 +254,9 @@ Asana.taskUrl    = "https://app.asana.com/api/1.0/tasks";        // For creating
 
 //=========================================================================================================
 // Wrapper for project - https://developers.asana.com/docs/projects
-// Class Project
+// Class AsanaProject
 
-class Project {
+class AsanaProject {
   
   static create() {
     
@@ -341,7 +341,7 @@ class Project {
     };      
     let url = Asana.getProjectUrl(project_gid);                                     // set the project_gid param
     UrlFetchApp.fetch(url,options);
-    //trace(`Project.update --> ${response.getContentText()}`);
+    //trace(`AsanaProject.update --> ${response.getContentText()}`);
     Dialog.notify("Project is updated!","Please check Asana workspace for more details of project " +  PROJECT_NAME);
   }
 

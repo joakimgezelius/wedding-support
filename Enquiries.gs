@@ -1,51 +1,51 @@
-const EnquiriesRangeName = "Enquiries";
+const ProjectsRangeName = "Projects";
 const ParamsSheetName = "Params";
 const CoordinationSheetName = "Coordinator";
 
-// Go through raw list of enquiries, 
+// Go through raw list of projects, 
 //  - find those that are work-in-progress
 //
-function onUpdateEnquiries() {
-  trace("onUpdateEnquiries");
-  //let enquiries = new Enquiries;  
-  //enquiries.update(enquiriesNoReply);
+function onUpdateProjects() {
+  trace("onUpdateProjects");
+  let projects = new Projects;  
+  projects.update(projectsNoReply);
 }
 
 // Open project sheet for the selected project, 
-// - create a new sheet if no such sheet exists
+// - option to create a new sheet if no such sheet exists
 //
 function onOpenProjectSheet() {
   trace("onOpenProjectSheet");
-  let enquiries = new Enquiries;
-  enquiries.selected.openProjectSheet();
+  let projects = new Projects;
+  projects.selected.openProjectSheet();
 }
 
 function onCreateNewProjectSheet() {
   trace("onCreateNewProjectSheet");
-  let enquiries = new Enquiries;
-  enquiries.selected.createNewProjectSheet();
+  let projects = new Projects;
+  projects.selected.createNewProjectSheet();
 }
 
 function onDraftSelectedEmail() {
   trace("onDraftSelectedEmail");
-  let enquiries = new Enquiries;
-  enquiries.selected.draftSelectedEmail();
+  let projects = new Projects;
+  projects.selected.draftSelectedEmail();
 }
 
 function onPrepareProjectStructure() {
   trace("onPrepareProjectStructure");
-  let enquiries = new Enquiries;
+  let projects = new Projects;
   let templateFolderLink = Spreadsheet.getCellValueLinkUrl("TemplateProjectFolder");     // W & E's >> Upcoming
   let templateProjectSheetLink = Spreadsheet.getCellValueLinkUrl("TemplateProjectSheet"); // URL to the W & E's template sheet
-  enquiries.selected.prepareProjectStructure(templateFolderLink, templateProjectSheetLink);
+  projects.selected.prepareProjectStructure(templateFolderLink, templateProjectSheetLink);
 }
 
 //========================================================================================================
 
-class Enquiries {
+class Projects {
 
   constructor(rangeName = null) {
-    rangeName = (rangeName === null) ? EnquiriesRangeName : rangeName;
+    rangeName = (rangeName === null) ? ProjectsRangeName : rangeName;
     this.range = Range.getByName(rangeName).loadColumnNames();
     trace("NEW " + this.trace);
   }
@@ -53,62 +53,70 @@ class Enquiries {
   get selected() {
     let selection = this.range.findSelectedRow();
     if (selection === null) {
-      Error.fatal("Please select a valid enquiry.");
+      Error.fatal("Please select a valid project.");
     }
     // Range is now positioned to selection
-    let selectedEnquiry = new Enquiry(this.range);
-    if (!selectedEnquiry.isValid) {
-      Error.fatal("Please select a valid enquiry.");
+    let selectedProject = new Project(this.range);
+    if (!selectedProject.isValid) {
+      Error.fatal("Please select a valid project.");
     }
-    return selectedEnquiry;
+    return selectedProject;
   }
   
   update(target) {
     trace(`${this.trace}.update`);
     for (var rowOffset = 0; rowOffset < this.range.height; rowOffset++) {
-      let enquiry = new Enquiry(); // Fix this!!
-      if (!enquiry.isValid) {
+      let project = new Project(); // Fix this!!
+      if (!project.isValid) {
         break;
       }
-      target.append(enquiry);
+      target.append(project);
     }
   }
   
-  // Append an enquiry to a list 
+  // Append an project to a list 
   //
-  append(enquiry) {
-    trace(`${this.trace}.append ${enquiry.trace}`);    
+  append(project) {
+    trace(`${this.trace}.append ${project.trace}`);    
     this.range.findFirstTrailingEmptyRow();
-    //  trace(`Create target enquiry based on ${this.range.trace}, ${this.range.currentRowOffset}`);    
-    let targetEnquiry = new Enquiry(); // Fix this!!
-    enquiry.copyTo(targetEnquiry);
+    //  trace(`Create target project based on ${this.range.trace}, ${this.range.currentRowOffset}`);    
+    let targetProject = new Project(); // Fix this!!
+    project.copyTo(targetProject);
   }
 
-  get trace() { return `{Enquiries ${this.range.trace}}`; }
+  get trace() { return `{Projects ${this.range.trace}}`; }
   
-} // Enquiries
+} // Projects
 
 
 //================================================================================================
 
 
-class Enquiry extends RangeRow {
+class Project extends RangeRow {
   
   constructor(range) {
     super(range);
     this._name = this.name;
     this._rowOffset = range.currentRowOffset;
-    this._isValid = (this.name !== "");
+    this._isValid = this.validate();
     trace("NEW " + this.trace);
   }
   
+  validate() {
+    let isValid = (
+      (this.name !== "") &&
+      (this.date != "")
+    );
+    return isValid;
+  }
+
   createNewProjectSheet() {
     trace(`createNewProjectSheet for ${this.trace}`);
     if (!this.isValid) {
-      Error.fatal("Please select a valid enquiry.");
+      Error.fatal("Please select a valid project.");
     };
     let projectSheetName = `${this.name}`;
-    //  let targetFolder = Folder.getById(enquiriesFolderId);
+    //  let targetFolder = Folder.getById(projectsFolderId);
     let weddingProjectTemplateFile = File.getById(weddingProjectTemplateSpreadsheetId);
     let projectSpreadsheetFile = weddingProjectTemplateFile.copyTo(targetFolder, projectSheetName);
     this.projectSheet = Spreadsheet.openById(projectSpreadsheetFile.id);
@@ -192,7 +200,7 @@ class Enquiry extends RangeRow {
   draftSelectedEmail() {
     trace(`draftSelectedEmail to ${this.trace}`);
     if (!this.isValid) {
-      Error.fatal("Please select a valid enquiry.");
+      Error.fatal("Please select a valid project.");
     }
     if (Dialog.confirm("Draft Email", `Draft email to ${this.name}, are you sure?`) == false) {
       return;
@@ -211,16 +219,16 @@ class Enquiry extends RangeRow {
   set sheetLink(value)  { this.set("SheetLink", value); }
 
 
-  get trace() { return `{Enquiry #${this.rowOffset} ${this._name} ${this.isValid ? "(valid)" : "(invalid)"}}`; }
+  get trace() { return `{Project #${this.rowOffset} ${this._name} ${this.isValid ? "(valid)" : "(invalid)"}}`; }
   
-} // Enquiry
+} // Project
 
 //================================================================================================
                
 class Prospects {
   
   constructor() {
-    this.range = Range.getByName(EnquiriesWaitingResponseRangeName).loadColumnNames();
+    this.range = Range.getByName(ProjectsWaitingResponseRangeName).loadColumnNames();
     trace("NEW " + this.trace);
   }
 
@@ -234,7 +242,7 @@ class Prospects {
 class Prospect {
   
   constructor() {
-    this.range = Range.getByName(EnquiriesWaitingResponseRangeName).loadColumnNames();
+    this.range = Range.getByName(ProjectsWaitingResponseRangeName).loadColumnNames();
     trace("NEW " + this.trace);
   }
 
