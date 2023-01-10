@@ -122,6 +122,7 @@ class Menu {
     trace("> Adding custom projects menu");
     let ui = SpreadsheetApp.getUi();
     let menu = ui.createMenu("Projects" + globalLibMenuTag)
+        .addItem("Show Project Sidebar", libName + ".onShowProjectSidebar")
         .addItem("Update Enquiries", libName + ".onUpdateEnquiries")
         .addItem("Open Project Sheet", libName + ".onOpenProjectSheet")
         .addItem("Prepare New Project Document Structure", libName + ".onPrepareProjectStructure")

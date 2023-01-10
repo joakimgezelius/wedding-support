@@ -1,13 +1,22 @@
-const ProjectsRangeName = "Projects";
+// Sheets
 const ParamsSheetName = "Params";
 const CoordinationSheetName = "Coordinator";
+
+// Named Ranges
+const UpcomingProjects = "UpcomingProjects";
+const ProjectFoldersRoot = "ProjectFoldersRoot";
+const PaymentsFoldersRoot = "PaymentsFoldersRoot";
+const SelectedTemplateProjectFolder = "SelectedTemplateProjectFolder";
+const SelectedTemplateProjectSheet = "SelectedTemplateProjectSheet";
+const SelectedProjectName = "SelectedProjectName";
+const SelectedProjectType = "SelectedProjectType";
 
 // Go through raw list of projects, 
 //  - find those that are work-in-progress
 //
 function onUpdateProjects() {
   trace("onUpdateProjects");
-  let projects = new Projects;  
+  let projects = new Projects;
   projects.update(projectsNoReply);
 }
 
@@ -35,9 +44,23 @@ function onDraftSelectedEmail() {
 function onPrepareProjectStructure() {
   trace("onPrepareProjectStructure");
   let projects = new Projects;
-  let templateFolderLink = Spreadsheet.getCellValueLinkUrl("TemplateProjectFolder");     // W & E's >> Upcoming
-  let templateProjectSheetLink = Spreadsheet.getCellValueLinkUrl("TemplateProjectSheet"); // URL to the W & E's template sheet
+  let templateFolderLink = Spreadsheet.getCellValueLinkUrl(SelectedTemplateProjectFolder);
+  let templateProjectSheetLink = Spreadsheet.getCellValueLinkUrl(SelectedTemplateProjectSheet);
   projects.selected.prepareProjectStructure(templateFolderLink, templateProjectSheetLink);
+}
+
+// This event handler triggers when a new project row is selected in the master sheet, the primary event trigger 
+// onSelectionChange is located in the master sheet itself, and flters out unrelated selections before calling 
+// this handler. The handler identifies the selected project, and fills in the name and type on the master sheet
+// for visual feedback.
+//
+function onNewProjectRowSelection() {
+  trace("> onNewProjectRowSelection");
+  let projects = new Projects;
+  var selectedProject = projects.selected;
+  trace(`selectedProject: ${selectedProject.trace}`);
+  Range.getByName(SelectedProjectName).value = selectedProject.name;
+  Range.getByName(SelectedProjectType).value = selectedProject.type;
 }
 
 //========================================================================================================
@@ -45,7 +68,7 @@ function onPrepareProjectStructure() {
 class Projects {
 
   constructor(rangeName = null) {
-    rangeName = (rangeName === null) ? ProjectsRangeName : rangeName;
+    rangeName = (rangeName === null) ? UpcomingProjects : rangeName;
     this.range = Range.getByName(rangeName).loadColumnNames();
     trace("NEW " + this.trace);
   }
@@ -127,9 +150,9 @@ class Project extends RangeRow {
   prepareProjectStructure(templateFolderLink, templateProjectSheetLink) {
     trace(`prepareProjectStructure for ${this.trace}`);
     let sourceFolder = Folder.getByUrl(templateFolderLink);
-    let destinationFolderURL = Spreadsheet.getCellValueLinkUrl("ProjectFoldersRoot"); // Destination - W & E's param named range ProjectFoldersRoot
+    let destinationFolderURL = Spreadsheet.getCellValueLinkUrl(ProjectFoldersRoot); // Destination - W & E's param named range ProjectFoldersRoot
     let destinationFolder = Folder.getByUrl(destinationFolderURL);
-    let paymentsFoldersRootURL = Spreadsheet.getCellValueLinkUrl("PaymentsFoldersRoot"); // Destination - W & E's param named range PaymentsFoldersRoot
+    let paymentsFoldersRootURL = Spreadsheet.getCellValueLinkUrl(PaymentsFoldersRoot); // Destination - W & E's param named range PaymentsFoldersRoot
     let paymentsFoldersRoot = Folder.getByUrl(paymentsFoldersRootURL);
     if (destinationFolder.folderExists(this.fileName)) {
       Dialog.notify("Project folder already exists!","Please check the Weddings & Events Folder for more details.");      
@@ -173,6 +196,10 @@ class Project extends RangeRow {
     }
   }
 
+  preparePaymentsFolder() {
+    trace(`preparePaymentsFolder for ${this.trace}`);
+  }
+
   copyTo(destination) {
     trace(`${this.trace}.copyTo ${destination.trace}`);
     const fields = ["Name", "EmailAddress", "Who"];
@@ -208,6 +235,7 @@ class Project extends RangeRow {
   }  
   
   get name()            { return this.get("Name", "string"); }
+  get type()            { return this.get("Type", "string"); }
   get date()            { return this.get("EventDate"); }
   // Time-Zone Changes in the Summer Time begins and ends at 1:00 a.m ( Universal Time (GMT))
   get fileName()        { return `${Utilities.formatDate(this.date, "GMT+2", "yyyy-MM-dd")} ${this.name}`; }  
