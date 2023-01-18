@@ -95,7 +95,7 @@ class EventDetailsUpdater {
       row.itemNo = this.generateItemId();
     }
 
-    row.isStoreTicked = `=OR(${a1_category}="Stock to Buy", ${a1_status}="Store Gibraltar", ${a1_status}="Store Los Barrios", ${a1_status}="To Buy")`;
+    row.isStoreTicked = `=OR(REGEXMATCH(LOWER(${a1_category}),"stock|make"),REGEXMATCH(LOWER(${a1_status}),"store|buy|make"))`;
 
     this.setNativeUnitCost(row);
     row.nativeUnitCostWithVAT = `=IF(OR(${a1_currency}="", ${a1_nativeUnitCost}="", ${a1_nativeUnitCost}=0), "", ${a1_nativeUnitCost}*(1+${a1_vat}))`;
@@ -112,7 +112,7 @@ class EventDetailsUpdater {
     }
     if (row.isInStock && this.forced) { // Set mark-up and commission for in-stock items
       trace("- Set In Stock commision & mark-up on " + this.itemNo);
-      row.commissionPercentage = 0.5;
+      row.commissionPercentage = 0.2; // 20% commission for Gib companny
       row.markup = 0;
     }
   }
