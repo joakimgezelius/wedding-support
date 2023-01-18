@@ -31,9 +31,18 @@ class Dialog {
   }
 
   static notify(title, message) {
+    // https://developers.google.com/apps-script/reference/base/ui
     let ui = SpreadsheetApp.getUi();
     trace("Dialog.notify " + title + ", " + message);
     ui.alert(title, message, ui.ButtonSet.OK);
     trace("Dialog.notify");
+  }
+
+  static toast(message, title = null) {
+    if (title == null) {
+      SpreadsheetApp.getActive().toast(message);
+    } else {
+      SpreadsheetApp.getActive().toast(message, title);
+    }
   }
 }

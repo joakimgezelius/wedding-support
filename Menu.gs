@@ -128,6 +128,7 @@ class Menu {
         .addItem("Prepare New Project Document Structure", libName + ".onPrepareProjectStructure")
         .addSubMenu(ui.createMenu("Project Folder Maintenance")
           .addItem("Add payments folder & link", libName + ".onPreparePaymentsFolder")
+          .addItem("Delete Project Document Structure", libName + ".onDeleteProjectDocumentStructure")
         );
         /*.addSubMenu(ui.createMenu("Prepare New Client Document Structure")
           .addItem("For Small Wedding/Event", libName + ".onPrepareClientStructureSmallWedding")
