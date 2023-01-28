@@ -159,7 +159,7 @@ class Project extends RangeRow {
     let weddingProjectTemplateFile = File.getById(weddingProjectTemplateSpreadsheetId);
     let projectSpreadsheetFile = weddingProjectTemplateFile.copyTo(targetFolder, projectSheetName);
     this.projectSheet = Spreadsheet.openById(projectSpreadsheetFile.id);
-    this.setHyperLink("SheetLink", this.projectSheet.url, "Sheet");
+    this.setHyperLink("SheetLink", this.projectSheet.url, "Project Sheet");
     Browser.newTab(this.projectSheet.url);
   }
 
@@ -203,7 +203,7 @@ class Project extends RangeRow {
             let newProjectSheetId = newProjectSheet.id;                            // Returns the id of found file
             let projectTemplate = Spreadsheet.openById(newProjectSheetId);
             projectTemplate.setActive();                                           // Sets the active spreadsheet Confirmed W & E to new project sheet
-            let newProjectSheetLink = newProjectSheet.url;                         // Gets the URL of newly copied template file 
+            let newProjectSheetLink = newProjectSheet.url;                         // Gets the URL of newly copied template file
             this.setHyperLink("SheetLink", newProjectSheetLink, "Project Sheet");  // Sets the project sheet link to the cell in SheetLink Column
             Dialog.notify("Project Document Structure Created!", 'Please check columns "Project Sheet", "Project Folder" & "Project Payments Folder" for more details.');
             Browser.newTab(newProjectSheetLink);
