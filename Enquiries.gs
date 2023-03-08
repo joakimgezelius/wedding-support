@@ -164,10 +164,11 @@ class Project extends RangeRow {
   }
 
   prepareProjectStructure(templateFolderLink, templateProjectSheetLink) {
-    trace(`prepareProjectStructure for ${this.trace}`);
-    let sourceFolder = Folder.getByUrl(templateFolderLink);
+    trace(`> prepareProjectStructure for ${this.trace}, templateFolder=${templateFolderLink}, templateProjectSheet=${templateProjectSheetLink}`);
+    let templateFolder = Folder.getByUrl(templateFolderLink);
     let destinationFolderURL = Spreadsheet.getCellValueLinkUrl(ProjectFoldersRoot);
     let destinationFolder = Folder.getByUrl(destinationFolderURL);
+    trace(`destinationFolder: ${destinationFolder.trace}`);
     let paymentsFoldersRootURL = Spreadsheet.getCellValueLinkUrl(PaymentsFoldersRoot);
     let paymentsFoldersRoot = Folder.getByUrl(paymentsFoldersRootURL);
     let templateName = Spreadsheet.getCellValue(SelectedTemplateName);
@@ -177,7 +178,7 @@ class Project extends RangeRow {
     else {
       if (Dialog.confirm("Preparing Project Document Structure", `Preparing a new project document structure for ${this.name}, using template ${templateName}. Are you sure?`)) {
         Dialog.toast("Preparing document structure, this may take a minute or two...");
-        sourceFolder.copyTo(destinationFolder, this.fileName);                    // Copies source folder contents to target folder
+        templateFolder.copyTo(destinationFolder, this.fileName);                    // Copies source folder contents to target folder
         let paymentsFolderName =  this.fileName + " - Payments";
         paymentsFoldersRoot.createFolder(paymentsFolderName);
 
@@ -274,7 +275,6 @@ class Project extends RangeRow {
   get isValid()         { return this._isValid; }
   get rowOffset()       { return this._rowOffset; }
   set sheetLink(value)  { this.set("SheetLink", value); }
-
 
   get trace() { return `{Project #${this.rowOffset} ${this._name} ${this.isValid ? "(valid)" : "(invalid)"}}`; }
   

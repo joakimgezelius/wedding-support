@@ -50,6 +50,7 @@ function onWeddingPackagesSheetOpen(libName) {
   Menu.addWeddingPackagesMenu(libName);
 }
 
+// This is loaded from the price list
 function onProductsSheetOpen(libName) {
   trace(`onProductsSheetOpen libName=${libName}`);
   Menu.addProductsSheetMenu(libName);

@@ -7,7 +7,7 @@ class Folder {
     this._nativeFolder = nativeFolder;
     this._name = this.nativeFolder.getName();
     if (!this.parents.hasNext() && this.name === "Drive") { // This is the root in a shared drive)
-      this._name = SharedDrive.GetById(nativeFolder.getId()).name;
+      this._name = SharedDrive.GetNameById(parent.getId());
     }
     this._path = this.getPath();
     this._trace = `{Folder ${this.id} "${this.path}"}`;
@@ -22,7 +22,7 @@ class Folder {
       let name = parent.getName();
       parents = parent.getParents();
       if (!parents.hasNext() && name === "Drive") { // We've reached the root in a shared drive
-        name = SharedDrive.GetById(parent.getId()).name;
+        name = SharedDrive.GetNameById(parent.getId());
       }
       fullName = "/" + name + fullName;
     }
@@ -44,7 +44,7 @@ class Folder {
       let folderId = Folder.getIdFromUrl(url);
       folder = Folder.getById(folderId);
     } catch (error) {
-      trace(`Caught exception: "${error}"`);     
+      trace(`Folder.getByUrl(${url}), caught exception: "${error}"`);     
     }
     trace(`< Folder.getByUrl(${url}) --> ${folder !== null ? folder.trace : "null"}`);
     return folder;
@@ -198,7 +198,7 @@ class File {
       let fileId = File.getIdFromUrl(url);
       file = File.getById(fileId);
     } catch (error) {
-      trace(`Caught exception: "${error}"`);     
+      trace(`File.getByUrl(${url}), caught exception: "${error}"`);     
     }
     trace(`< File.getByUrl(${url}) --> ${file !== null ? file.trace : "null"}`);
     return file;
@@ -269,24 +269,35 @@ class SharedDrive {
   get trace() { return this._trace; }
 
   static get list() {
-    // List of shared drives, as an array of {  id, name } elements:
-    //  inspiration: https://yagisanatode.com/2021/07/26/get-a-list-of-google-shared-drives-by-id-and-name-in-google-apps-script/
-    let list = Drive.Drives.list().items.map(drive => ({id:drive.id,name:drive.name}));
-    return list;
+    if (typeof SharedDrive._list === "undefined") {
+      // List of shared drives, as an array of { id, name } elements:
+      //  inspiration: https://yagisanatode.com/2021/07/26/get-a-list-of-google-shared-drives-by-id-and-name-in-google-apps-script/
+      SharedDrive._list = Drive.Drives.list({ maxResults: 50 }).items.map(drive => ({id:drive.id,name:drive.name}));
+      trace("Initiate SharedDrive.list, entries:");
+      for (const [id, drive] of SharedDrive._list.entries()) {
+        trace(`  id: ${id} => name: ${drive.name}`);
+      }
+    }
+    return SharedDrive._list;
   }
 
   static GetById(lookup) {
-    let list = SharedDrive.list;
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find
-    let drive = list.find( ({ id }) => id === lookup );
+    const drive = SharedDrive.list.find( ({ id }) => id === lookup );
     return new SharedDrive(drive.id, drive.name);
   }
 
   static GetByName(lookup) {
-    let list = SharedDrive.list;
     // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find
-    let drive = list.find( ({ name }) => name === lookup );
+    const drive = SharedDrive.list.find( ({ name }) => name === lookup );
     return new SharedDrive(drive.id, drive.name);
   }
 
+  static GetNameById(lookup) {
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find
+    const drive = SharedDrive.list.find( ({ id }) => id === lookup );
+    return (drive === null ? "[unknown drive]" : drive.name);
+  }
 }
+
+
