@@ -97,6 +97,10 @@ class EventDetailsUpdater {
 
     row.isStoreTicked = `=OR(REGEXMATCH(LOWER(${a1_category}),"stock|make"),REGEXMATCH(LOWER(${a1_status}),"store|buy|make"))`;
 
+    if(row.status === "") {      // Set the status Not Actioned for the blank status rows
+      row.status = `Not Actioned`;
+    }
+
     this.setNativeUnitCost(row);
     row.nativeUnitCostWithVAT = `=IF(OR(${a1_currency}="", ${a1_nativeUnitCost}="", ${a1_nativeUnitCost}=0), "", ${a1_nativeUnitCost}*(1+${a1_vat}))`;
     row.getCell("NativeUnitCostWithVAT").setNumberFormat(row.currencyFormat);

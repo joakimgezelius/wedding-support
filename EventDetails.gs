@@ -107,7 +107,7 @@ class EventRow extends RangeRow {
   set itemNo(value)         { this.set("ItemNo", value); }
   set isStoreTicked(value)  { this.set("StoreTicked", value); }   // To inject query to tick true/false based on other column values
   set category(value)       { this.set("Category", value); }
-  set status(value)         { this.get("Status", value); }
+  set status(value)         { this.set("Status", value); }
   set supplier(value)       { this.set("Supplier", value); }
   set description(value)    { this.set("Description", value); }
   set quantity(value)       { this.set("Quantity", value); }

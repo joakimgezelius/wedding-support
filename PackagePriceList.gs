@@ -70,6 +70,8 @@ class PriceListIndex {
       const row = new RangeRow(range);
       const category = row.get("Category");
       const rangeName = row.get("Range");
+      // const status = row.get("Status", "string");
+      // if()
       if (category !== "") {
         trace(`updatePriceList: ${category}, ${rangeName}`);
         // Force-update the category/section at hand
