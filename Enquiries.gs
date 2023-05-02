@@ -159,7 +159,7 @@ class Project extends RangeRow {
     let weddingProjectTemplateFile = File.getById(weddingProjectTemplateSpreadsheetId);
     let projectSpreadsheetFile = weddingProjectTemplateFile.copyTo(targetFolder, projectSheetName);
     this.projectSheet = Spreadsheet.openById(projectSpreadsheetFile.id);
-    this.setHyperLink("SheetLink", this.projectSheet.url, "Project Sheet");
+    this.sheetLink = this.projectSheet.url; // Note, don't set labelled hyperlink, as it creates problems downstream
     Browser.newTab(this.projectSheet.url);
   }
 
@@ -186,11 +186,11 @@ class Project extends RangeRow {
 
         let projectFolder = destinationFolder.getSubfolder(this.fileName);         // Gets newly created project folder by name
         let projectFolderLink = projectFolder.url;                                 // Gets the URL of newly created project folder 
-        this.setHyperLink("FolderLink",projectFolderLink, "Project Folder");       // Sets the folder link in the cell in FolderLink Column
+        this.folderLink = projectFolderLink;                                       // Sets the folder link in the cell in FolderLink Column
 
         let paymentsFolder = paymentsFoldersRoot.getSubfolder(paymentsFolderName); // Gets newly created payment folder by name
         let paymentsFolderLink = paymentsFolder.url;                               // Returns URL to Payment Folder
-        this.setHyperLink("PaymentsLink", paymentsFolderLink, "Payments");         // Sets the URL in the Master sheet
+        this.paymentsLink = paymentsFolderLink;                                    // Sets the URL in the Master sheet
 
         //let targetFolderName = "Office Use";                                     // Folder name to look for copying the template file in it
         //let subFolder = projectFolder.getSubfolder(targetFolderName);
@@ -205,7 +205,7 @@ class Project extends RangeRow {
             let projectTemplate = Spreadsheet.openById(newProjectSheetId);
             projectTemplate.setActive();                                           // Sets the active spreadsheet Confirmed W & E to new project sheet
             let newProjectSheetLink = newProjectSheet.url;                         // Gets the URL of newly copied template file
-            this.setHyperLink("SheetLink", newProjectSheetLink, "Project Sheet");  // Sets the project sheet link to the cell in SheetLink Column
+            this.sheetLink= newProjectSheetLink;                                   // Sets the project sheet link to the cell in SheetLink Column
             Dialog.notify("Project Document Structure Created!", 'Please check columns "Project Sheet", "Project Folder" & "Project Payments Folder" for more details.');
             Browser.newTab(newProjectSheetLink);
         } 
@@ -264,17 +264,19 @@ class Project extends RangeRow {
     }    
   }  
   
-  get name()            { return this.get("Name", "string"); }
-  get type()            { return this.get("Type", "string"); }
-  get date()            { return this.get("EventDate"); }
+  get name()              { return this.get("Name", "string"); }
+  get type()              { return this.get("Type", "string"); }
+  get date()              { return this.get("EventDate"); }
   // Time-Zone Changes in the Summer Time begins and ends at 1:00 a.m ( Universal Time (GMT))
-  get fileName()        { return `${Utilities.formatDate(this.date, "GMT+2", "yyyy-MM-dd")} ${this.name}`; }  
-  get sheetLink()       { return this.get("SheetLink", "string"); }  
-  get folderLink()      { return this.get("FolderLink", "string"); }
-  get folderLink()      { return this.get("FolderLink", "string"); }
-  get isValid()         { return this._isValid; }
-  get rowOffset()       { return this._rowOffset; }
-  set sheetLink(value)  { this.set("SheetLink", value); }
+  get fileName()          { return `${Utilities.formatDate(this.date, "GMT+2", "yyyy-MM-dd")} ${this.name}`; }  
+  get sheetLink()         { return this.get("SheetLink", "string"); }  
+  get folderLink()        { return this.get("FolderLink", "string"); }
+  get paymentsLink()      { return this.get("PaymentsLink", "string"); }
+  get isValid()           { return this._isValid; }
+  get rowOffset()         { return this._rowOffset; }
+  set sheetLink(value)    { this.set("SheetLink", value); }
+  set folderLink(value)   { this.set("FolderLink", value); }
+  set paymentsLink(value) { this.set("PaymentsLink", value); }
 
   get trace() { return `{Project #${this.rowOffset} ${this._name} ${this.isValid ? "(valid)" : "(invalid)"}}`; }
   

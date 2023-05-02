@@ -284,11 +284,13 @@ class RangeRow {
     cell.setValue(value);
   }
 
+/* Avoid this feature as it creates issues downstream, there is no simple way to get to the URL using standard sheet functions
   setHyperLink(columnName, url, label = url) {
     let value = `=hyperlink("${url}","${label}")`;
     trace(`RangeRow.setHyperLink ${columnName} = [${url}, ${label}]`);
     this.set(columnName, value);
   }
+*/
 
   copyFieldTo(destination, columnName) {
     destination.set(columnName, this.get(columnName));
