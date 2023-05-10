@@ -1,7 +1,8 @@
-const HubSpotApiKey = "e5957bc8-badc-449e-b69f-055c2590bd0a";
+const SecureToken="pat-na1-d82619fe-af03-4d4b-bbe3-07c8f30d514b";
 const HubSpotBaseUrl = "https://api.hubapi.com/crm/v3/objects";
-const DataDictionarySheetId = "1C_uOMH30siZLSGzYOziBfcl_lx5ZZRYCBv7fqpegGEk";
 
+const DataDictionarySheetId = "1C_uOMH30siZLSGzYOziBfcl_lx5ZZRYCBv7fqpegGEk";
+const urlFetchAppParams = { "headers": { "Authorization": `Bearer ${SecureToken}` } };
 
 function onUpdateClientData() {
   trace("onUpdateClientData");  
@@ -16,12 +17,12 @@ function onUpdateClientData() {
 class HubSpot {
 
   static getUrl(method) {
-    return `${HubSpotBaseUrl}/${method}&hapikey=${HubSpotApiKey}`; // for Contacts & Deals
+    return `${HubSpotBaseUrl}/${method}`; // for Contacts & Deals
   }
 
   static listContacts() {
     let url = HubSpot.getUrl("contacts?limit=100&properties=hs_object_id,firstname,lastname,createdate,email,hs_email_domain,phone,annualrevenue,how_many_people_in_total_including_the_couple_will_be_at_the_ceremony_and_or_the_celebration_,asana_link,hs_lifecyclestage_customer_date,hs_lifecyclestage_lead_date,hs_lifecyclestage_marketingqualifiedlead_date,hs_lifecyclestage_salesqualifiedlead_date,hs_lifecyclestage_subscriber_date,hs_lifecyclestage_evangelist_date,hs_lifecyclestage_opportunity_date,hs_lifecyclestage_other_date,city,company,hs_object_id,country,date,date_worked,do_you_agree_to_special_terms_in_the_event_of_a_coronavirus_event,hs_content_membership_email_confirmed,event_start_time,industry,is_there_any_food_that_you_dislike,is_your_kitchen_fulled_equipped_and_functional,jobtitle,kitchen,kitchen_1,lastmodifieddate,hs_latest_sequence_ended_date,hs_latest_sequence_enrolled,hs_latest_sequence_enrolled_date,lifecyclestage,hs_marketable_status,hs_marketable_reason_id,hs_marketable_reason_type,hs_marketable_until_renewal,mobilephone,numemployees,hs_sequences_enrolled_count,hs_createdate,hs_persona,zip,hs_language,salutation,state,address,hs_content_membership_registration_email_sent_at,time_sheet,twitterhandle,website,what_the_occasion&archived=false");
-    let response = UrlFetchApp.fetch(url);
+    let response = UrlFetchApp.fetch(url, urlFetchAppParams);
     trace(`HubSpot.listContacts --> ${response.getContentText()}`);
     let data = JSON.parse(response.getContentText());
     let results = data['results'];
@@ -37,7 +38,7 @@ class HubSpot {
 
   static listDeals() {
     let url = HubSpot.getUrl("deals?limit=100&properties=hs_object_id,amount,closedate,createdate,dealname,description,hubspot_owner_id,dealstage,dealtype,departure_date,hs_forecast_amount,hs_manual_forecast_category,hs_forecast_probability,hubspot_team_id,hs_lastmodifieddate,hs_next_step,num_associated_contacts,hs_priority,pipeline&archived=false");
-    let response = UrlFetchApp.fetch(url);
+    let response = UrlFetchApp.fetch(url, urlFetchAppParams);
     //trace(`HubSpot.listDeals --> ${response.getContentText()}`);
     let data = JSON.parse(response.getContentText());
     let results = data['results'];
@@ -51,7 +52,7 @@ class HubSpot {
       }
     });
     /*let apiCall = function(url) {
-      let response = UrlFetchApp.fetch(url);
+      let response = UrlFetchApp.fetch(url, urlFetchAppParams);
       let data = JSON.parse(response);
       return data;
     };
@@ -62,8 +63,8 @@ class HubSpot {
   }
 
   static listEngagement() {
-    let url = `https://api.hubapi.com/engagements/v1/engagements/paged?hapikey=${HubSpotApiKey}`;
-    let response = UrlFetchApp.fetch(url);
+    let url = `https://api.hubapi.com/engagements/v1/engagements/paged`;
+    let response = UrlFetchApp.fetch(url, urlFetchAppParams);
     trace(`HubSpot.listEngagement --> ${response.getContentText()}`);
     let data = JSON.parse(response.getContentText());
     let results = data['results'];
@@ -78,7 +79,7 @@ class HubSpot {
 
   static masterHubspot() {
     let url = HubSpot.getUrl("contacts?limit=100&properties=invoice_no,first_conversion_date,deal_status,hubspot_owner_id,contacttype,number_of_guests__inc_the_couple_,decor,firstname,lastname,partner_s_first_name,partner_s_last_name,meet___greet_date,meet___greet_time,event_date,time_of_ceremony,confirmed_venue,venue___reception,do_you_require_witnesses_,documents_status,notes,registry_office_payment,xero_outstanding_thirty_days,florist,suppliers_deposits&archived=false");
-    let response = UrlFetchApp.fetch(url);
+    let response = UrlFetchApp.fetch(url, urlFetchAppParams);
     trace(`HubSpot.masterHubspot --> ${response.getContentText()}`);
     let data = JSON.parse(response.getContentText());
     let results = data['results'];
@@ -93,8 +94,8 @@ class HubSpot {
   }  
 
   static contactToDeal() {
-    let url = `https://api.hubapi.com/crm/v3/objects/contacts?associations=deal&hapikey=${HubSpotApiKey}`;
-    let response = UrlFetchApp.fetch(url);
+    let url = `https://api.hubapi.com/crm/v3/objects/contacts?associations=deal`;
+    let response = UrlFetchApp.fetch(url, urlFetchAppParams);
     trace(`HubSpot.contactToDeal --> ${response.getContentText()}`);
     let data = JSON.parse(response.getContentText());
     let results = data['results'];
@@ -105,8 +106,8 @@ class HubSpot {
 
   static dealToContact(dealId) {
     trace("dealToContact")
-    let url = `https://api.hubapi.com/crm/v3/objects/deals/${dealId}/associations/contacts?hapikey=${HubSpotApiKey}`;
-    let response = UrlFetchApp.fetch(url);
+    let url = `https://api.hubapi.com/crm/v3/objects/deals/${dealId}/associations/contacts`;
+    let response = UrlFetchApp.fetch(url, urlFetchAppParams);
     let data = JSON.parse(response.getContentText());
     let result = Array.from(data['results']);
     let contactId, i = 0;
@@ -127,8 +128,8 @@ class HubSpot {
       let dealId = Spreadsheet.getCellValue("HubSpotDeal");
       trace(`Deal ID : ${dealId}`);
       Dialog.notify("Updating Client Data...","Please wait updating Client Data from HubSpot!");
-      let url = `https://api.hubapi.com/crm/v3/objects/deals/${dealId}?properties=hs_object_id,invoice_id,estimate_id,amount,closedate,createdate,dealname,description,hubspot_owner_id,dealstage,dealtype,departure_date,hs_forecast_amount,hs_manual_forecast_category,hs_forecast_probability,hubspot_team_id,hs_lastmodifieddate,hs_next_step,num_associated_contacts,hs_priority,pipeline&archived=false&hapikey=${HubSpotApiKey}`;
-      let response = UrlFetchApp.fetch(url);
+      let url = `https://api.hubapi.com/crm/v3/objects/deals/${dealId}?properties=hs_object_id,invoice_id,estimate_id,amount,closedate,createdate,dealname,description,hubspot_owner_id,dealstage,dealtype,departure_date,hs_forecast_amount,hs_manual_forecast_category,hs_forecast_probability,hubspot_team_id,hs_lastmodifieddate,hs_next_step,num_associated_contacts,hs_priority,pipeline&archived=false`;
+      let response = UrlFetchApp.fetch(url, urlFetchAppParams);
       let data = JSON.parse(response.getContentText());
       console.log(data);
       let result = data;
@@ -159,8 +160,8 @@ class HubSpot {
   static listContact(contactId) {
     trace("listContact");
     //try {
-      let url = `https://api.hubapi.com/crm/v3/objects/contacts/"${contactId}"?properties=invoice_no,first_conversion_date,deal_status,hubspot_owner_id,contacttype,number_of_guests__inc_the_couple_,decor,hs_object_id,firstname,lastname,meet___greet_date,meet___greet_time,event_date,confirmed_wedding_date,time_of_ceremony,confirmed_venue,venue___reception,do_you_require_witnesses_,documents_status,notes,createdate,email,hs_email_domain,phone,annualrevenue,number_of_guests,asana_link,hs_lifecyclestage_customer_date,hs_lifecyclestage_lead_date,hs_lifecyclestage_marketingqualifiedlead_date,hs_lifecyclestage_salesqualifiedlead_date,hs_lifecyclestage_subscriber_date,hs_lifecyclestage_evangelist_date,hs_lifecyclestage_opportunity_date,hs_lifecyclestage_other_date,city,company,hs_object_id,country,date,date_worked,do_you_agree_to_special_terms_in_the_event_of_a_coronavirus_event,hs_content_membership_email_confirmed,event_start_time,industry,is_there_any_food_that_you_dislike,is_your_kitchen_fulled_equipped_and_functional,jobtitle,kitchen,kitchen_1,lastmodifieddate,hs_latest_sequence_ended_date,hs_latest_sequence_enrolled,hs_latest_sequence_enrolled_date,lifecyclestage,hs_marketable_status,hs_marketable_reason_id,hs_marketable_reason_type,hs_marketable_until_renewal,mobilephone,numemployees,hs_sequences_enrolled_count,hs_createdate,hs_persona,zip,hs_language,salutation,state,address,hs_content_membership_registration_email_sent_at,time_sheet,twitterhandle,website,what_the_occasion&archived=false&hapikey=${HubSpotApiKey}`;
-      let response = UrlFetchApp.fetch(url);
+      let url = `https://api.hubapi.com/crm/v3/objects/contacts/"${contactId}"?properties=invoice_no,first_conversion_date,deal_status,hubspot_owner_id,contacttype,number_of_guests__inc_the_couple_,decor,hs_object_id,firstname,lastname,meet___greet_date,meet___greet_time,event_date,confirmed_wedding_date,time_of_ceremony,confirmed_venue,venue___reception,do_you_require_witnesses_,documents_status,notes,createdate,email,hs_email_domain,phone,annualrevenue,number_of_guests,asana_link,hs_lifecyclestage_customer_date,hs_lifecyclestage_lead_date,hs_lifecyclestage_marketingqualifiedlead_date,hs_lifecyclestage_salesqualifiedlead_date,hs_lifecyclestage_subscriber_date,hs_lifecyclestage_evangelist_date,hs_lifecyclestage_opportunity_date,hs_lifecyclestage_other_date,city,company,hs_object_id,country,date,date_worked,do_you_agree_to_special_terms_in_the_event_of_a_coronavirus_event,hs_content_membership_email_confirmed,event_start_time,industry,is_there_any_food_that_you_dislike,is_your_kitchen_fulled_equipped_and_functional,jobtitle,kitchen,kitchen_1,lastmodifieddate,hs_latest_sequence_ended_date,hs_latest_sequence_enrolled,hs_latest_sequence_enrolled_date,lifecyclestage,hs_marketable_status,hs_marketable_reason_id,hs_marketable_reason_type,hs_marketable_until_renewal,mobilephone,numemployees,hs_sequences_enrolled_count,hs_createdate,hs_persona,zip,hs_language,salutation,state,address,hs_content_membership_registration_email_sent_at,time_sheet,twitterhandle,website,what_the_occasion&archived=false`;
+      let response = UrlFetchApp.fetch(url, urlFetchAppParams);
       let data = JSON.parse(response.getContentText());
       console.log(data);
       let result =data;
