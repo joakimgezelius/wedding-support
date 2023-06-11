@@ -25,13 +25,6 @@ function onReverseMarkupCalculations(){
   }
 }
 
-function onCheckCoordinator() {
-  trace("onCheckCoordinator");
-  let eventDetails = new EventDetails();
-  let eventDetailsChecker = new EventDetailsChecker();
-  eventDetails.apply(eventDetailsChecker);
-}
-
 
 //=============================================================================================
 // Class EventDetailsUpdater

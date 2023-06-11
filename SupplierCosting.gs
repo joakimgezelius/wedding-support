@@ -94,6 +94,7 @@ class SupplierCostingBuilder {
   onRow(row) {
     var totalNativeGrossCost = row.totalNativeGrossCost;
     var totalNettCost = row.totalNettCost;
+    var commissionPercentage = row.commissionPercentage;
     var paymentMethod = row.paymentMethod;
     var paymentStatus = row.paymentStatus;
     if (!row.isSubItem && Math.abs(row.nativeUnitCostWithVAT) > 0.01 && row.quantity > 0) { // This not a sub-item (marked as such or with no price)
@@ -112,6 +113,7 @@ class SupplierCostingBuilder {
       targetRow.getCell(1,column++).setValue(row.location);
       targetRow.getCell(1,column++).setValue(description);
       targetRow.getCell(1,column++).setValue(row.quantity);
+      targetRow.getCell(1,column++).setValue(row.currency);
       targetRow.getCell(1,column++).setValue(row.nativeUnitCostWithVAT).setNumberFormat(row.currencyFormat);
       if (row.currency === "GBP") {
         this.currentSupplierGrossGbpSum += Number(totalNativeGrossCost);
@@ -123,6 +125,7 @@ class SupplierCostingBuilder {
         ++column; // Skip GBP column
       }
       targetRow.getCell(1,column++).setValue(totalNettCost).setNumberFormat("£#,##0.00");
+      targetRow.getCell(1,column++).setValue(commissionPercentage);
       targetRow.getCell(1,column++).setValue(paymentMethod);
       targetRow.getCell(1,column++).setValue(paymentStatus);
       targetRow.setFontWeight("normal");

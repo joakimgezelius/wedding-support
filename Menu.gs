@@ -10,7 +10,7 @@ class Menu {
       //.addSeparator()
       .addItem("Update Coordinator (no over-writes)", libName + ".onUpdateCoordinator")   // In Coordinator.gs
       .addItem("Force-Update Coordinator - over-writes data", libName + ".onUpdateCoordinatorForced")   // In Coordinator.gs
-      //.addItem("Check Coordinator", libName + ".onCheckCoordinator")
+      .addItem("Check Client Sheet", libName + ".onCheckClientSheet")               // In ClientSheet.gs
       .addItem("Update Budget", libName + ".onUpdateBudget")    // In Budget.gs
       .addItem("Update Client Itinerary", libName + ".onUpdateClientItinerary")     // In itinerary.gs
       .addItem("Update Decor Summary", libName + ".onUpdateDecorSummary")           // In DecorSummary.gs

@@ -1,10 +1,10 @@
 function onTestCase1() {        // HubSpot Testing
   trace("onTestCase1");  
-  //HubSpot.listContacts(); 
-  HubSpot.listDeals();
-  //HubSpot.contactToDeal();
+  // HubSpot.listContacts(); 
+  // HubSpot.listDeals();
+  HubSpot.contactToDeal();
   //HubSpot.dealToContact();
-  //HubSpot.listEngagement();
+  // HubSpot.listEngagement();
   //HubSpot.masterHubspot();
   //HubSpot.getClientData();
 }

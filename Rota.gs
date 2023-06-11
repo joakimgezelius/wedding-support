@@ -101,7 +101,7 @@ class ClientSheetList {
     let dataset = "";
     this.range.values.forEach(row => { // Add to dataset if not blank
       // NOTE: We're generating queries that return a header row, to avoid problems with empty result sets
-      dataset = dataset + (row[0] != "" ? (dataset != "" ? ";" : "") + `QUERY(importrange("${row[0]}", "${sourceRangeName}"), "${query.replace('${eventName}',row[1])}", 1)`: "")
+      dataset = dataset + (row[0] != "" ? (dataset != "" ? ";" : "") + `IFERROR(QUERY(importrange("${row[0]}", "${sourceRangeName}"), "${query.replace('${eventName}',row[1])}", 1))`: "")
     });
     dataset = `{${dataset}}`;
     trace(`ClientSheetList.generateDataset() -> ${dataset}`);
