@@ -85,6 +85,7 @@ class SupplierCostingBuilder {
     ++column;
     ++column;
     ++column;
+    ++column;
     this.fillSupplierSums(targetRow.getCell(1,column++), targetRow.getCell(1,column++), targetRow.getCell(1,column++));
     targetRow.setFontWeight("bold");
     targetRow.setFontSize(12);
