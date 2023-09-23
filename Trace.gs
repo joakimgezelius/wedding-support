@@ -30,3 +30,13 @@ class Trace {
   }
 */
 }
+
+class Log {
+  static clear() {
+
+  }  
+
+  static log() {
+
+  }
+}

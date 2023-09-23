@@ -1,12 +1,13 @@
 function onTestCase1() {        // HubSpot Testing
-  trace("onTestCase1");  
+  trace("onTestCase1");
+  HubSpotDataDictionary.importHubSpotTasks();
   // HubSpot.listContacts(); 
   // HubSpot.listDeals();
-  HubSpot.contactToDeal();
-  //HubSpot.dealToContact();
+  // HubSpot.contactToDeal();
+  // HubSpot.dealToContact();
   // HubSpot.listEngagement();
-  //HubSpot.masterHubspot();
-  //HubSpot.getClientData();
+  // HubSpot.masterHubspot();
+  // HubSpot.getClientData();
 }
 
 function onTestCase2() {    

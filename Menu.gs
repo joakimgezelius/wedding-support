@@ -16,7 +16,7 @@ class Menu {
       .addItem("Update Decor Summary", libName + ".onUpdateDecorSummary")           // In DecorSummary.gs
       .addItem("Update Supplier Costing", libName + ".onUpdateSupplierCosting")     // In SupplierCosting.gs      
       //.addItem("Update Supplier Venue Itinerary", libName + ".onUpdateSupplierVenueItinerary") // In VenueItinerary.gs
-      .addItem("Update Venue Itinerary", libName + ".onUpdateVenueItinerary")       // In VenueItinerary.gs
+      //.addItem("Update Venue Itinerary", libName + ".onUpdateVenueItinerary")       // In VenueItinerary.gs
       .addItem("Pull Client Data From HubSpot", libName + ".onUpdateClientData")    // In HubSpotAPI.gs
       .addSeparator()
       //.addItem("Update Exchange Rates", libName + ".onUpdateExchangeRates")

@@ -206,5 +206,57 @@ class HubSpotDataDictionary {
     return HubSpotDataDictionary.singleton ?? (HubSpotDataDictionary.singleton = new HubSpotDataDictionary);
   }
 
-}
+  static importHubSpotTasks() {
+    Logger.log(" ----- start of importHubSpotTasks ---- ");
+    let hubspotEndpoint = `${HubSpotBaseUrl}/tasks`;
+    let sheet = SpreadsheetApp.getActiveSheet();
 
+    // Clear existing data in the sheet
+    sheet.clear();
+
+    // Write headers
+    let headers = ['Task ID', 'Title', 'Description', 'Due Date', 'Status'];
+    sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+
+    // Request to HubSpot API
+    let response = UrlFetchApp.fetch(hubspotEndpoint, urlFetchAppParams);
+    let data = JSON.parse(response.getContentText());
+    // Logger.log(data);
+
+    // Check if there are tasks
+    if (data.results && data.results.length > 0) {
+      // Write HubSpot tasks to the sheet
+      let tasks = data.results;
+      let taskData = [];
+      
+      for (let i = 0; i < tasks.length; i++) {
+        let task = tasks[i];
+        let taskId = task.id;
+        let taskDetailsEndpoint = `${HubSpotBaseUrl}/tasks/${taskId}`;
+        
+        // trying to fetch task details individually
+        let taskDetailsResponse = UrlFetchApp.fetch(taskDetailsEndpoint, urlFetchAppParams);
+        let taskDetails = JSON.parse(taskDetailsResponse.getContentText());
+        Logger.log(taskDetails);
+        
+        let rowData = [
+          taskId,
+          taskDetails.properties && taskDetails.properties.subject ? taskDetails.properties.subject : '', 
+          taskDetails.properties && taskDetails.properties.description ? taskDetails.properties.description : '',
+          taskDetails.properties && taskDetails.properties.dueDate ? taskDetails.properties.dueDate : '',
+          taskDetails.properties && taskDetails.properties.status ? taskDetails.properties.status : '',
+        ];
+        
+        taskData.push(rowData);
+      }
+
+      // write the task data to the sheet
+      sheet.getRange(2, 1, taskData.length, taskData[0].length).setValues(taskData);
+    } else {
+      // handle the case where there are no tasks
+      Logger.log('No tasks found.');
+    }
+    Logger.log(" ----- End of importHubSpotTasks ---- ");
+  }
+
+}
