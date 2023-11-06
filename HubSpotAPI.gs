@@ -206,11 +206,14 @@ class HubSpotDataDictionary {
     return HubSpotDataDictionary.singleton ?? (HubSpotDataDictionary.singleton = new HubSpotDataDictionary);
   }
 
-  
   static importHubSpotTasks() {
     Logger.log(" ----- start of importHubSpotTasks ---- ");
     let sheet = SpreadsheetApp.getActiveSheet();
     let taskData = [];
+    let offset = 0; // Initialize offset to 0
+    const pageSize = 50; // Number of records per page
+    const delayBetweenRequests = 5000; // Delay in milliseconds between requests (adjust as needed)
+    let taskCounter = 0; // Initialize task counter
 
     // Clear existing data in the sheet
     sheet.clear();
@@ -219,34 +222,43 @@ class HubSpotDataDictionary {
     let headers = ['Task ID', 'Title', 'Description', 'Due Date', 'Assignee', 'Status'];
     sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
 
-    let nextPageLink = `${HubSpotBaseUrl}/tasks?limit=100`;
-
-    // Fetch a limited number of tasks in each execution
     try {
-      let response = UrlFetchApp.fetch(nextPageLink, urlFetchAppParams);
-      let data = JSON.parse(response.getContentText());
+      while (true) {
+        let nextPageLink = `${HubSpotBaseUrl}/tasks?limit=${pageSize}&offset=${offset}`;
 
-      if (data.results && data.results.length > 0) {
-        for (let i = 0; i < data.results.length; i++) {
-          let task = data.results[i];
-          let taskId = task.id;
-          let taskDetailsEndpoint = `${HubSpotBaseUrl}/tasks/${taskId}?properties=hs_task_subject&properties=hs_task_body&properties=hs_task_status&properties=hs_timestamp&properties=hubspot_owner_id&archived=false`;
+        let response = UrlFetchApp.fetch(nextPageLink, urlFetchAppParams);
+        let data = JSON.parse(response.getContentText());
 
-          // Fetch task details individually
-          let taskDetailsResponse = UrlFetchApp.fetch(taskDetailsEndpoint, urlFetchAppParams);
-          let taskDetails = JSON.parse(taskDetailsResponse.getContentText());
-          // Logger.log(taskDetails);
+        if (data.results && data.results.length > 0) {
+          for (let i = 0; i < data.results.length; i++) {
+            let task = data.results[i];
+            let taskId = task.id;
 
-          let rowData = [
-            taskId,
-            taskDetails.properties && taskDetails.properties.hs_task_subject ? taskDetails.properties.hs_task_subject : '',
-            taskDetails.properties && taskDetails.properties.hs_task_body ? taskDetails.properties.hs_task_body : '',
-            taskDetails.properties && taskDetails.properties.hs_timestamp ? taskDetails.properties.hs_timestamp : '',
-            taskDetails.properties && taskDetails.properties.hubspot_owner_id ? taskDetails.properties.hubspot_owner_id : '',
-            taskDetails.properties && taskDetails.properties.hs_task_status ? taskDetails.properties.hs_task_status : '',
-          ];
+            taskCounter++; // Increment the task counter
+            Logger.log(`Task ${taskCounter}: Processing Task ID: ${taskId}`); // Log the task ID with counter
+            let taskDetailsEndpoint = `${HubSpotBaseUrl}/tasks/${taskId}?properties=hs_task_subject&properties=hs_task_body&properties=hs_task_status&properties=hs_timestamp&properties=hubspot_owner_id&archived=false`;
 
-          taskData.push(rowData);
+            // Fetch task details individually
+            let taskDetailsResponse = UrlFetchApp.fetch(taskDetailsEndpoint, urlFetchAppParams);
+            let taskDetails = JSON.parse(taskDetailsResponse.getContentText());
+
+            let rowData = [
+              taskId,
+              taskDetails.properties && taskDetails.properties.hs_task_subject ? taskDetails.properties.hs_task_subject : '',
+              taskDetails.properties && taskDetails.properties.hs_task_body ? taskDetails.properties.hs_task_body : '',
+              taskDetails.properties && taskDetails.properties.hs_timestamp ? taskDetails.properties.hs_timestamp : '',
+              taskDetails.properties && taskDetails.properties.hubspot_owner_id ? taskDetails.properties.hubspot_owner_id : '',
+              taskDetails.properties && taskDetails.properties.hs_task_status ? taskDetails.properties.hs_task_status : '',
+            ];
+
+            taskData.push(rowData);
+          }
+
+          offset += pageSize; // Increment the offset for the next page
+          Utilities.sleep(delayBetweenRequests); // Add a delay between requests to avoid rate limiting
+        } else {
+          // No more tasks to fetch
+          break;
         }
       }
 
@@ -262,5 +274,64 @@ class HubSpotDataDictionary {
     }
     Logger.log(" ----- End of importHubSpotTasks ---- ");
   }
+
+
+
+  
+  // static importHubSpotTasks() {
+  //   Logger.log(" ----- start of importHubSpotTasks ---- ");
+  //   let sheet = SpreadsheetApp.getActiveSheet();
+  //   let taskData = [];
+
+  //   // Clear existing data in the sheet
+  //   sheet.clear();
+
+  //   // Write headers
+  //   let headers = ['Task ID', 'Title', 'Description', 'Due Date', 'Assignee', 'Status'];
+  //   sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+
+  //   let nextPageLink = `${HubSpotBaseUrl}/tasks?limit=100`;
+
+  //   // Fetch a limited number of tasks in each execution
+  //   try {
+  //     let response = UrlFetchApp.fetch(nextPageLink, urlFetchAppParams);
+  //     let data = JSON.parse(response.getContentText());
+
+  //     if (data.results && data.results.length > 0) {
+  //       for (let i = 0; i < data.results.length; i++) {
+  //         let task = data.results[i];
+  //         let taskId = task.id;
+  //         let taskDetailsEndpoint = `${HubSpotBaseUrl}/tasks/${taskId}?properties=hs_task_subject&properties=hs_task_body&properties=hs_task_status&properties=hs_timestamp&properties=hubspot_owner_id&archived=false`;
+
+  //         // Fetch task details individually
+  //         let taskDetailsResponse = UrlFetchApp.fetch(taskDetailsEndpoint, urlFetchAppParams);
+  //         let taskDetails = JSON.parse(taskDetailsResponse.getContentText());
+  //         // Logger.log(taskDetails);
+
+  //         let rowData = [
+  //           taskId,
+  //           taskDetails.properties && taskDetails.properties.hs_task_subject ? taskDetails.properties.hs_task_subject : '',
+  //           taskDetails.properties && taskDetails.properties.hs_task_body ? taskDetails.properties.hs_task_body : '',
+  //           taskDetails.properties && taskDetails.properties.hs_timestamp ? taskDetails.properties.hs_timestamp : '',
+  //           taskDetails.properties && taskDetails.properties.hubspot_owner_id ? taskDetails.properties.hubspot_owner_id : '',
+  //           taskDetails.properties && taskDetails.properties.hs_task_status ? taskDetails.properties.hs_task_status : '',
+  //         ];
+
+  //         taskData.push(rowData);
+  //       }
+  //     }
+
+  //     if (taskData.length > 0) {
+  //       // Write the task data to the sheet
+  //       sheet.getRange(2, 1, taskData.length, taskData[0].length).setValues(taskData);
+  //     } else {
+  //       // Handle the case where there are no tasks
+  //       Logger.log('No tasks found.');
+  //     }
+  //   } catch (e) {
+  //     Logger.log("Error: " + e);
+  //   }
+  //   Logger.log(" ----- End of importHubSpotTasks ---- ");
+  // }
 
 }

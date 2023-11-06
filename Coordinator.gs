@@ -103,15 +103,15 @@ class EventDetailsUpdater {
     row.unitPrice = `=IF(OR(${a1_unitCost}="", ${a1_unitCost}=0), "", ${a1_unitCost} * ( 1 + ${a1_markup}))`;
     row.totalPrice = `=IF(OR(${a1_quantity}="", ${a1_quantity}=0, ${a1_unitPrice}="", ${a1_unitPrice}=0, ${a1_selected}=FALSE), "", ${a1_quantity} * ${a1_unitPrice})`;
 //  row.commission = `=IF(OR(${a1_commissionPercentage}="", ${a1_commissionPercentage}=0), "", ${a1_quantity} * ${a1_unitCost} * ${a1_commissionPercentage})`;
-  // Check this quantity calculation formula after StaffTicked is replaced with StoreTicked
+    // Check this quantity calculation formula after StaffTicked is replaced with StoreTicked
     if (row.isStoreTicked && (row.quantity === "")) { // Calculate quantity if staff and time fields are filled  (isStoreTicked instead StaffTicked)
       row.quantity = `=IF(OR(${a1_startTime}="", ${a1_endTime}=""), "", ((hour(${a1_endTime})*60+minute(${a1_endTime}))-(hour(${a1_startTime})*60+minute(${a1_startTime})))/60)`;
     }
-    if (row.isInStock && this.forced) { // Set mark-up and commission for in-stock items
-      trace("- Set In Stock commision & mark-up on " + this.itemNo);
-      row.commissionPercentage = 0.2; // 20% commission for Gib companny
-      row.markup = 0;
-    }
+//. if (row.isInStock && this.forced) { // Set mark-up and commission for in-stock items
+//    trace("- Set In Stock commision & mark-up on " + this.itemNo);
+//    row.commissionPercentage = 0.2; // 20% commission for Gib companny
+//    row.markup = 0;
+//  }
   }
 
   generateSectionId() {
