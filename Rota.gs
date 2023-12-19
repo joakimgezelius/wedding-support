@@ -22,63 +22,20 @@ function onUpdateRotaSheet() {
 
 function onEventCoordinationSheetPeriodChanged() {
   trace("onEventCoordinationSheetPeriodChanged");
-  Dialog.notify("Period Changed", "Sheet will be recalculated, this may take a few seconds...");
-  onUpdateEventCoordinationSheet();
+  Dialog.notify("Refreshing Details", "Sheet will be recalculated, this may take a few seconds...");
+  updateMasterQuery();
 }
 
-function onUpdateEventCoordinationSheet() {
-  trace("onUpdateEventCoordinationSheet");
+function updateMasterQuery() {
+  trace("updateMasterQuery");
   let clientSheetList = new ClientSheetList;
-   
+  // 
   // Note: We now use a two-phased appraoch, first phase collects a master data set based on a query we compile in code (next couple of lines),
   //       after which secodary queries on each tab further filters the data set.
   //
   clientSheetList.setQuery("MasterQuery",
-    "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col9,Col10,Col11,Col12,Col13,Col14,Col16,Col18,Col28,Col35 WHERE Col17=TRUE", 
-    "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col4) CONTAINS 'cancelled' ORDER BY Col5");
-
-  /*
-  AND LOWER(Col17) CONTAINS 'true' 
-  clientSheetList.setQuery("ThingsToOrderQuery",
-    "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col11,Col12,Col13,Col18,Col16 WHERE LOWER (Col7) CONTAINS 'to order' OR Col7='Ordered'", 
-    "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' ORDER BY Col5");
-
-  clientSheetList.setQuery("ThingsToMakeQuery",
-    "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col11,Col12,Col13,Col18,Col16 WHERE LOWER (Col6) CONTAINS 'to make'", 
-    "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' ORDER BY Col5");
-
-  clientSheetList.setQuery("ThingsOrderedQuery",
-    "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col11,Col12,Col13,Col18,Col16 WHERE Col7='Ordered'", 
-    "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' ORDER BY Col5");
-
-  clientSheetList.setQuery("ThingsToBuyQuery",
-    "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col11,Col12,Col13,Col18,Col16 WHERE Col7='To Buy' OR Col7='To Collect'", 
-    "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' ORDER BY Col5");
-
-  clientSheetList.setQuery("TransportationQuery",
-    "SELECT '${eventName}',Col1,Col6,Col8,Col9,Col10,Col7,Col11,Col12,Col13,Col16 WHERE Col6='Transport'", 
-    "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' ORDER BY Col5");
-
-  clientSheetList.setQuery("ServicesQuery",
-    "SELECT '${eventName}',Col1,Col6,Col8,Col9,Col10,Col7,Col11,Col12,Col13,Col16 WHERE Col6='Service'", 
-    "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' AND NOT LOWER(Col7) CONTAINS 'booked' AND NOT LOWER(Col7) CONTAINS 'confirmed' AND NOT LOWER(Col7) CONTAINS 'own arrangement' ORDER BY Col4,Col5");
-
-  clientSheetList.setQuery("ThingsInStoreQuery",
-    "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col11,Col12,Col13,Col18,Col16 WHERE LOWER(Col7) CONTAINS 'spain'", 
-    "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' ORDER BY Col5");
-
-  clientSheetList.setQuery("ThingsInShopQuery",
-    "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col11,Col12,Col13,Col18,Col16 WHERE LOWER(Col7) CONTAINS 'shop' or LOWER(Col7) CONTAINS 'gibraltar'",
-    "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' ORDER BY Col5");
-
-  clientSheetList.setQuery("RotaQuery",
-    "SELECT '${eventName}',Col1,Col6,Col8,Col9,Col10,Col7,Col11,Col12,Col13,Col16 WHERE (LOWER(Col6) CONTAINS 'transport' OR  LOWER(Col6) CONTAINS 'rota')", // Col4=TRUE OR Col13 IS NOT NULL", 
-    "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' ORDER BY Col5");
-
-  clientSheetList.setQuery("HotelReservationsQuery",
-    "SELECT '${eventName}',Col1,Col6,Col7,Col8,Col12,Col14,Col18,Col28,Col16 WHERE LOWER(Col6) CONTAINS 'hotel'", 
-    "SELECT * WHERE Col2<>'#01' AND NOT LOWER(Col7) CONTAINS 'cancelled' ORDER BY Col5"); 
-  */
+    "SELECT '${eventName}',Col1,Col2,Col3,Col4,Col5,Col6,Col7,Col8,Col9,Col10,Col11,Col12,Col13,Col14,Col15,Col16,Col17,Col18,Col19,Col20,Col21,Col22,Col23,Col24,Col25,Col26,Col27,Col28,Col29,Col30,Col31,Col32,Col33,Col34,Col35", 
+    "SELECT * WHERE Col2<>'#01'");
 }
 
 
