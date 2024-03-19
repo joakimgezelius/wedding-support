@@ -1,3 +1,4 @@
+// Come here when force-updating the price list from the Price List menu
 function onUpdatePriceListForced() {
   trace("onUpdatePriceListForced");
   if (Dialog.confirm("Forced Price List Update - Confirmation Required", "Are you sure you want to force-update the price list? It will overwrite row numbers and formulas, make sure the sheet is sorted properly!") == true) {

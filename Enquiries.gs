@@ -180,38 +180,54 @@ class Project extends RangeRow {
         Dialog.toast("Preparing document structure, this may take a minute or two...");
         templateFolder.copyTo(destinationFolder, this.fileName);                    // Copies source folder contents to target folder
         let paymentsFolderName =  this.fileName + " - Payments";
-        paymentsFoldersRoot.createFolder(paymentsFolderName);
+        if (paymentsFoldersRoot.folderExists(paymentsFolderName)) {
+          Dialog.notify("Payments folder already exists!", "Project Payments Folder for more details!");
+        } else {
+          paymentsFoldersRoot.createFolder(paymentsFolderName);
+        }
 
         let templateSheetFile = File.getByUrl(templateProjectSheetLink);
 
         let projectFolder = destinationFolder.getSubfolder(this.fileName);         // Gets newly created project folder by name
-        let projectFolderLink = projectFolder.url;                                 // Gets the URL of newly created project folder 
-        this.folderLink = projectFolderLink;                                       // Sets the folder link in the cell in FolderLink Column
+        if (projectFolder) {
+            trace(`projectFolder: ${projectFolder}`);
+            let projectFolderLink = projectFolder.url;                                 // Gets the URL of newly created project folder 
+            this.folderLink = projectFolderLink;                                       // Sets the folder link in the cell in FolderLink Column
 
-        let paymentsFolder = paymentsFoldersRoot.getSubfolder(paymentsFolderName); // Gets newly created payment folder by name
-        let paymentsFolderLink = paymentsFolder.url;                               // Returns URL to Payment Folder
-        this.paymentsLink = paymentsFolderLink;                                    // Sets the URL in the Master sheet
+            let paymentsFolder = paymentsFoldersRoot.getSubfolder(paymentsFolderName); // Gets newly created payment folder by name
+            if(paymentsFolder == null) {
+              paymentsFoldersRoot.createFolder(paymentsFolderName);
+              paymentsFolder = paymentsFoldersRoot.getSubfolder(paymentsFolderName);
+              let paymentsFolderLink = paymentsFolder.url;                               // Returns URL to Payment Folder
+              this.paymentsLink = paymentsFolderLink;                                    // Sets the URL in the Master sheet
+            } else {
+              let paymentsFolderLink = paymentsFolder.url;                               // Returns URL to Payment Folder
+              this.paymentsLink = paymentsFolderLink;                                    // Sets the URL in the Master sheet
+            }
 
-        //let targetFolderName = "Office Use";                                     // Folder name to look for copying the template file in it
-        //let subFolder = projectFolder.getSubfolder(targetFolderName);
-        //let subFolderId = subFolder.id;                                          // Gets the id of found subfolder "Office Use"
+            //let targetFolderName = "Office Use";                                     // Folder name to look for copying the template file in it
+            //let subFolder = projectFolder.getSubfolder(targetFolderName);
+            //let subFolderId = subFolder.id;                                          // Gets the id of found subfolder "Office Use"
 
-        let targetFolder = projectFolder;                                          // Gets the folder by id to copy the template file in it
-        if (targetFolder) {
-            projectFolder.createShortcut(paymentsFolder, "Payments");              // Creates shortcut to Payment Folder in Project Folder
-            templateSheetFile.copyTo(targetFolder,this.fileName);       
-            let newProjectSheet = targetFolder.getFile(this.fileName);             // Gets the newly copied file with given name
-            let newProjectSheetId = newProjectSheet.id;                            // Returns the id of found file
-            let projectTemplate = Spreadsheet.openById(newProjectSheetId);
-            projectTemplate.setActive();                                           // Sets the active spreadsheet Confirmed W & E to new project sheet
-            let newProjectSheetLink = newProjectSheet.url;                         // Gets the URL of newly copied template file
-            this.sheetLink= newProjectSheetLink;                                   // Sets the project sheet link to the cell in SheetLink Column
-            Dialog.notify("Project Document Structure Created!", 'Please check columns "Project Sheet", "Project Folder" & "Project Payments Folder" for more details.');
-            Browser.newTab(newProjectSheetLink);
-        } 
-        else {
-            Dialog.notify("Folder not found!","Template folder does not exist! Couldn't make a copy of template sheet, please check source folder.");
+            let targetFolder = projectFolder;                                          // Gets the folder by id to copy the template file in it
+            if (targetFolder) {
+                projectFolder.createShortcut(paymentsFolder, "Payments");              // Creates shortcut to Payment Folder in Project Folder
+                templateSheetFile.copyTo(targetFolder,this.fileName);       
+                let newProjectSheet = targetFolder.getFile(this.fileName);             // Gets the newly copied file with given name
+                let newProjectSheetId = newProjectSheet.id;                            // Returns the id of found file
+                let projectTemplate = Spreadsheet.openById(newProjectSheetId);
+                projectTemplate.setActive();                                           // Sets the active spreadsheet Confirmed W & E to new project sheet
+                let newProjectSheetLink = newProjectSheet.url;                         // Gets the URL of newly copied template file
+                this.sheetLink= newProjectSheetLink;                                   // Sets the project sheet link to the cell in SheetLink Column
+                Dialog.notify("Project Document Structure Created!", 'Please check columns "Project Sheet", "Project Folder" & "Project Payments Folder" for more details.');
+                Browser.newTab(newProjectSheetLink);
+            } 
+        } else {
+            Dialog.notify("Folder not found!", "Project folder does not exist!");
         }
+      } 
+      else {
+          Dialog.notify("Folder not found!","Template folder does not exist! Couldn't make a copy of template sheet, please check source folder.");
       }
     }
   }

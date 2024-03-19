@@ -163,7 +163,8 @@ class Menu {
     trace("> Adding custom price list menu");
     let ui = SpreadsheetApp.getUi();
     let menu = ui.createMenu("Price List" + globalLibMenuTag)
-        .addItem("Force-Update Price List", libName + ".onUpdatePriceListForced"); // PackagePriceList.gs
+        .addItem("Force-Update Price Lists from the Price List Index", libName + ".onUpdatePriceListForced") // PackagePriceList.gs
+        .addItem("Force-Update Current Price List", libName + ".onUpdatePriceListForced"); // PackagePriceList.gs
     Menu.addTestItems(libName, menu).addToUi();
     trace("< Custom price list menu added");
   }
