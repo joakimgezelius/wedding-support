@@ -95,9 +95,9 @@ class SupplierCostingBuilder {
   onRow(row) {
     var totalNativeGrossCost = row.totalNativeGrossCost;
     var totalNettCost = row.totalNettCost;
-    var commissionPercentage = row.commissionPercentage;
-    var paymentMethod = row.paymentMethod;
-    var paymentStatus = row.paymentStatus;
+//  var commissionPercentage = row.commissionPercentage;
+//  var paymentMethod = row.paymentMethod;
+//  var paymentStatus = row.paymentStatus;
     if (!row.isSubItem && Math.abs(row.nativeUnitCostWithVAT) > 0.01 && row.quantity > 0) { // This not a sub-item (marked as such or with no price)
       trace("SupplierCostingBuilder.onRow " + row.description);
       if (row.supplier !== this.currentSupplier) {

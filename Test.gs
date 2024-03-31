@@ -1,6 +1,6 @@
 function onTestCase1() {        // HubSpot Testing
   trace("onTestCase1");
-  HubSpotDataDictionary.importHubSpotTasks();
+  // HubSpotDataDictionary.importHubSpotTasks();
   // HubSpot.listContacts(); 
   // HubSpot.listDeals();
   // HubSpot.contactToDeal();
@@ -8,6 +8,13 @@ function onTestCase1() {        // HubSpot Testing
   // HubSpot.listEngagement();
   // HubSpot.masterHubspot();
   // HubSpot.getClientData();
+  let spreadsheet = Spreadsheet.active;
+  let sheet1 = spreadsheet.getSheetByName("Crazy in love");
+  let range1 = sheet1.fullRange;
+  range1.setName("'Crazy in love'!TestRangeName");
+  let sheet2 = spreadsheet.getSheetByName("Banoffee Bonanza");
+  let range2= sheet2.fullRange;
+  range2.setName("'Banoffee Bonanza'!TestRangeName");
 }
 
 function onTestCase2() {    

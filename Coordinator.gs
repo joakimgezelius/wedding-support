@@ -69,6 +69,7 @@ class EventDetailsUpdater {
   onRow(row) {
     trace("EventDetailsUpdater.onRow " + row.sectionId + " " + this.itemNo);
     ++this.itemNo;
+
     let a1_category = row.getA1Notation("Category");
     let a1_status   = row.getA1Notation("Status");
     let a1_selected = row.getA1Notation("Selected");

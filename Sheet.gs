@@ -135,6 +135,12 @@ class Spreadsheet {
     Error.fatal(`Cannot find named range ${rangeName}`);
   }
 
+  setNamedRange(name, range) {
+    // https://developers.google.com/apps-script/reference/spreadsheet/spreadsheet#setnamedrangename,-range
+    trace(`${this.trace}.setNamedRange("${name}", ${range.trace})`);
+    this.nativeSpreadsheet.setNamedRange(name, range.nativeRange);
+  }
+
   getSheetByName(name) {
     const sheet = this.nativeSpreadsheet.getSheetByName(name);
     const newSheet = sheet === null ? null : new Sheet(sheet);

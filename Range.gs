@@ -45,6 +45,12 @@ class Range {
     this.nativeRange.copyTo(destination.nativeRange, copyPasteType, false);
   }
 
+  setName(name) {
+    trace(`Range.setName ${this.trace} to ${name}`);
+    let spreadsheet = Spreadsheet.active;
+    spreadsheet.setNamedRange(name, this);
+  }
+
   // Iterate over all rows in the range by moving the currentRowOffset forward
   //  - call back passing "this", callee picks up current row...
   //
