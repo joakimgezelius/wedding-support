@@ -83,6 +83,7 @@ class Range {
 
   set values(values)        { this.nativeRange.setValues(this._values = values); }
   set value(value)          { this.nativeRange.getCell(1, 1).setValue(value); }
+  set currentRowOffset(value){ return this._currentRowOffset = value; }
   
   //========================================================================================================= 
   //  Dynamic Range Features Below
