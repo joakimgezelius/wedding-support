@@ -237,7 +237,7 @@ class Project extends RangeRow {
 
   copyTo(destination) {
     trace(`${this.trace}.copyTo ${destination.trace}`);
-    const fields = ["Name", "EmailAddress", "Who"];
+    const fields = ["Name", "EmailAddress", "Responsible"];
     this.copyFieldsTo(destination, fields);
   }
 

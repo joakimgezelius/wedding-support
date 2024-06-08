@@ -68,7 +68,7 @@ class EventRow extends RangeRow {
   get isSubItem()           { return this.category.toLowerCase() === "part"; }     // Is this a sub-item?
   get isInStock()           { return this.category.toLowerCase() === "in stock"; }   // Is this item in stock?
   get isCancelled()         { return this.status.toLowerCase() === "cancelled"; }  // Is this item cancelled?
-  get who()                 { return this.get("Who", "string"); }
+  get responsible()                 { return this.get("Responsible", "string"); }
   get incharge()            { return this.get("InCharge", "string"); }
   get category()            { return this.get("Category", "string"); }
   get status()              { return this.get("Status", "string"); }
@@ -163,8 +163,8 @@ class EventRow extends RangeRow {
   }
 
   compareStaff(other) {
-    let myValue = this.who;
-    let otherValue = other.who;
+    let myValue = this.responsible;
+    let otherValue = other.responsible;
     return myValue < otherValue ? -1 : (myValue > otherValue ? 1 : 0);
   }
 

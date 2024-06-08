@@ -48,7 +48,7 @@ class StaffItineraryBuilder {
       let targetRow = this.targetRange.getNextRowAndExtend();
       //trace("StaffItineraryBuilder.onRow got target row: " + Range.trace(targetRow));
       let column = 1;
-      targetRow.getCell(1,column++).setValue(row.who);
+      targetRow.getCell(1,column++).setValue(row.responsible);
       targetRow.getCell(1,column++).setValue(row.date);
       targetRow.getCell(1,column++).setValue(row.time);
       targetRow.getCell(1,column++).setValue(row.endTime);
