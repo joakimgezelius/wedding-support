@@ -203,7 +203,7 @@ class DecorSummaryBuilder {
       targetRow.getCell(1,column++).setValue(row.startTime);
       targetRow.getCell(1,column++).setValue(row.endTime);
       targetRow.getCell(1,column++).setValue(row.responsible);
-      targetRow.getCell(1,column++).setValue(row.incharge);
+      targetRow.getCell(1,column++).setValue(row.accountable);
       targetRow.getCell(1,column++).setValue(row.location);
       targetRow.getCell(1,column++).setValue(row.description);
       targetRow.getCell(1,column++).setValue(row.quantity);
