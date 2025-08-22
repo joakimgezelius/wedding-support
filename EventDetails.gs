@@ -70,6 +70,7 @@ class EventRow extends RangeRow {
   get isCancelled()         { return this.status.toLowerCase() === "cancelled"; }  // Is this item cancelled?
   get responsible()         { return this.get("Responsible", "string"); }
   get accountable()         { return this.get("Accountable", "string"); }
+  get po()                  { return this.get("Accountable", "string"); }
   get category()            { return this.get("Category", "string"); }
   get status()              { return this.get("Status", "string"); }
   get supplier()            { return this.get("Supplier", "string"); }

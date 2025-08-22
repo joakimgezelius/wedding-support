@@ -242,16 +242,19 @@ class HubSpotDataDictionary {
             let taskDetailsResponse = UrlFetchApp.fetch(taskDetailsEndpoint, urlFetchAppParams);
             let taskDetails = JSON.parse(taskDetailsResponse.getContentText());
 
-            let rowData = [
-              taskId,
-              taskDetails.properties && taskDetails.properties.hs_task_subject ? taskDetails.properties.hs_task_subject : '',
-              taskDetails.properties && taskDetails.properties.hs_task_body ? taskDetails.properties.hs_task_body : '',
-              taskDetails.properties && taskDetails.properties.hs_timestamp ? taskDetails.properties.hs_timestamp : '',
-              taskDetails.properties && taskDetails.properties.hubspot_owner_id ? taskDetails.properties.hubspot_owner_id : '',
-              taskDetails.properties && taskDetails.properties.hs_task_status ? taskDetails.properties.hs_task_status : '',
-            ];
+            if (taskDetails.properties && taskDetails.properties.hs_task_status && taskDetails.properties.hs_task_status !== 'completed') {
 
-            taskData.push(rowData);
+              let rowData = [
+                taskId,
+                taskDetails.properties && taskDetails.properties.hs_task_subject ? taskDetails.properties.hs_task_subject : '',
+                taskDetails.properties && taskDetails.properties.hs_task_body ? taskDetails.properties.hs_task_body : '',
+                taskDetails.properties && taskDetails.properties.hs_timestamp ? taskDetails.properties.hs_timestamp : '',
+                taskDetails.properties && taskDetails.properties.hubspot_owner_id ? taskDetails.properties.hubspot_owner_id : '',
+                taskDetails.properties && taskDetails.properties.hs_task_status ? taskDetails.properties.hs_task_status : '',
+              ];
+
+              taskData.push(rowData);
+            }
           }
 
           offset += pageSize; // Increment the offset for the next page

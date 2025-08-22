@@ -80,10 +80,12 @@ class BudgetBuilder {
 
   onRow(row) {
     let totalPrice = row.totalPrice;
-    let category = row.category; 
+    let category = row.category;
+    let isSelected = row.isSelected;
     if (Math.abs(totalPrice) > 0 && 
-        category != "Labour" &&
-        category != "Styling"
+        isSelected === true
+//      category != "Labour" &&
+//      category != "Styling"
     ) { // This is an item for the invoice
       trace("BudgetBuilder.onRow " + row.description);
       let description = row.description;

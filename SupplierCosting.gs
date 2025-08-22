@@ -98,7 +98,7 @@ class SupplierCostingBuilder {
 //  var commissionPercentage = row.commissionPercentage;
 //  var paymentMethod = row.paymentMethod;
 //  var paymentStatus = row.paymentStatus;
-    if (!row.isSubItem && Math.abs(row.nativeUnitCostWithVAT) > 0.01 && row.quantity > 0) { // This not a sub-item (marked as such or with no price)
+    if (!row.isSubItem && Math.abs(row.nativeUnitCostWithVAT) > 0.01 && row.quantity > 0 && row.isSelected) { // This not a sub-item (marked as such or with no price)
       trace("SupplierCostingBuilder.onRow " + row.description);
       if (row.supplier !== this.currentSupplier) {
         this.newSupplierSection(row);
@@ -126,6 +126,7 @@ class SupplierCostingBuilder {
         ++column; // Skip GBP column
       }
       targetRow.getCell(1,column++).setValue(totalNettCost).setNumberFormat("£#,##0.00");
+      targetRow.getCell(1,column++).setValue(row.po);
 //    targetRow.getCell(1,column++).setValue(commissionPercentage);
 //    targetRow.getCell(1,column++).setValue(paymentMethod);
 //    targetRow.getCell(1,column++).setValue(paymentStatus);
