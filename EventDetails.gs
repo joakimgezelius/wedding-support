@@ -32,6 +32,8 @@ class EventDetails {
 
   // NOTE: Sorting the underlying array of values for the range is dangerous, as the range itself isn't sorted!
   //
+  // Uses the JavaScript built-in sort function, suppling custom compare function, see https://www.w3schools.com/js/js_array_sort.asp
+  // Compare function supplied with arrow syntax: https://www.w3schools.com/js/js_arrow_function.asp
   sort(type) {
     trace(`EventDetails.sort(${type}) ${this.trace}`);
     this.range.values.sort((row1, row2) => {
@@ -50,7 +52,18 @@ class EventDetails {
 //=============================================================================================
 // Class EventRow
 //
-  
+
+class Helper {
+
+  static currencySymbol(currency) { 
+    return currency === "GBP" ? "£" : (currency === "EUR" ? "€" : (currency === "USD" ? "$" : "!"));
+  }
+
+  static currencyFormat(currency) {
+    return `${Helper.currencySymbol(currency)} #,##0.00`;
+  }
+}
+
 class EventRow extends RangeRow {
   
   constructor(range, values = null) {
@@ -83,8 +96,8 @@ class EventRow extends RangeRow {
   get description()         { return this.get("Description", "string"); }
   get quantity()            { return this.get("Quantity"); } // Accept blank
   get currency()            { return this.get("Currency", "string").toUpperCase(); }
-  get currencySymbol()      { return this.currency === "GBP" ? "£" : "€"; }
-  get currencyFormat()      { return `${this.currencySymbol}#,##0.00`; }
+  get currencySymbol()      { return Helper.currencySymbol(this.currency); }
+  get currencyFormat()      { return Helper.currencyFormat(this.currency); }
   get budgetUnitCost()      { return this.get("BudgetUnitCost");  } // Accept blank
   get nativeUnitCost()      { return this.get("NativeUnitCost");  } // Accept blank
   get nativeUnitCostWithVAT() { return this.get("NativeUnitCostWithVAT"); } // Accept blank

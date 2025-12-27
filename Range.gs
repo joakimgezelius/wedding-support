@@ -250,7 +250,7 @@ class RangeRow {
     this.namedColumns = range.namedColumns;
     this.nativeRange = range.currentRow;
     this.rowPosition = range.rowPosition + range.currentRowOffset;
-    trace(`NEW RangeRow on ${range.trace}`);
+//  trace(`NEW RangeRow on ${range.trace}`); // Avoid tracing unless critical for debugging, floods the trace.
   }
 
   get(columnName, expectedType = "undefined") {
