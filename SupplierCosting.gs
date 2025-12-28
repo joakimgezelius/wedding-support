@@ -50,8 +50,8 @@ class SupplierCostingBuilder {
 
   onEnd() {
     trace("SupplierCostingBuilder.onEnd - fill final supplier sum, autofit & trim");
-    if (this.currentSupplierClientPriceSum == 0) {     // Last section is empty?
-      this.targetRange.getPreviousRow(); //  yes - Back up one row (last title will be trimmed away)
+    if (this.currentSectionRows == 0) {   // Last section is empty?
+      this.targetRange.getPreviousRow();  //  yes - Back up one row (last title will be trimmed away)
     }
     else {
       this.fillSectionHeader();
@@ -69,7 +69,8 @@ class SupplierCostingBuilder {
    onRow(row) {
     if (this.isRowToBeIgnored(row)) {  // Check if this row is to be ignored
       trace("SupplierCostingBuilder.onRow - ignore: " + row.description);
-    } else {
+    } 
+    else {
       if (row.supplier !== this.currentSupplier) { // Check if we've hit the next supplier, if so, insert header etc.
         this.newSupplierSection(row);
       }
@@ -100,11 +101,12 @@ class SupplierCostingBuilder {
       targetRow.getCell(1,column++).setValue(row.nativeUnitCostWithVAT).setNumberFormat(row.currencyFormat);
       targetRow.getCell(1,column++).setValue(totalNativeGrossCost).setNumberFormat(row.currencyFormat);
       targetRow.getCell(1,column++).setValue(totalClientPrice).setNumberFormat("£ #,##0.00");
-      // Commission handling, summing for the sub-header, but only show if there is a commission
-      if (commissionPercentage !== 0) {
+      
+      if (commissionPercentage !== 0) { // Only show if there is a commission
         targetRow.getCell(1,column++).setValue(commissionPercentage);  // Commission %
         targetRow.getCell(1,column++).setValue(commissionAmount).setNumberFormat(row.currencyFormat);  // Commission amount
-      } else {
+      } 
+      else {
         ++column;
         ++column;
       }
@@ -135,7 +137,8 @@ class SupplierCostingBuilder {
     trace(`SupplierCostingBuilder.newSupplierSection ${this.currentSection}: ${row.supplier}`);
     if (this.currentSection == 1) { // This is the first section, no need for back-filling
       trace(`SupplierCostingBuilder.newSupplierSection first section, no filling`);
-    } else {
+    } 
+    else {
       if (this.currentSectionRows == 0) {       // Section with no content?
         this.targetRange.getPreviousRow();      //  - back up instead of moving on
       }

@@ -35,9 +35,17 @@ class Sheet {
     return newRange;
   }
 
+  copyTo(destination) {
+    // https://developers.google.com/apps-script/reference/spreadsheet/sheet#copyTo(Spreadsheet)
+    trace(`> ${this.trace}.copyTo("${destination.trace}`);
+    const newNativeSheet = this.nativeSheet.copyTo(destination.nativeSpreadsheet);
+    const newSheet = new Sheet(newNativeSheet);
+    trace(`< ${this.trace}.copyTo("${destination.trace} --> ${newSheet.trace}`);
+    return newSheet;
+  }
+
   insertRowBefore(position)   { this.nativeSheet.insertRowBefore(position); return this; }
   deleteRows(position, count) { this.nativeSheet.deleteRows(position, count); return this; }
-  copyTo(destination)         { this.nativeSheet.copyTo(destination); return this; }
   activate()                  { this.nativeSheet.activate; return this; }
   
   get nativeSheet()      { return this._nativeSheet; }
@@ -113,6 +121,13 @@ class Spreadsheet {
     trace(`< Spreadsheet.setActiveSpreadsheet`);
   }
 
+  setActiveSheet(sheet) {
+    // https://developers.google.com/apps-script/reference/spreadsheet/spreadsheet#setactivesheetsheet
+    trace(`${this.trace}.setActiveSheet(${sheet.trace})`);
+    this.nativeSpreadsheet.setActiveSheet(sheet.nativeSheet);
+    return sheet;
+  }
+
   getRangeByName(rangeName, sheetName = "") {
     let range = this.nativeSpreadsheet.getRangeByName(rangeName);
     if (range !== null) { 
@@ -148,6 +163,21 @@ class Spreadsheet {
     return newSheet;
   }
   
+  getSheetPosition(sheet) {
+    // https://developers.google.com/apps-script/reference/spreadsheet/spreadsheet#getsheets
+    trace(`${this.trace}.getSheetPosition(${sheet.trace})`);
+    const sheets = this.nativeSpreadsheet.getSheets();
+    const sheetName = sheet.name;
+    for (let i = 0; i < sheets.length; i++) {
+      if (sheets[i].getName() == sheetName) {
+        trace(`${this.trace}.getSheetPosition(${sheet.trace}) --> ${i}`);
+        return i;
+      };
+    }
+    trace(`${this.trace}.getSheetPosition(${sheet.trace}) --> -1, Not Found`);
+    return -1;
+  }
+
   copy(name) {
     trace(`${this.trace}.copy(${name})`);
     const newSpreadsheet = new Spreadsheet(this.nativeSpreadsheet.copy(name));
@@ -163,5 +193,6 @@ class Spreadsheet {
   get parentFolder()      { return this.file.parent; }
   get trace()             { return this._trace; }
 
-} // Spreadsheet
 
+
+} // Spreadsheet

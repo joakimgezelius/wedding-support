@@ -8,27 +8,23 @@ class Menu {
       //.addSeparator()
       //.addItem("Pull Client Information", libName + ".onPullClientInformation") // In client.gs
       //.addSeparator()
-      .addItem("Update Coordinator (no over-writes)", libName + ".onUpdateCoordinator")   // In Coordinator.gs
-      .addItem("Force-Update Coordinator - over-writes data", libName + ".onUpdateCoordinatorForced")   // In Coordinator.gs
       .addItem("Check Client Sheet", libName + ".onCheckClientSheet")               // In ClientSheet.gs
       .addItem("Update Budget", libName + ".onUpdateBudget")    // In Budget.gs
       .addItem("Update Client Itinerary", libName + ".onUpdateClientItinerary")     // In itinerary.gs
       .addItem("Update Decor Summary", libName + ".onUpdateDecorSummary")           // In DecorSummary.gs
       .addItem("Update Supplier Costing", libName + ".onUpdateSupplierCosting")     // In SupplierCosting.gs      
       //.addItem("Update Supplier Venue Itinerary", libName + ".onUpdateSupplierVenueItinerary") // In VenueItinerary.gs
-      //.addItem("Update Venue Itinerary", libName + ".onUpdateVenueItinerary")       // In VenueItinerary.gs
+      //.addItem("Update Venue Itinerary", libName + ".onUpdateVenueItinerary")     // In VenueItinerary.gs
       .addItem("Pull Client Data From HubSpot", libName + ".onUpdateClientData")    // In HubSpotAPI.gs
-      .addSeparator()
       //.addItem("Update Exchange Rates", libName + ".onUpdateExchangeRates")
       //.addSeparator()
       /*.addSubMenu(ui.createMenu("Prices")
                   .addItem("Import price list", libName + ".onImportPriceList")
                   .addItem("tbd...", libName + ".onImportPriceList")
                   )
-      .addSeparator()*/
+      */
       //.addItem("Create New Client Sheet", libName + ".onCreateNewClientSheet")
-      .addItem("Apply Format Template", libName + ".onApplyFormat")     // In SheetFormat.gs
-      .addItem("Format Coordinator", libName + ".onFormatCoordinator"); // In SheetFormat.gs
+
 //      .addSeparator()
 //      .addSubMenu(ui.createMenu("Email")
 //                  .addItem("Prepare client email draft 1", libName + ".onCreateFirstEmailDraft")
@@ -39,6 +35,14 @@ class Menu {
 //                  .addItem("Big Wedding", libName + ".onShowBigWeddingTasks")
 //                  .addItem("Show All", libName + ".onShowAllTasks")
 //                  )
+        .addSeparator()
+        .addSubMenu(ui.createMenu("Sheet Maintenance")
+          .addItem("Apply Format Template", libName + ".onApplyFormat")         // In SheetFormat.gs
+          .addItem("Format Coordinator", libName + ".onFormatCoordinator")      // In SheetFormat.gs
+          .addItem("Install Supplier Costing Sheet", libName + ".onInstallSupplierCostingSheet")            // In SheetMaintenance.gs
+          .addItem("Update Coordinator (no over-writes)", libName + ".onUpdateCoordinator")                 // In Coordinator.gs
+          .addItem("Force-Update Coordinator - over-writes data", libName + ".onUpdateCoordinatorForced")   // In Coordinator.gs
+          );
     Menu.addTestItems(libName, menu).addToUi();
     trace("< Custom event menu added");
   }
