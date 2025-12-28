@@ -19,13 +19,14 @@ class SupplierCostingTemplate {
   static get templateSheetName() { return "Supplier Costing"; }
 
   static install() {
-    const activeSpreadSheet = Spreadsheet.active;
     const templateSpreadSheet = Spreadsheet.openByUrl(SupplierCostingTemplate.templateSheetUrl);
     const templateSheet = templateSpreadSheet.getSheetByName(SupplierCostingTemplate.templateSheetName);
-    const newSheet = templateSheet.copyTo(activeSpreadSheet);
-    const oldSheet = activeSpreadSheet.getSheetByName(SupplierCostingTemplate.templateSheetName);
+    let activeSpreadSheet = Spreadsheet.active;
+    let newSheet = templateSheet.copyTo(activeSpreadSheet);
+    let oldSheet = activeSpreadSheet.getSheetByName(SupplierCostingTemplate.templateSheetName);
     const oldSheetTabOrder = activeSpreadSheet.getSheetPosition(oldSheet);
     activeSpreadSheet.setActiveSheet(newSheet);
+    activeSpreadSheet.deleteSheet(oldSheet);
     activeSpreadSheet.nativeSpreadsheet.moveActiveSheet(oldSheetTabOrder + 1);
     //.activate();
     // SupplierTotalCost

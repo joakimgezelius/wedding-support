@@ -35,7 +35,7 @@ class Sheet {
     return newRange;
   }
 
-  copyTo(destination) {
+  copyTo(/*Spreadsheet*/ destination) {
     // https://developers.google.com/apps-script/reference/spreadsheet/sheet#copyTo(Spreadsheet)
     trace(`> ${this.trace}.copyTo("${destination.trace}`);
     const newNativeSheet = this.nativeSheet.copyTo(destination.nativeSpreadsheet);
@@ -176,6 +176,14 @@ class Spreadsheet {
     }
     trace(`${this.trace}.getSheetPosition(${sheet.trace}) --> -1, Not Found`);
     return -1;
+  }
+
+  deleteSheet(sheet) {
+    // https://developers.google.com/apps-script/reference/spreadsheet/spreadsheet#deletesheetsheet
+    trace(`> ${this.trace}.deleteSheet(${sheet.trace})`);
+  //Confirm dialogue?
+  //this.nativeSpreadsheet.deleteSheet(sheet.nativeSheet);
+    trace(`< ${this.trace}.deleteSheet(${sheet.trace}) done`);
   }
 
   copy(name) {
