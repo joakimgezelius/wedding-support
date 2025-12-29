@@ -1,6 +1,8 @@
 function onTestCase1() {        // HubSpot Testing
   trace("onTestCase1");
-  HubSpotDataDictionary.importHubSpotTasks();
+  Spreadsheet.active.iterateOverNamedRanges();
+  Spreadsheet.active.getRangeByName("AsanaAPIColumnIds");
+  // HubSpotDataDictionary.importHubSpotTasks();
   // HubSpot.listContacts(); 
   // HubSpot.listDeals();
   // HubSpot.contactToDeal();

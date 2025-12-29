@@ -27,15 +27,15 @@ class Sheet {
   }
   */
 
-  getRangeByName(name) {
-    // https://developers.google.com/apps-script/reference/spreadsheet/sheet#getRange(String)
+  getRangeByName(a1notatrion) {
+    // https://developers.google.com/apps-script/reference/spreadsheet/sheet#getrangea1notation
     const range = this.nativeSheet.getRange(name);
     const newRange = range === null ? null : new Range(range, name, this.name);
     trace(`${this.trace}.getRangeByName("${name}") --> ${range === null?"null (NOT FOUND)":newRange.trace}`);
     return newRange;
   }
 
-  copyTo(/*Spreadsheet*/ destination) {
+  copyTo(destination) {
     // https://developers.google.com/apps-script/reference/spreadsheet/sheet#copyTo(Spreadsheet)
     trace(`> ${this.trace}.copyTo("${destination.trace}`);
     const newNativeSheet = this.nativeSheet.copyTo(destination.nativeSpreadsheet);
@@ -57,6 +57,9 @@ class Sheet {
   get currentCell()      { return new Range(this.nativeSheet.getCurrentCell()); } // The current cell is the cell having focus
   get fullRange()        { return new Range(this.nativeSheet.getRange(1, 1, this.maxRows, this.maxColumns)); }
   get trace()            { return this._trace; }
+
+  // https://developers.google.com/apps-script/reference/spreadsheet/sheet#setnamename
+  set name(name)         { return this.nativeSheet.setName(name); }
 
 } // Sheet
 
@@ -128,7 +131,10 @@ class Spreadsheet {
     return sheet;
   }
 
+  // Get named range 
   getRangeByName(rangeName, sheetName = "") {
+    // https://developers.google.com/apps-script/reference/spreadsheet/spreadsheet#getrangebynamename
+    // 
     let range = this.nativeSpreadsheet.getRangeByName(rangeName);
     if (range !== null) { 
       // Range found, create wrapper and return
@@ -136,7 +142,7 @@ class Spreadsheet {
       trace(`${this.trace}.getRangeByName("${rangeName}") --> ${newRange.trace}`);
       return newRange;
     }
-    if (sheetName !== "") {
+    else if (sheetName !== "") {
       // A sheet name is provided and the named range cannot be found globally, a local named range will be attempted
       trace (`attempting to get named range from sheet "${sheetName}"`);
       let sheet = this.getSheetByName(sheetName);
@@ -150,6 +156,30 @@ class Spreadsheet {
     Error.fatal(`Cannot find named range ${rangeName}`);
   }
 
+  // Loop over all named ranges in the spreadsheet and callback to the provided function
+  iterateOverNamedRanges(callback=null) {
+    // https://developers.google.com/apps-script/reference/spreadsheet/spreadsheet#getnamedranges
+    trace(`> ${this.trace}.iterateOverNamedRanges`);
+    const namedRanges = this.nativeSpreadsheet.getNamedRanges();
+    for (let i = 0; i < namedRanges.length; i++) {
+      // Note: interestingly enough, it's not possible to call namedRanges[i].getSheet() directly, so we're looking up the range by name 
+      const rangeName = namedRanges[i].getName();
+      // https://developers.google.com/apps-script/reference/spreadsheet/spreadsheet#getrangebynamename
+      const nativeNamedRange = this.nativeSpreadsheet.getRangeByName(rangeName);
+      if (nativeNamedRange !== null) {
+        // namedRange = new Range(nativeNamedRange, rangeName)
+        trace( `  ${this.trace}.iterateOverNamedRanges ${i}: ${rangeName}`);
+      }
+      else {
+        // Invalid range, do we clean up by deleating it?
+        trace( `  ${this.trace}.iterateOverNamedRanges ${i}: ${rangeName} - Invalid range!`);
+      }
+      if (callback !== null) callback(rangeName, nativeNamedRange);
+    }
+    trace(`< ${this.trace}.iterateOverNamedRanges Done`);
+  }
+
+  // Create a new named range
   setNamedRange(name, range) {
     // https://developers.google.com/apps-script/reference/spreadsheet/spreadsheet#setnamedrangename,-range
     trace(`${this.trace}.setNamedRange("${name}", ${range.trace})`);
@@ -181,9 +211,11 @@ class Spreadsheet {
   deleteSheet(sheet) {
     // https://developers.google.com/apps-script/reference/spreadsheet/spreadsheet#deletesheetsheet
     trace(`> ${this.trace}.deleteSheet(${sheet.trace})`);
-  //Confirm dialogue?
-  //this.nativeSpreadsheet.deleteSheet(sheet.nativeSheet);
-    trace(`< ${this.trace}.deleteSheet(${sheet.trace}) done`);
+    if (Dialog.confirm("Delete Sheet Tab - Confirmation Required", `Are you sure you want to delete the sheet tab ${sheet.name}`) != true) {
+      Error.break;
+    }
+    this.nativeSpreadsheet.deleteSheet(sheet.nativeSheet);
+    trace(`< ${this.trace}.deleteSheet(${sheet.trace}) Done`);
   }
 
   copy(name) {

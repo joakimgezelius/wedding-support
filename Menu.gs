@@ -40,6 +40,7 @@ class Menu {
           .addItem("Apply Format Template", libName + ".onApplyFormat")         // In SheetFormat.gs
           .addItem("Format Coordinator", libName + ".onFormatCoordinator")      // In SheetFormat.gs
           .addItem("Install Supplier Costing Sheet", libName + ".onInstallSupplierCostingSheet")            // In SheetMaintenance.gs
+          .addItem("Clean Up Named Ranges", libName + ".onCleanUpNamedRanges")                              // In SheetMaintenance.gs
           .addItem("Update Coordinator (no over-writes)", libName + ".onUpdateCoordinator")                 // In Coordinator.gs
           .addItem("Force-Update Coordinator - over-writes data", libName + ".onUpdateCoordinatorForced")   // In Coordinator.gs
           );

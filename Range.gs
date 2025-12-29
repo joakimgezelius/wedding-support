@@ -21,12 +21,13 @@ class Range {
     this._values = this.nativeRange.getValues();
   }
 
+  // Get named range from active spreadsheet
   static getByName(rangeName, sheetName = "") {
     return Spreadsheet.active.getRangeByName(rangeName, sheetName);
   }
 
-  static trace(range) {
-    return `[${range.getSheet().getName()}!${range.getA1Notation()}]`;
+  static trace(nativeRange) {
+    return `[${nativeRange.getSheet().getName()}!${nativeRange.getA1Notation()}]`;
   }
 
   getNativeRowRange(rowOffset) {
@@ -235,8 +236,8 @@ class Range {
   getColumnLetter(columnName) {
     return this.namedColumns.getColumnLetter(columnName);
   }
-  
-}
+
+} // Range
 
 
 //----------------------------------------------------------------------------------------------------
@@ -312,4 +313,5 @@ class RangeRow {
     return cell.getA1Notation();
   }
 
-}
+} // RangeRow
+

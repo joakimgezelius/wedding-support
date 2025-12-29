@@ -5,10 +5,26 @@ function onInstallSupplierCostingSheet() {
   trace("< onInstallSupplierCostingSheet");
 }
 
+function onCleanUpNamedRanges() {
+  trace("> onCleanUpNamedRanges");
+  SheetMaintenance.cleanUpNamedRanges();
+  trace("< onCleanUpNamedRanges");
+}
+
+
 class SheetMaintenance {
 
-  installSupplierCostingSheet() {
+  static installSupplierCostingSheet() {
     ;
+  }
+  
+  static cleanUpNamedRanges() {
+    Spreadsheet.active.iterateOverNamedRanges((rangeName, nativeNamedRange) => { // Callback to arrow function
+      if (nativeNamedRange === null) { // This is an invalid range, to be deleted
+        trace(`  cleanUpNamedRanges, invalid range, delete: ${rangeName}`);
+        ;
+      }
+    });
   }
 
 }
@@ -19,18 +35,20 @@ class SupplierCostingTemplate {
   static get templateSheetName() { return "Supplier Costing"; }
 
   static install() {
+    const activeSpreadSheet = Spreadsheet.active;
     const templateSpreadSheet = Spreadsheet.openByUrl(SupplierCostingTemplate.templateSheetUrl);
     const templateSheet = templateSpreadSheet.getSheetByName(SupplierCostingTemplate.templateSheetName);
-    let activeSpreadSheet = Spreadsheet.active;
-    let newSheet = templateSheet.copyTo(activeSpreadSheet);
-    let oldSheet = activeSpreadSheet.getSheetByName(SupplierCostingTemplate.templateSheetName);
-    const oldSheetTabOrder = activeSpreadSheet.getSheetPosition(oldSheet);
+    const oldSheet = activeSpreadSheet.getSheetByName(SupplierCostingTemplate.templateSheetName);
+    let oldSheetTabOrder = 1; // To do: look up detault tab order?
+    if (oldSheet !== null) {
+      oldSheetTabOrder = activeSpreadSheet.getSheetPosition(oldSheet);
+      activeSpreadSheet.deleteSheet(oldSheet);
+    }
+    const newSheet = templateSheet.copyTo(activeSpreadSheet);
+    newSheet.name = SupplierCostingTemplate.templateSheetName;
     activeSpreadSheet.setActiveSheet(newSheet);
-    activeSpreadSheet.deleteSheet(oldSheet);
     activeSpreadSheet.nativeSpreadsheet.moveActiveSheet(oldSheetTabOrder + 1);
-    //.activate();
-    // SupplierTotalCost
-    // SupplierCosting
-//    newSheet.moveto();
+
+    // Sort out the named ranges
   }
 }
