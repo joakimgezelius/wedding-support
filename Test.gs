@@ -1,9 +1,6 @@
 function onTestCase1() {        // HubSpot Testing
   trace("onTestCase1");
   Spreadsheet.active.iterateOverNamedRanges();
-  //Spreadsheet.active.getRangeByName("'AsanaAPIColumnIds'");
-  Spreadsheet.active.getRangeByName("DecorSummary");
-  Spreadsheet.active.getRangeByName("DecorSummary");
 
   // HubSpotDataDictionary.importHubSpotTasks();
   // HubSpot.listContacts(); 
@@ -24,6 +21,9 @@ function onTestCase1() {        // HubSpot Testing
 
 function onTestCase2() {    
   trace("onTestCase2");
+  let sheet = Spreadsheet.active.getSheetByName("Supplier Costing");
+  sheet.makeNamedRangesGlobal();
+  /*
   //get the right spreadsheet & sheet
   let ss = SpreadsheetApp.getActiveSpreadsheet();
   let sheet = ss.getSheetByName('Deals');
@@ -48,6 +48,7 @@ function onTestCase2() {
 
   let newDeals = apiCall(url, queryParams);
   trace(`Deals: ${newDeals}`);
+  */
 }
 
 function onTestCase3() {        // Other Testings

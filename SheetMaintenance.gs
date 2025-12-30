@@ -22,7 +22,10 @@ class SheetMaintenance {
     Spreadsheet.active.iterateOverNamedRanges((namedRange) => { // Callback to arrow function
       if (namedRange.range === null) { // This is an invalid range, to be deleted
         trace(`  cleanUpNamedRanges, invalid range, delete: ${namedRange.trace}`);
-        //namedRange.remove();
+        namedRange.remove(false); // false --> prompt for confirmation before delete
+      }
+      if (namedRange.name.includes('!')) { // This is a local named range
+        Dialog.notify("Local Named Range", `Local named range found: ${namedRange.name}`);
       }
     });
   }
@@ -42,13 +45,12 @@ class SupplierCostingTemplate {
     let oldSheetTabOrder = 1; // To do: look up detault tab order?
     if (oldSheet !== null) {
       oldSheetTabOrder = activeSpreadSheet.getSheetPosition(oldSheet);
-      activeSpreadSheet.deleteSheet(oldSheet);
+      activeSpreadSheet.deleteSheet(oldSheet, false); // false --> prompt for confirmation before delete
     }
     const newSheet = templateSheet.copyTo(activeSpreadSheet);
     newSheet.name = SupplierCostingTemplate.templateSheetName;
     activeSpreadSheet.setActiveSheet(newSheet);
     activeSpreadSheet.nativeSpreadsheet.moveActiveSheet(oldSheetTabOrder + 1);
-
-    // Sort out the named ranges
+    newSheet.makeNamedRangesGlobal();
   }
 }

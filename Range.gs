@@ -93,7 +93,7 @@ class Range {
   
   refresh() { // Reload the range - e.g. if it has changed
     trace(`${this.trace} refresh`);
-    let newRange = this.sheet.getRangeByName(this.name); 
+    let newRange = Spreadsheet.active.getRangeByName(this.name, this.sheet.name);
     this._nativeRange = newRange.nativeRange;
     this._values = this.nativeRange.getValues();
     this._trace = newRange.trace;
@@ -260,9 +260,26 @@ class NamedRange {
     trace(`NEW ${this.trace}`);
   }
   
-  remove() {
-    trace(`${this.trace}.remove`); 
-    this._nativeNamedRange.remove();
+  remove(forced) {
+    trace(`${this.trace}.remove, forced=${forced}`);
+    if (forced || Dialog.confirm("Delete Named Range - Confirmation Required", `Are you sure you want to delete the named range ${this.trace}?`) == true) {
+      this._nativeNamedRange.remove();
+    }
+  }
+
+  makeGlobal() {
+    if (this.name.includes('!')) {
+      const newName = this.name.split('!')[1];
+      trace(`${this.trace}.makeGlobal --> ${newName}`);
+      // NOTE: Setting the range name is not sufficient, as it is maintained as a sheet-local named range. We have to recreate and delete the old one.
+      //       note also that unfortunately we can't use Spreadsheet.active.setNamedRange, as it assumes a wrapped Range object, and we can't create one
+      //       around the named range, as the getSheet() method doesn't work on named ranges (which is odd).
+      Spreadsheet.active._nativeSpreadsheet.setNamedRange(newName, this.range)
+      this.remove(true);
+    }
+    else {
+      trace(`${this.trace}.makeGlobal - not a sheet-local named range, ignore`);
+    }
   }
 
   get nativeNamedRange()    { return this._nativeNamedRange; }

@@ -50,6 +50,17 @@ class Sheet {
     trace(`< ${this.trace}.iterateOverNamedRanges Done`);
   }
 
+  makeNamedRangesGlobal() {
+    trace(`> ${this.trace}.makeNamedRangesGlobal`);
+    this.iterateOverNamedRanges((namedRange) => {
+      if (namedRange.name.includes('!')) { // We have a sheet-local named range
+        trace(`sheet-local named range found, convert: ${namedRange.name}`);
+        namedRange.makeGlobal();
+      }
+    });
+    trace(`< ${this.trace}.makeNamedRangesGlobal`);
+  }
+
   copyTo(destination) {
     // https://developers.google.com/apps-script/reference/spreadsheet/sheet#copyTo(Spreadsheet)
     trace(`> ${this.trace}.copyTo("${destination.trace}`);
@@ -193,10 +204,12 @@ class Spreadsheet {
     this.nativeSpreadsheet.setNamedRange(name, range.nativeRange);
   }
 
-  removeNamedRange(name) {
+  removeNamedRange(name, forced) {
     // https://developers.google.com/apps-script/reference/spreadsheet/spreadsheet#removenamedrangename
     trace(`${this.trace}.removeNamedRange(${name})`);
-    this.nativeSpreadsheet.removeNamedRange(name);
+    if (forced || Dialog.confirm("Delete Named Range - Confirmation Required", `Are you sure you want to delete the named range ${name}?`) == true) {
+      this.nativeSpreadsheet.removeNamedRange(name);
+    }
   }
 
   getSheetByName(name) {
@@ -221,14 +234,13 @@ class Spreadsheet {
     return -1;
   }
 
-  deleteSheet(sheet) {
+  deleteSheet(sheet, forced) {
     // https://developers.google.com/apps-script/reference/spreadsheet/spreadsheet#deletesheetsheet
-    trace(`> ${this.trace}.deleteSheet(${sheet.trace})`);
-    if (Dialog.confirm("Delete Sheet Tab - Confirmation Required", `Are you sure you want to delete the sheet tab ${sheet.name}`) != true) {
-      Error.break;
+    trace(`> ${this.trace}.deleteSheet(${sheet.trace}), forced=${forced}`);
+    if (forced || Dialog.confirm("Delete Sheet Tab - Confirmation Required", `Are you sure you want to delete the sheet tab ${sheet.name}`) == true) {
+      this.nativeSpreadsheet.deleteSheet(sheet.nativeSheet);
+      trace(`- ${this.trace}.deleteSheet(${sheet.trace}) Done`);
     }
-    this.nativeSpreadsheet.deleteSheet(sheet.nativeSheet);
-    trace(`< ${this.trace}.deleteSheet(${sheet.trace}) Done`);
   }
 
   copy(name) {
