@@ -36,6 +36,10 @@ class Menu {
 //                  .addItem("Show All", libName + ".onShowAllTasks")
 //                  )
         .addSeparator()
+        .addSubMenu(ui.createMenu("MyWedding")
+          .addItem("Update Template from BigQuery", "onUpdateWeddingTemplate")
+        )
+        .addSeparator()
         .addSubMenu(ui.createMenu("Sheet Maintenance")
           .addItem("Apply Format Template", libName + ".onApplyFormat")         // In SheetFormat.gs
           .addItem("Format Coordinator", libName + ".onFormatCoordinator")      // In SheetFormat.gs
