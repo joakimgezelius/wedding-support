@@ -19,10 +19,10 @@ class SheetMaintenance {
   }
   
   static cleanUpNamedRanges() {
-    Spreadsheet.active.iterateOverNamedRanges((rangeName, nativeNamedRange) => { // Callback to arrow function
-      if (nativeNamedRange === null) { // This is an invalid range, to be deleted
-        trace(`  cleanUpNamedRanges, invalid range, delete: ${rangeName}`);
-        ;
+    Spreadsheet.active.iterateOverNamedRanges((namedRange) => { // Callback to arrow function
+      if (namedRange.range === null) { // This is an invalid range, to be deleted
+        trace(`  cleanUpNamedRanges, invalid range, delete: ${namedRange.trace}`);
+        //namedRange.remove();
       }
     });
   }

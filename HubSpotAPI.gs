@@ -133,7 +133,7 @@ class HubSpot {
       let data = JSON.parse(response.getContentText());
       console.log(data);
       let result = data;
-      let range = SpreadsheetApp.getActive().getRangeByName("DealData");
+      let range = Spreadsheet.active.getRangeByName("DealData");
 
       let props = ["invoice_id","estimate_id","amount","closedate","createdate","dealname","description","hubspot_owner_id","dealtype","dealstage","departure_date","hs_forecast_amount","hs_manual_forecast_category","hs_forecast_probability","hubspot_team_id","hs_lastmodifieddate","hs_next_step","num_associated_contacts","hs_priority","pipeline" ]; // 20 deal properties
 
@@ -165,7 +165,7 @@ class HubSpot {
       let data = JSON.parse(response.getContentText());
       console.log(data);
       let result =data;
-      let range = SpreadsheetApp.getActive().getRangeByName("ContactData");
+      let range = Spreadsheet.active.getRangeByName("ContactData");
 
       let props = ["invoice_no","first_conversion_date","deal_status","hubspot_owner_id","contacttype","number_of_guests__inc_the_couple_","decor","firstname","lastname","meet___greet_date","meet___greet_time","event_date","confirmed_wedding_date","time_of_ceremony","confirmed_venue","venue___reception","do_you_require_witnesses_","documents_status","notes","createdate","email","hs_email_domain","phone","annualrevenue","number_of_guests","asana_link","hs_lifecyclestage_customer_date","hs_lifecyclestage_lead_date","hs_lifecyclestage_marketingqualifiedlead_date","hs_lifecyclestage_salesqualifiedlead_date","hs_lifecyclestage_subscriber_date","hs_lifecyclestage_evangelist_date","hs_lifecyclestage_opportunity_date","hs_lifecyclestage_other_date","city","company","hs_object_id","country","date","date_worked","do_you_agree_to_special_terms_in_the_event_of_a_coronavirus_event","hs_content_membership_email_confirmed","event_start_time","industry","is_there_any_food_that_you_dislike","is_your_kitchen_fulled_equipped_and_functional","jobtitle","kitchen","kitchen_1","lastmodifieddate","hs_latest_sequence_ended_date","hs_latest_sequence_enrolled","hs_latest_sequence_enrolled_date","lifecyclestage","hs_marketable_status","hs_marketable_reason_id","hs_marketable_reason_type","hs_marketable_until_renewal","mobilephone","numemployees","hs_sequences_enrolled_count","hs_createdate","hs_persona","zip","hs_language","salutation","state","address","hs_content_membership_registration_email_sent_at","time_sheet","twitterhandle","website","what_the_occasion"];     // 73 contact properties   
 
@@ -192,11 +192,11 @@ class HubSpotDataDictionary {
 
   constructor() {
     trace("> NEW HubSpotDataDictionary, loading dictionary...");
-    let dataDictionarySheet = Spreadsheet.openById(DataDictionarySheetId);
-    this.summaryContactPropertyIds = dataDictionarySheet.getRangeByName("SummaryContactPropertyIds").values;
-    this.summaryDealPropertyIds = dataDictionarySheet.getRangeByName("SummaryDealPropertyIds").values;
-    this.detailedContactPropertyIds = dataDictionarySheet.getRangeByName("DetailedContactPropertyIds").values;
-    this.detailedDealPropertyIds = dataDictionarySheet.getRangeByName("DetailedDealPropertyIds").values;
+    let dataDictionarySpreadsheet = Spreadsheet.openById(DataDictionarySheetId);
+    this.summaryContactPropertyIds = dataDictionarySpreadsheet.getRangeByName("SummaryContactPropertyIds").values;
+    this.summaryDealPropertyIds = dataDictionarySpreadsheet.getRangeByName("SummaryDealPropertyIds").values;
+    this.detailedContactPropertyIds = dataDictionarySpreadsheet.getRangeByName("DetailedContactPropertyIds").values;
+    this.detailedDealPropertyIds = dataDictionarySpreadsheet.getRangeByName("DetailedDealPropertyIds").values;
 
     this.detailedContactPropertyIds.forEach( item => { if (item[0] !== "") trace(`item: ${item[0]}`); } );
     trace("< NEW HubSpotDataDictionary, dictionary loaded.");

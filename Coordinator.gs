@@ -277,8 +277,8 @@ function onInsertPackage() {
   // Default formatting for item rows excluding the title row we get in range & create grouping for found items range by depth 1
   destinationRange.nativeRange.offset(1, 0, packageRowCount - 1).setFontColor("#434343").setBackground("#FFFFFF").setFontSize(9).setWrap(true).breakApart().shiftRowGroupDepth(1);  
   // Alternative - copy directly from the price list, this way we get the formulas, formatting etc
-  // let priceListSheet = Spreadsheet.openByUrl(Spreadsheet.getCellValue("PriceListURL"));
-  // let categoryRange = priceListSheet.getRangeByName(categoryRangeName); // This gives us the selected category section of the price list
+  // let priceListSpreadheet = Spreadsheet.openByUrl(Spreadsheet.getCellValue("PriceListURL"));
+  // let categoryRange = priceListSpreadheet.getRangeByName(categoryRangeName); // This gives us the selected category section of the price list
   // let packageFirstRow = categoryRange.values.findIndex(row => row[0] == packageId); // Find the first row with the selected packageId
   // trace(`Package ${packageId}, first row: ${packageFirstRow}`);
   // https://developers.google.com/apps-script/reference/spreadsheet/range#offsetrowoffset,-columnoffset,-numrows

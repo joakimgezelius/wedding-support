@@ -1,5 +1,6 @@
 //=============================================================================================
 // Class Range
+// Wrapper for https://developers.google.com/apps-script/reference/spreadsheet/range
 //=============================================================================================
 
 class Range {
@@ -239,10 +240,45 @@ class Range {
 
 } // Range
 
+//=============================================================================================
+// Class NamedRange
+// Wrapper for https://developers.google.com/apps-script/reference/spreadsheet/named-range
+//=============================================================================================
 
-//----------------------------------------------------------------------------------------------------
-// 
-// class RangeRow
+class NamedRange {
+  constructor(nativeNamedRange) {
+    this._nativeNamedRange = nativeNamedRange;
+    this._range = null;
+    try {
+      this._range = nativeNamedRange.getRange();
+    }
+    catch(error) {
+      trace(`Caught error ${error} while constructing NamedRange ${this.name}`);
+    }
+    const rangeString =  this._range === null ? '[#REF]' : `[${this._range.getA1Notation()}]`;
+    this._trace = `{NamedRange ${this.name} ${rangeString}}`;
+    trace(`NEW ${this.trace}`);
+  }
+  
+  remove() {
+    trace(`${this.trace}.remove`); 
+    this._nativeNamedRange.remove();
+  }
+
+  get nativeNamedRange()    { return this._nativeNamedRange; }
+  get name()                { return this._nativeNamedRange===null ? '[null]' : this._nativeNamedRange.getName(); }
+  get range()               { return this._range; }
+  get trace()               { return this._trace; }
+
+  set name(name)            { return this._nativeNamedRange.setName(name) }
+  set range(range)          { this._range = range; return this._nativeNamedRange.setRange(range) }
+
+} // NamedRange
+
+
+//=============================================================================================
+// Class RangeRow
+//=============================================================================================
 
 class RangeRow {
 

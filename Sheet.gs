@@ -27,12 +27,27 @@ class Sheet {
   }
   */
 
+  /* NOTE: We're removing this method, as it is not doing what was expected (it doesn't look up a named range!)
   getRangeByName(a1notatrion) {
     // https://developers.google.com/apps-script/reference/spreadsheet/sheet#getrangea1notation
     const range = this.nativeSheet.getRange(name);
     const newRange = range === null ? null : new Range(range, name, this.name);
     trace(`${this.trace}.getRangeByName("${name}") --> ${range === null?"null (NOT FOUND)":newRange.trace}`);
     return newRange;
+  }
+  */
+
+  // Loop over all named ranges in the sheet and callback to the provided function
+  iterateOverNamedRanges(callback=null) {
+    // https://developers.google.com/apps-script/reference/spreadsheet/sheet#getnamedranges
+    trace(`> ${this.trace}.iterateOverNamedRanges`);
+    const namedRanges = this.nativeSheet.getNamedRanges();
+    for (let i = 0; i < namedRanges.length; i++) {
+      const namedRange = new NamedRange(namedRanges[i]);
+      trace( `- iterateOverNamedRanges ${i}: ${namedRange.trace}`);
+      if (callback !== null) callback(namedRange);
+    }
+    trace(`< ${this.trace}.iterateOverNamedRanges Done`);
   }
 
   copyTo(destination) {
@@ -143,14 +158,16 @@ class Spreadsheet {
       return newRange;
     }
     else if (sheetName !== "") {
-      // A sheet name is provided and the named range cannot be found globally, a local named range will be attempted
-      trace (`attempting to get named range from sheet "${sheetName}"`);
+      // A sheet name is provided and the named range cannot be found globally, atetmpt a local named range search
+      trace (`attempting to get named range local to sheet "${sheetName}"`);
       let sheet = this.getSheetByName(sheetName);
       if (sheet !== null) {
-        range = sheet.getRangeByName(rangeName);
-        if (range !== null) {
-          return range;
-        }
+        sheet.iterateOverNamedRanges((namedRange) => { // Callback to arrow function
+          if (namedRange.name === rangeName) {
+            trace(`found local named range ${namedRange}`);
+            return new Range(namedRange.range, rangeName, sheetName);
+          }
+        });
       }
     }
     Error.fatal(`Cannot find named range ${rangeName}`);
@@ -162,19 +179,9 @@ class Spreadsheet {
     trace(`> ${this.trace}.iterateOverNamedRanges`);
     const namedRanges = this.nativeSpreadsheet.getNamedRanges();
     for (let i = 0; i < namedRanges.length; i++) {
-      // Note: interestingly enough, it's not possible to call namedRanges[i].getSheet() directly, so we're looking up the range by name 
-      const rangeName = namedRanges[i].getName();
-      // https://developers.google.com/apps-script/reference/spreadsheet/spreadsheet#getrangebynamename
-      const nativeNamedRange = this.nativeSpreadsheet.getRangeByName(rangeName);
-      if (nativeNamedRange !== null) {
-        // namedRange = new Range(nativeNamedRange, rangeName)
-        trace( `  ${this.trace}.iterateOverNamedRanges ${i}: ${rangeName}`);
-      }
-      else {
-        // Invalid range, do we clean up by deleating it?
-        trace( `  ${this.trace}.iterateOverNamedRanges ${i}: ${rangeName} - Invalid range!`);
-      }
-      if (callback !== null) callback(rangeName, nativeNamedRange);
+      const namedRange = new NamedRange(namedRanges[i]);
+      trace( `- iterateOverNamedRanges ${i}: ${namedRange.trace}`);
+      if (callback !== null) callback(namedRange);
     }
     trace(`< ${this.trace}.iterateOverNamedRanges Done`);
   }
@@ -184,6 +191,12 @@ class Spreadsheet {
     // https://developers.google.com/apps-script/reference/spreadsheet/spreadsheet#setnamedrangename,-range
     trace(`${this.trace}.setNamedRange("${name}", ${range.trace})`);
     this.nativeSpreadsheet.setNamedRange(name, range.nativeRange);
+  }
+
+  removeNamedRange(name) {
+    // https://developers.google.com/apps-script/reference/spreadsheet/spreadsheet#removenamedrangename
+    trace(`${this.trace}.removeNamedRange(${name})`);
+    this.nativeSpreadsheet.removeNamedRange(name);
   }
 
   getSheetByName(name) {
