@@ -27,16 +27,6 @@ class Sheet {
   }
   */
 
-  /* NOTE: We're removing this method, as it is not doing what was expected (it doesn't look up a named range!)
-  getRangeByName(a1notatrion) {
-    // https://developers.google.com/apps-script/reference/spreadsheet/sheet#getrangea1notation
-    const range = this.nativeSheet.getRange(name);
-    const newRange = range === null ? null : new Range(range, name, this.name);
-    trace(`${this.trace}.getRangeByName("${name}") --> ${range === null?"null (NOT FOUND)":newRange.trace}`);
-    return newRange;
-  }
-  */
-
   // Loop over all named ranges in the sheet and callback to the provided function
   iterateOverNamedRanges(callback=null) {
     // https://developers.google.com/apps-script/reference/spreadsheet/sheet#getnamedranges
@@ -48,6 +38,19 @@ class Sheet {
       if (callback !== null) callback(namedRange);
     }
     trace(`< ${this.trace}.iterateOverNamedRanges Done`);
+  }
+
+  getRangeByName(rangeName) {
+    // Attempt a local named range search
+    trace (`${this.trace}.getRangeByName(${rangeName})`);
+    this.iterateOverNamedRanges((namedRange) => { // Callback to arrow function
+      if (namedRange.name === rangeName) {
+        trace(`found local named range ${namedRange}`);
+        return new Range(namedRange.range, rangeName, sheetName);
+      }
+    });
+    trace (`${this.trace}.getRangeByName(${rangeName}) not found --> null`);
+    return null;
   }
 
   makeNamedRangesGlobal() {
@@ -158,30 +161,20 @@ class Spreadsheet {
   }
 
   // Get named range 
-  getRangeByName(rangeName, sheetName = "") {
+  getRangeByName(rangeName, failIfNotFound = true) {
     // https://developers.google.com/apps-script/reference/spreadsheet/spreadsheet#getrangebynamename
     // 
     let range = this.nativeSpreadsheet.getRangeByName(rangeName);
     if (range !== null) { 
       // Range found, create wrapper and return
-      let newRange = new Range(range, rangeName, sheetName);
+      let newRange = new Range(range, rangeName);
       trace(`${this.trace}.getRangeByName("${rangeName}") --> ${newRange.trace}`);
       return newRange;
     }
-    else if (sheetName !== "") {
-      // A sheet name is provided and the named range cannot be found globally, atetmpt a local named range search
-      trace (`attempting to get named range local to sheet "${sheetName}"`);
-      let sheet = this.getSheetByName(sheetName);
-      if (sheet !== null) {
-        sheet.iterateOverNamedRanges((namedRange) => { // Callback to arrow function
-          if (namedRange.name === rangeName) {
-            trace(`found local named range ${namedRange}`);
-            return new Range(namedRange.range, rangeName, sheetName);
-          }
-        });
-      }
+    if (failIfNotFound) {
+      Error.fatal(`Cannot find named range ${rangeName}`);
     }
-    Error.fatal(`Cannot find named range ${rangeName}`);
+    return null;
   }
 
   // Loop over all named ranges in the spreadsheet and callback to the provided function
@@ -237,7 +230,7 @@ class Spreadsheet {
   deleteSheet(sheet, forced) {
     // https://developers.google.com/apps-script/reference/spreadsheet/spreadsheet#deletesheetsheet
     trace(`> ${this.trace}.deleteSheet(${sheet.trace}), forced=${forced}`);
-    if (forced || Dialog.confirm("Delete Sheet Tab - Confirmation Required", `Are you sure you want to delete the sheet tab ${sheet.name}`) == true) {
+    if (forced || Dialog.confirm("Delete Sheet Tab - Confirmation Required", `Are you sure you want to delete the sheet tab "${sheet.name}"?`) == true) {
       this.nativeSpreadsheet.deleteSheet(sheet.nativeSheet);
       trace(`- ${this.trace}.deleteSheet(${sheet.trace}) Done`);
     }

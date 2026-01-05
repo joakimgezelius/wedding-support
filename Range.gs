@@ -23,8 +23,8 @@ class Range {
   }
 
   // Get named range from active spreadsheet
-  static getByName(rangeName, sheetName = "") {
-    return Spreadsheet.active.getRangeByName(rangeName, sheetName);
+  static getByName(rangeName) {
+    return Spreadsheet.active.getRangeByName(rangeName);
   }
 
   static trace(nativeRange) {
@@ -93,10 +93,9 @@ class Range {
   
   refresh() { // Reload the range - e.g. if it has changed
     trace(`${this.trace} refresh`);
-    let newRange = Spreadsheet.active.getRangeByName(this.name, this.sheet.name);
-    this._nativeRange = newRange.nativeRange;
+    this._nativeRange = Spreadsheet.active._nativeSpreadsheet.getRangeByName(this.name);
     this._values = this.nativeRange.getValues();
-    this._trace = newRange.trace;
+    this._trace = `{Range ${this.name} ${Range.trace(this.nativeRange)} `; // NOTE: This static trace string is incomplete on purpose, see trace access method above
   }
 
   findSelectedRow() {
@@ -255,8 +254,8 @@ class NamedRange {
     catch(error) {
       trace(`Caught error ${error} while constructing NamedRange ${this.name}`);
     }
-    const rangeString =  this._range === null ? '[#REF]' : `[${this._range.getA1Notation()}]`;
-    this._trace = `{NamedRange ${this.name} ${rangeString}}`;
+    this._rangeString =  this._range === null ? '[#REF]' : `[${this._range.getA1Notation()}]`;
+    this._trace = `{NamedRange ${this.name} ${this.rangeString}}`;
     trace(`NEW ${this.trace}`);
   }
   
@@ -267,14 +266,26 @@ class NamedRange {
     }
   }
 
+  // If a corresponding global named range already exists then repoint it (don't delete it, as this would break existing formulas and other dependencies).
+  // If not, create a new one. Once the global named range is set, delete the local range. Only act on sheet-local named ranges.
+  //
   makeGlobal() {
-    if (this.name.includes('!')) {
-      const newName = this.name.split('!')[1];
-      trace(`${this.trace}.makeGlobal --> ${newName}`);
-      // NOTE: Setting the range name is not sufficient, as it is maintained as a sheet-local named range. We have to recreate and delete the old one.
-      //       note also that unfortunately we can't use Spreadsheet.active.setNamedRange, as it assumes a wrapped Range object, and we can't create one
-      //       around the named range, as the getSheet() method doesn't work on named ranges (which is odd).
-      Spreadsheet.active._nativeSpreadsheet.setNamedRange(newName, this.range)
+    if (this.name.includes('!')) { // Only act on sheet-local named ranges.
+      const globalName = this.name.split('!')[1];
+      const nativeActiveSpreadsheet = Spreadsheet.active._nativeSpreadsheet;
+      trace(`${this.trace}.makeGlobal --> ${globalName}`);
+      const globalNamedRange = Spreadsheet.active.getRangeByName(globalName, false); // return null if not found
+      if (globalNamedRange !== null) { // A global named range by the same name exists, repoint it
+        trace(`repoint existing global named range ${globalNamedRange.trace} to ${this.rangeString}`);
+        globalNamedRange.range = this.range;
+      }
+      else {
+        // NOTE: Setting the range name is not sufficient, as it is maintained as a sheet-local named range. We have to recreate and delete the old one.
+        //       note also that unfortunately we can't use Spreadsheet.active.setNamedRange, as it assumes a wrapped Range object, and we can't create one
+        //       around the named range, as the getSheet() method doesn't work on named ranges (which is odd).
+        nativeActiveSpreadsheet.setNamedRange(globalName, this.range);
+      }
+      // Finally remove the sheet-local range
       this.remove(true);
     }
     else {
@@ -286,6 +297,7 @@ class NamedRange {
   get name()                { return this._nativeNamedRange===null ? '[null]' : this._nativeNamedRange.getName(); }
   get range()               { return this._range; }
   get trace()               { return this._trace; }
+  get rangeString()         { return this._rangeString; }
 
   set name(name)            { return this._nativeNamedRange.setName(name) }
   set range(range)          { this._range = range; return this._nativeNamedRange.setRange(range) }

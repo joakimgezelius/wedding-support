@@ -1,9 +1,8 @@
+// Weddings & Events > Templates & Snippets >  > 2026 Wedding Template (USE THIS ONE ONLY)
+const templateSheetUrl = "https://docs.google.com/spreadsheets/d/1uBFQrefEIyegbogwe8u0r_QYCcD9CxlWh5BMzwBH3bs/edit?gid=1229250297#gid=1229250297";
+const supplierCostingSheetName = "Supplier Costing";
+const paramsSheetName = "Params";
 
-function onInstallSupplierCostingSheet() {
-  trace("> onInstallSupplierCostingSheet");
-  SupplierCostingTemplate.install();
-  trace("< onInstallSupplierCostingSheet");
-}
 
 function onCleanUpNamedRanges() {
   trace("> onCleanUpNamedRanges");
@@ -11,13 +10,16 @@ function onCleanUpNamedRanges() {
   trace("< onCleanUpNamedRanges");
 }
 
+function onInstallSupplierCostingSheet() {
+  SheetMaintenance.installSheetTemplate(templateSheetUrl, supplierCostingSheetName);
+}
+
+function onInstallParamsSheet() {
+  SheetMaintenance.installSheetTemplate(templateSheetUrl, paramsSheetName);
+}
 
 class SheetMaintenance {
 
-  static installSupplierCostingSheet() {
-    ;
-  }
-  
   static cleanUpNamedRanges() {
     Spreadsheet.active.iterateOverNamedRanges((namedRange) => { // Callback to arrow function
       if (namedRange.range === null) { // This is an invalid range, to be deleted
@@ -31,27 +33,27 @@ class SheetMaintenance {
     });
   }
 
-}
-
-class SupplierCostingTemplate {
-  // Weddings & Events > Templates & Snippets >  > 2026 Wedding Template (USE THIS ONE ONLY)
-  static get templateSheetUrl() { return "https://docs.google.com/spreadsheets/d/1uBFQrefEIyegbogwe8u0r_QYCcD9CxlWh5BMzwBH3bs/edit?gid=1229250297#gid=1229250297"; }
-  static get templateSheetName() { return "Supplier Costing"; }
-
-  static install() {
+  // Replace a sheet with the corresponding template sheet, and clean up the named ranges
+  //
+  static installSheetTemplate(templateUrl, sheetName) {
+    trace(` > SheetMaintenance.installSheetTemplate ${sheetName}`);
     const activeSpreadSheet = Spreadsheet.active;
-    const templateSpreadSheet = Spreadsheet.openByUrl(SupplierCostingTemplate.templateSheetUrl);
-    const templateSheet = templateSpreadSheet.getSheetByName(SupplierCostingTemplate.templateSheetName);
-    const oldSheet = activeSpreadSheet.getSheetByName(SupplierCostingTemplate.templateSheetName);
-    let oldSheetTabOrder = 1; // To do: look up detault tab order?
+    const templateSpreadSheet = Spreadsheet.openByUrl(templateUrl);
+    const templateSheet = templateSpreadSheet.getSheetByName(sheetName);
+    const oldSheet = activeSpreadSheet.getSheetByName(sheetName);
+    let newSheetTabOrder = 1; // To do: look up detault tab order?
+    const newSheet = templateSheet.copyTo(activeSpreadSheet);
+    activeSpreadSheet.setActiveSheet(newSheet);
+    // NOTE: we're not deleting the old sheet until the new one is in place, as we need to "take over" the global named ranges if they already exist
     if (oldSheet !== null) {
-      oldSheetTabOrder = activeSpreadSheet.getSheetPosition(oldSheet);
+
+      newSheetTabOrder = activeSpreadSheet.getSheetPosition(oldSheet); // Take over the old sheet tab order
       activeSpreadSheet.deleteSheet(oldSheet, false); // false --> prompt for confirmation before delete
     }
-    const newSheet = templateSheet.copyTo(activeSpreadSheet);
-    newSheet.name = SupplierCostingTemplate.templateSheetName;
-    activeSpreadSheet.setActiveSheet(newSheet);
-    activeSpreadSheet.nativeSpreadsheet.moveActiveSheet(oldSheetTabOrder + 1);
+    newSheet.name = sheetName;
     newSheet.makeNamedRangesGlobal();
+    activeSpreadSheet.nativeSpreadsheet.moveActiveSheet(newSheetTabOrder + 1);
+    trace(`< SheetMaintenance.installSheetTemplate ${sheetName}`);
   }
-}
+
+} // class SheetMaintenance

@@ -1,5 +1,4 @@
 const ClientItineraryRangeName = "ClientItinerary";
-const ClientItinerarySheetName = "Client Itinerary";
 
 function onUpdateClientItinerary() {
   trace("onUpdateClientItinerary");
@@ -17,7 +16,7 @@ function onUpdateClientItinerary() {
     const sharedClientItinerarySpreadsheet = Spreadsheet.openByUrl(sharedClientItineraryLink);
 
     // Locate the ClientItinerary range in the external/shared client itinerary
-    let sharedClientItineraryRange = sharedClientItinerarySpreadsheet.getRangeByName(ClientItineraryRangeName, ClientItinerarySheetName)
+    const sharedClientItineraryRange = sharedClientItinerarySpreadsheet.getRangeByName(ClientItineraryRangeName)
 
     // Apply the builder, just as for the local client itinerary
     let sharedClientItineraryBuilder = new ClientItineraryBuilder(sharedClientItineraryRange);     
