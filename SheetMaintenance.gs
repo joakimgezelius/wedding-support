@@ -24,8 +24,9 @@ class SheetMaintenance {
         trace(`  cleanUpNamedRanges, invalid range, delete: ${namedRange.trace}`);
         namedRange.remove(false); // false --> prompt for confirmation before delete
       }
-      if (namedRange.name.includes('!')) { // This is a local named range
-        Dialog.notify("Local Named Range", `Local named range found: ${namedRange.name}`);
+      else if (namedRange.name.includes('!')) { // This is a local named range
+        Dialog.notify("Local Named Range", `Local named range found: ${namedRange.name}, making it global`);
+        namedRange.makeGlobal();
       }
     });
   }
@@ -33,8 +34,8 @@ class SheetMaintenance {
 }
 
 class SupplierCostingTemplate {
-
-  static get templateSheetUrl() { return "https://docs.google.com/spreadsheets/d/1k3eS6-9KZ88IubW01tlCzXpSRFW9bfk_xd7lYEnQpso/edit?gid=71237569#gid=71237569"; }
+  // Weddings & Events > Templates & Snippets >  > 2026 Wedding Template (USE THIS ONE ONLY)
+  static get templateSheetUrl() { return "https://docs.google.com/spreadsheets/d/1uBFQrefEIyegbogwe8u0r_QYCcD9CxlWh5BMzwBH3bs/edit?gid=1229250297#gid=1229250297"; }
   static get templateSheetName() { return "Supplier Costing"; }
 
   static install() {
