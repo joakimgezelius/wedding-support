@@ -45,13 +45,12 @@ class SheetMaintenance {
     const newSheet = templateSheet.copyTo(activeSpreadSheet);
     activeSpreadSheet.setActiveSheet(newSheet);
     // NOTE: we're not deleting the old sheet until the new one is in place, as we need to "take over" the global named ranges if they already exist
+    newSheet.makeNamedRangesGlobal(); // Take over global named ranges if they already exist
     if (oldSheet !== null) {
-
       newSheetTabOrder = activeSpreadSheet.getSheetPosition(oldSheet); // Take over the old sheet tab order
       activeSpreadSheet.deleteSheet(oldSheet, false); // false --> prompt for confirmation before delete
     }
     newSheet.name = sheetName;
-    newSheet.makeNamedRangesGlobal();
     activeSpreadSheet.nativeSpreadsheet.moveActiveSheet(newSheetTabOrder + 1);
     trace(`< SheetMaintenance.installSheetTemplate ${sheetName}`);
   }

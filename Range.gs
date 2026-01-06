@@ -7,9 +7,8 @@ class Range {
   constructor(nativeRange, name = "") {
     this._nativeRange = nativeRange;
     this._name = name;
-    this._sheet = new Sheet(nativeRange.getSheet());
+    this._sheet = null;
     this._values = this.nativeRange.getValues();  // Note: we cache this as we need to allow the array to be sorted
-    this._sheetName = this.sheet.name;
     this._currentRowOffset = 0;
     this._currentColumnOffset = 0;
     this._trace = `{Range ${name} ${Range.trace(nativeRange)} `; // NOTE: This static trace string is incomplete on purpose, see trace access method below
@@ -70,7 +69,7 @@ class Range {
   get nativeRange()         { return this._nativeRange; }
   get name()                { return this._name; }
   get trace()               { return this._trace + this._currentRowOffset + "}"; }
-  get sheet()               { return this._sheet; }
+  get sheet()               { return this._sheet === null ? this._sheet = new Sheet(this.nativeRange.getSheet()) : this._sheet; } // Lazy loading
   get values()              { return this._values; }
   get value()               { return this._values[0][0]; } // Helper to access first cell in range
   get height()              { return this.nativeRange.getHeight(); }
@@ -245,16 +244,18 @@ class Range {
 //=============================================================================================
 
 class NamedRange {
+
   constructor(nativeNamedRange) {
     this._nativeNamedRange = nativeNamedRange;
+    this._nativeRange = null;
     this._range = null;
     try {
-      this._range = nativeNamedRange.getRange();
+      this._nativeRange = nativeNamedRange.getRange();
     }
     catch(error) {
       trace(`Caught error ${error} while constructing NamedRange ${this.name}`);
     }
-    this._rangeString =  this._range === null ? '[#REF]' : `[${this._range.getA1Notation()}]`;
+    this._rangeString = this._nativeRange === null ? '[#REF]' : Range.trace(this._nativeRange);
     this._trace = `{NamedRange ${this.name} ${this.rangeString}}`;
     trace(`NEW ${this.trace}`);
   }
@@ -272,18 +273,19 @@ class NamedRange {
   makeGlobal() {
     if (this.name.includes('!')) { // Only act on sheet-local named ranges.
       const globalName = this.name.split('!')[1];
-      const nativeActiveSpreadsheet = Spreadsheet.active._nativeSpreadsheet;
-      trace(`${this.trace}.makeGlobal --> ${globalName}`);
-      const globalNamedRange = Spreadsheet.active.getRangeByName(globalName, false); // return null if not found
+      trace(`${this.trace}.makeGlobal --> "${globalName}"`);
+      const globalNamedRange = Spreadsheet.active.getNamedRange(globalName); // return null if not found
       if (globalNamedRange !== null) { // A global named range by the same name exists, repoint it
         trace(`repoint existing global named range ${globalNamedRange.trace} to ${this.rangeString}`);
         globalNamedRange.range = this.range;
       }
       else {
         // NOTE: Setting the range name is not sufficient, as it is maintained as a sheet-local named range. We have to recreate and delete the old one.
-        //       note also that unfortunately we can't use Spreadsheet.active.setNamedRange, as it assumes a wrapped Range object, and we can't create one
-        //       around the named range, as the getSheet() method doesn't work on named ranges (which is odd).
-        nativeActiveSpreadsheet.setNamedRange(globalName, this.range);
+            //       note also that unfortunately we can't use Spreadsheet.active.setNamedRange, as it assumes a wrapped Range object, and we can't create one
+            //       around the named range, as the getSheet() method doesn't work on named ranges (which is odd).
+        Spreadsheet.active.setNamedRange(globalName, this.range); // Create a new named range
+        //const nativeActiveSpreadsheet = Spreadsheet.active._nativeSpreadsheet;
+        //nativeActiveSpreadsheet.setNamedRange(globalName, this.range);
       }
       // Finally remove the sheet-local range
       this.remove(true);
@@ -293,14 +295,20 @@ class NamedRange {
     }
   }
 
-  get nativeNamedRange()    { return this._nativeNamedRange; }
-  get name()                { return this._nativeNamedRange===null ? '[null]' : this._nativeNamedRange.getName(); }
-  get range()               { return this._range; }
-  get trace()               { return this._trace; }
-  get rangeString()         { return this._rangeString; }
+  get nativeNamedRange()      { return this._nativeNamedRange; }
+  get name()                  { return this._nativeNamedRange===null ? '[null]' : this._nativeNamedRange.getName(); }
+  get range()                 { return this._range === null ? this._range = new Range(this._nativeRange) : this._range; }
+  get trace()                 { return this._trace; }
+  get rangeString()           { return this._rangeString; }
 
-  set name(name)            { return this._nativeNamedRange.setName(name) }
-  set range(range)          { this._range = range; return this._nativeNamedRange.setRange(range) }
+  set name(name)              { this._nativeNamedRange.setName(name); return this; }
+
+  set range(range) { // Wrapper Range object
+    this.nativeNamedRange.setRange(range.nativeRange);    // First repoint the named range to the supplied range
+    this._nativeRange = this.nativeNamedRange.getRange(); // next update the cached native range (we cache it as could throw an error, see constructor)
+    this._range = null;                                   // finally we invalidate the corresponding cached Range object (it will be recreated upon the next access)
+    return this;
+  }
 
 } // NamedRange
 

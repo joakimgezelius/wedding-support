@@ -1,7 +1,12 @@
 function onTestCase1() {        // HubSpot Testing
   trace("onTestCase1");
-  Spreadsheet.active.iterateOverNamedRanges();
-
+  // Spreadsheet.active.iterateOverNamedRanges();
+  let range1 = Spreadsheet.active.getRangeByName("budget", false);
+  let range2 = Spreadsheet.active.getRangeByName("Budget", false);
+  let sheet = range2.sheet;
+  trace(`onTestCase1 range: ${range2.trace},  sheet: ${sheet.trace}`);
+  let namedRange1 = Spreadsheet.active.getNamedRange("Budget");
+  let namedRange2 = Spreadsheet.active.getNamedRange("budget");
   // HubSpotDataDictionary.importHubSpotTasks();
   // HubSpot.listContacts(); 
   // HubSpot.listDeals();
