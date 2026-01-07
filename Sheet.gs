@@ -73,6 +73,28 @@ class Sheet {
     trace(`> ${this.trace}.copyTo("${destination.trace}`);
     const newNativeSheet = this.nativeSheet.copyTo(destination.nativeSpreadsheet);
     const newSheet = new Sheet(newNativeSheet);
+    // NOTE: After copying, references to external named ranges are broken, to fix, copy the contents
+    // https://developers.google.com/apps-script/reference/spreadsheet/range#getvalues
+    const formulas = this.nativeSheet.getDataRange().getFormulas();
+    // NOTE: - We can't copy a range directly from one spreadsheet to another (copyTo only works within one spreadsheet)
+    //       - We can't use Range.setValues(...) as this will overwrite any formulas with actual values
+    //       - We can't use Range.setFormulas(...) as this will overwrite any cells with plain values where there are no formulas
+    // Solution: loop over the formulas, and only set them where a formula is actually present!
+    // As a side note, we don't have to worry about formatting, as the formatting copied across from the source sheet.
+    let rows = formulas.length;
+    let cols = formulas[0].length;
+    let formula = "";
+    trace(`Height: ${rows} Width: ${cols}`);
+    for (let row=0; row<rows; ++row) {
+      for (let col=0; col<cols; ++col) {
+        if ((formula = formulas[row][col]) !== "") {
+          trace(`Formula found in [${row+1},${col+1}]: ${formula} - set in new sheet`);
+          // https://developers.google.com/apps-script/reference/spreadsheet/sheet#getrangerow,-column
+          // https://developers.google.com/apps-script/reference/spreadsheet/range#setformulaformula
+          newSheet.nativeSheet.getRange(row+1, col+1).setFormula(formula);
+        }
+      }
+    }
     trace(`< ${this.trace}.copyTo("${destination.trace} --> ${newSheet.trace}`);
     return newSheet;
   }
