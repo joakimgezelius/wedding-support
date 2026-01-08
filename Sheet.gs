@@ -73,8 +73,15 @@ class Sheet {
     trace(`> ${this.trace}.copyTo("${destination.trace}`);
     const newNativeSheet = this.nativeSheet.copyTo(destination.nativeSpreadsheet);
     const newSheet = new Sheet(newNativeSheet);
-    // NOTE: After copying, references to external named ranges are broken, to fix, copy the contents
-    // https://developers.google.com/apps-script/reference/spreadsheet/range#getvalues
+    // NOTE: After copying, references to external named ranges are broken. To fix, copy the formulas,
+    //       however, this must be done after making all named ranges global, in case this is a replacement
+    //       copy, see SheetMaintenance.installSheetTemplate() and copyFormulasTo(...) below. If not, the sheet local
+    //       named range will take presedence.
+    trace(`< ${this.trace}.copyTo("${destination.trace} --> ${newSheet.trace}`);
+    return newSheet;
+  }
+
+  copyFormulasTo(destination) {
     const formulas = this.nativeSheet.getDataRange().getFormulas();
     // NOTE: - We can't copy a range directly from one spreadsheet to another (copyTo only works within one spreadsheet)
     //       - We can't use Range.setValues(...) as this will overwrite any formulas with actual values
@@ -84,19 +91,18 @@ class Sheet {
     let rows = formulas.length;
     let cols = formulas[0].length;
     let formula = "";
-    trace(`Height: ${rows} Width: ${cols}`);
+    trace(`> ${this.trace}.copyFormulasTo(${destination.trace}) Height: ${rows} Width: ${cols}`);
     for (let row=0; row<rows; ++row) {
       for (let col=0; col<cols; ++col) {
         if ((formula = formulas[row][col]) !== "") {
           trace(`Formula found in [${row+1},${col+1}]: ${formula} - set in new sheet`);
           // https://developers.google.com/apps-script/reference/spreadsheet/sheet#getrangerow,-column
           // https://developers.google.com/apps-script/reference/spreadsheet/range#setformulaformula
-          newSheet.nativeSheet.getRange(row+1, col+1).setFormula(formula);
+          destination.nativeSheet.getRange(row+1, col+1).setFormula(formula);
         }
       }
     }
-    trace(`< ${this.trace}.copyTo("${destination.trace} --> ${newSheet.trace}`);
-    return newSheet;
+    trace(`< copyFormulasTo`);
   }
 
   insertRowBefore(position)   { this.nativeSheet.insertRowBefore(position); return this; }
