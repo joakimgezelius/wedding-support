@@ -7,7 +7,7 @@ function onUpdateClientItinerary() {
   eventDetails.sort(SortType.time);
 
   // Populate the local Client Itinerary, by applying a ClientItineraryBuilder (defined below) based on the local named range
-  let clientItineraryBuilder = new ClientItineraryBuilder(Range.getByName(ClientItineraryRangeName, ClientItinerarySheetName));
+  let clientItineraryBuilder = new ClientItineraryBuilder(Range.getByName(ClientItineraryRangeName));
   eventDetails.apply(clientItineraryBuilder);
 
   try {
