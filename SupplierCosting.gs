@@ -125,7 +125,7 @@ class SupplierCostingBuilder {
   isRowToBeIgnored(row) { 
     if (row.supplier === "") return true;         // Ignore rows with no supplier 
     if (row.status == "Cancelled") return true;   // Ignore cancelled rows 
-//  if (!row.isSelected) return true; // Ignore rows that are not selected
+    if (!row.isSelected) return true;             // Ignore rows that are not selected
 //  if (row.isSubItem) return true;
 //  if (Math.abs(row.nativeUnitCostWithVAT) > 0.01) return true;
 //  if (row.quantity == 0) return true;
