@@ -279,19 +279,21 @@ class Project extends RangeRow {
     }    
   }  
   
-  get name()              { return this.get("Name", "string"); }
-  get type()              { return this.get("Type", "string"); }
-  get date()              { return this.get("EventDate"); }
+  get name()                { return this.get("Name", "string"); }
+  get type()                { return this.get("Type", "string"); }
+  get date()                { return this.get("EventDate"); }
   // Time-Zone Changes in the Summer Time begins and ends at 1:00 a.m ( Universal Time (GMT))
-  get fileName()          { return `${Utilities.formatDate(this.date, "GMT+2", "yyyy-MM-dd")} ${this.name}`; }  
-  get sheetLink()         { return this.get("SheetLink", "string"); }  
-  get folderLink()        { return this.get("FolderLink", "string"); }
-  get paymentsLink()      { return this.get("PaymentsLink", "string"); }
-  get isValid()           { return this._isValid; }
-  get rowOffset()         { return this._rowOffset; }
-  set sheetLink(value)    { this.set("SheetLink", value); }
-  set folderLink(value)   { this.set("FolderLink", value); }
-  set paymentsLink(value) { this.set("PaymentsLink", value); }
+  get fileName()            { return `${Utilities.formatDate(this.date, "GMT+2", "yyyy-MM-dd")} ${this.name}`; }  
+  get sheetLink()           { return this.get("SheetLink", "string"); }  
+  get decorSheetLink()      { return this.get("DecorSheetLink", "string"); }  
+  get folderLink()          { return this.get("FolderLink", "string"); }
+  get paymentsLink()        { return this.get("PaymentsLink", "string"); }
+  get isValid()             { return this._isValid; }
+  get rowOffset()           { return this._rowOffset; }
+  set sheetLink(value)      { this.set("SheetLink", value); }
+  set decorSheetLink(value) { this.set("DecorSheetLink", value); }
+  set folderLink(value)     { this.set("FolderLink", value); }
+  set paymentsLink(value)   { this.set("PaymentsLink", value); }
 
   get trace() { return `{Project #${this.rowOffset} ${this._name} ${this.isValid ? "(valid)" : "(invalid)"}}`; }
   

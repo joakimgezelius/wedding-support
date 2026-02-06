@@ -78,12 +78,13 @@ class EventRow extends RangeRow {
   //get isStaffTicked()     { return this.get("StaffTicked", "boolean"); }
   get isItineraryTicked()   { return this.get("ItineraryTicked", "boolean"); }
   get isTitle()             { return this.category.toLowerCase() === "title"; }    // Is this a title row?
-  get isSubItem()           { return this.category.toLowerCase() === "part"; }     // Is this a sub-item?
+  get isSubItem()           { return (this.category.toLowerCase() === "part" || this.grouping.toLowerCase() === "part"); } // Is this a sub-item?
   get isInStock()           { return this.category.toLowerCase() === "in stock"; }   // Is this item in stock?
   get isCancelled()         { return this.status.toLowerCase() === "cancelled"; }  // Is this item cancelled?
   get responsible()         { return this.get("Responsible", "string"); }
   get accountable()         { return this.get("Accountable", "string"); }
   get po()                  { return this.get("Accountable", "string"); }
+  get grouping()            { return this.get("Grouping", "string"); }
   get category()            { return this.get("Category", "string"); }
   get status()              { return this.get("Status", "string"); }
   get supplier()            { return this.get("Supplier", "string"); }

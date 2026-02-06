@@ -8,8 +8,9 @@ class Menu {
       //.addSeparator()
       //.addItem("Pull Client Information", libName + ".onPullClientInformation") // In client.gs
       //.addSeparator()
-      .addItem("Check Client Sheet", libName + ".onCheckClientSheet")               // In ClientSheet.gs
-      .addItem("Update Budget", libName + ".onUpdateBudget")    // In Budget.gs
+      //.addItem("Check Client Sheet", libName + ".onCheckClientSheet")             // In ClientSheet.gs
+      .addItem("Recalculate Formulas", libName + ".onRecalculateFormulas")          // In SheetSupport.gs
+      .addItem("Update Client Budget", libName + ".onUpdateClientBudget")           // In Budget.gs
       .addItem("Update Client Itinerary", libName + ".onUpdateClientItinerary")     // In itinerary.gs
       .addItem("Update Decor Summary", libName + ".onUpdateDecorSummary")           // In DecorSummary.gs
       .addItem("Update Supplier Costing", libName + ".onUpdateSupplierCosting")     // In SupplierCosting.gs      
@@ -41,9 +42,12 @@ class Menu {
         )
         .addSeparator()
         .addSubMenu(ui.createMenu("Sheet Maintenance")
-          .addItem("Apply Format Template", libName + ".onApplyFormat")         // In SheetFormat.gs
-          .addItem("Format Coordinator", libName + ".onFormatCoordinator")      // In SheetFormat.gs
+          .addItem("Apply Format Template", libName + ".onApplyFormat")                                     // In SheetFormat.gs
+          .addItem("Format Coordinator", libName + ".onFormatCoordinator")                                  // In SheetFormat.gs
+          .addItem("Install New Summary Sheet", libName + ".onInstallSummarySheet")                         // In SheetMaintenance.gs
+          .addItem("Install New Client Budget Sheet", libName + ".onInstallClientBudgetSheet")              // In SheetMaintenance.gs
           .addItem("Install New Supplier Costing Sheet", libName + ".onInstallSupplierCostingSheet")        // In SheetMaintenance.gs
+          .addItem("Install New Logistics Sheet", libName + ".onInstallLogisticsSheet")                     // In SheetMaintenance.gs
           .addItem("Install New Params Sheet", libName + ".onInstallParamsSheet")                           // In SheetMaintenance.gs
           .addItem("Clean Up Named Ranges", libName + ".onCleanUpNamedRanges")                              // In SheetMaintenance.gs
           .addItem("Update Coordinator (no over-writes)", libName + ".onUpdateCoordinator")                 // In Coordinator.gs
@@ -128,17 +132,17 @@ class Menu {
     trace("< Custom quote menu added");
   }
 
-  static addProjectsMenu(libName) {               // In Enquiries.gs
+  static addProjectsMenu(libName) { // Called from the Weddings & Events "master" sheet, via Main.gs
     trace("> Adding custom projects menu");
     let ui = SpreadsheetApp.getUi();
     let menu = ui.createMenu("Projects" + globalLibMenuTag)
-        .addItem("Show Project Sidebar", libName + ".onShowProjectSidebar")
-        .addItem("Update Enquiries", libName + ".onUpdateEnquiries")
-        .addItem("Open Project Sheet", libName + ".onOpenProjectSheet")
-        .addItem("Prepare New Project Document Structure", libName + ".onPrepareProjectStructure")
-        .addSubMenu(ui.createMenu("Project Folder Maintenance")
-          .addItem("Add payments folder & link", libName + ".onPreparePaymentsFolder")
-          .addItem("Delete Project Document Structure", libName + ".onDeleteProjectDocumentStructure")
+        .addItem("Show Project Sidebar", libName + ".onShowProjectSidebar")                             // in ProjectSidebar.gs
+      //.addItem("Update Enquiries", libName + ".onUpdateEnquiries")                                    // not implemented yet 
+        .addItem("Open Project Sheet", libName + ".onOpenProjectSheet")                                 // in Enquiries.gs
+        .addItem("Prepare New Project Document Structure", libName + ".onPrepareProjectStructure")      // in Enquiries.gs
+        .addSubMenu(ui.createMenu("Project Folder Maintenance")                                         
+          .addItem("Add payments folder & link", libName + ".onPreparePaymentsFolder")                  // not implemented yet 
+          .addItem("Delete Project Document Structure", libName + ".onDeleteProjectDocumentStructure")  // in Enquiries.gs
         );
         /*.addSubMenu(ui.createMenu("Prepare New Client Document Structure")
           .addItem("For Small Wedding/Event", libName + ".onPrepareClientStructureSmallWedding")

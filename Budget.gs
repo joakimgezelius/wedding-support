@@ -1,5 +1,5 @@
-function onUpdateBudget() {
-  trace("onUpdateBudget");
+function onUpdateClientBudget() {
+  trace("onUpdateClientBudget");
   let eventDetails = new EventDetails();
   let budgetBuilder = new BudgetBuilder(Range.getByName("Budget", "Budget"));
   eventDetails.apply(budgetBuilder);

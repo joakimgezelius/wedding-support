@@ -61,3 +61,17 @@ function onSetColour() {
   trace("onSetColour " + cell.getValue());
 }
 
+/**
+ * Forces all formulas in the active sheet to recalculate.
+ * It does this by finding every "=" in formulas and replacing it with itself.
+ */
+function onRecalculateFormulas() {
+  var sheet = SpreadsheetApp.getActiveSheet(); // https://developers.google.com/apps-script/reference/spreadsheet/spreadsheet-app#getactivesheet
+  // This uses the TextFinder API which is much faster than looping through cells
+  sheet.createTextFinder("=")
+       .matchFormulaText(true)  // Look inside formulas only
+       .replaceAllWith("=");    // Replace with itself
+       
+  SpreadsheetApp.flush(); // Applies all pending spreadsheet changes
+  SpreadsheetApp.getUi().alert('Formulas have been refreshed.');
+}
