@@ -49,6 +49,7 @@ class Menu {
           .addItem("Install New Supplier Costing Sheet", libName + ".onInstallSupplierCostingSheet")        // In SheetMaintenance.gs
           .addItem("Install New Logistics Sheet", libName + ".onInstallLogisticsSheet")                     // In SheetMaintenance.gs
           .addItem("Install New Params Sheet", libName + ".onInstallParamsSheet")                           // In SheetMaintenance.gs
+          .addItem("Install New Instruction Sheets", libName + ".onInstallInstructionSheets")               // In SheetMaintenance.gs
           .addItem("Clean Up Named Ranges", libName + ".onCleanUpNamedRanges")                              // In SheetMaintenance.gs
           .addItem("Update Coordinator (no over-writes)", libName + ".onUpdateCoordinator")                 // In Coordinator.gs
           .addItem("Force-Update Coordinator - over-writes data", libName + ".onUpdateCoordinatorForced")   // In Coordinator.gs
