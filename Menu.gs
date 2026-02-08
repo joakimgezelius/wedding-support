@@ -9,7 +9,7 @@ class Menu {
       //.addItem("Pull Client Information", libName + ".onPullClientInformation") // In client.gs
       //.addSeparator()
       //.addItem("Check Client Sheet", libName + ".onCheckClientSheet")             // In ClientSheet.gs
-      .addItem("Recalculate Formulas", libName + ".onRecalculateFormulas")          // In SheetSupport.gs
+      .addItem("Recalculate Formulas", libName + ".onRecalculateFormulas")          // In SheetMaintenance.gs
       .addItem("Update Client Budget", libName + ".onUpdateClientBudget")           // In Budget.gs
       .addItem("Update Client Itinerary", libName + ".onUpdateClientItinerary")     // In itinerary.gs
       .addItem("Update Decor Summary", libName + ".onUpdateDecorSummary")           // In DecorSummary.gs
@@ -51,6 +51,7 @@ class Menu {
           .addItem("Install New Params Sheet", libName + ".onInstallParamsSheet")                           // In SheetMaintenance.gs
           .addItem("Install New Instruction Sheets", libName + ".onInstallInstructionSheets")               // In SheetMaintenance.gs
           .addItem("Clean Up Named Ranges", libName + ".onCleanUpNamedRanges")                              // In SheetMaintenance.gs
+          .addItem("Refresh Data Validation Rules", libName + ".onRefreshDataValidations")                  // In SheetMaintenance.gs
           .addItem("Update Coordinator (no over-writes)", libName + ".onUpdateCoordinator")                 // In Coordinator.gs
           .addItem("Force-Update Coordinator - over-writes data", libName + ".onUpdateCoordinatorForced")   // In Coordinator.gs
           );

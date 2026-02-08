@@ -7,7 +7,8 @@ const UpcomingProjects = "UpcomingProjects";
 const ProjectFoldersRoot = "ProjectFoldersRoot";
 const PaymentsFoldersRoot = "PaymentsFoldersRoot";
 const SelectedTemplateProjectFolder = "SelectedTemplateProjectFolder";
-const SelectedTemplateProjectSheet = "SelectedTemplateProjectSheet";
+const SelectedProjectTemplateSheet = "SelectedProjectTemplateSheet";
+const SelectedDecorTemplateSheet = "SelectedDecorTemplateSheet";
 const SelectedProjectName = "SelectedProjectName";
 const SelectedProjectType = "SelectedProjectType";
 const SelectedProjectIndex = "SelectedProjectIndex";
@@ -46,9 +47,10 @@ function onDraftSelectedEmail() {
 function onPrepareProjectStructure() {
   trace("onPrepareProjectStructure");
   let projects = new Projects;
-  let templateFolderLink = Spreadsheet.getCellValueLinkUrl(SelectedTemplateProjectFolder);
-  let templateProjectSheetLink = Spreadsheet.getCellValueLinkUrl(SelectedTemplateProjectSheet);
-  projects.selected.prepareProjectStructure(templateFolderLink, templateProjectSheetLink);
+  const templateFolderLink = Spreadsheet.getCellValueLinkUrl(SelectedTemplateProjectFolder);
+  const projectTemplateSheetLink = Spreadsheet.getCellValueLinkUrl(SelectedProjectTemplateSheet);
+  const decorTemplateSheetLink = Spreadsheet.getCellValueLinkUrl(SelectedDecorTemplateSheet);
+  projects.selected.prepareProjectStructure(templateFolderLink, projectTemplateSheetLink, decorTemplateSheetLink);
 }
 
 function onDeleteProjectDocumentStructure() {
@@ -168,10 +170,11 @@ class Project extends RangeRow {
   }
 */
 
-  prepareProjectStructure(templateFolderLink, templateProjectSheetLink) {
-    trace(`> prepareProjectStructure for ${this.trace}, templateFolder=${templateFolderLink}, templateProjectSheet=${templateProjectSheetLink}`);
+  prepareProjectStructure(templateFolderLink, projectTemplateSheetLink, decorTemplateSheetLink) {
+    trace(`> prepareProjectStructure for ${this.trace}, templateFolder=${templateFolderLink}, projectTemplateSheet=${projectTemplateSheetLink}, decorTemplateSheet=${decorTemplateSheetLink}`);
     let templateFolder = Folder.getByUrl(templateFolderLink);
-    let templateSheetFile = File.getByUrl(templateProjectSheetLink);
+    let projectTemplateSheetFile = File.getByUrl(projectTemplateSheetLink);
+    let decorTemplateSheetFile = File.getByUrl(decorTemplateSheetLink);
     let projectFolderRootURL = Spreadsheet.getCellValueLinkUrl(ProjectFoldersRoot);
     let projectFolderRoot = Folder.getByUrl(projectFolderRootURL);
     trace(`projectFolderRoot: ${projectFolderRoot.trace}`);
@@ -217,7 +220,7 @@ class Project extends RangeRow {
       Dialog.notify("Project sheet already exists!", "Please check that it is valid.");
     }
     else {
-      projectSheet = templateSheetFile.copyTo(projectFolder, this.fileName);
+      projectSheet = projectTemplateSheetFile.copyTo(projectFolder, this.fileName);
     }
     let projectSheetLink = projectSheet.url;                              // Get the URL of new client project sheet
     this.sheetLink= projectSheetLink;                                     // Set the project sheet link to the cell in SheetLink column

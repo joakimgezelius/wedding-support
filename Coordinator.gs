@@ -226,6 +226,38 @@ class EventDetailsChecker {
   }
 }
 
+
+//=============================================================================================
+// Class EventDetailsCopyer
+//
+
+class EventDetailsCopyer {
+  constructor() {
+    trace(`NEW ${this.trace}`);
+  }
+  
+  onBegin() {
+    trace("EventDetailsCopyer.onBegin - no-op");
+  }
+  
+  onEnd() {
+    trace("EventDetailsCopyer.onEnd - no-op");
+  }
+
+  onTitle(row) {
+    trace(`EventDetailsCopyer.onTitle ${row.title}`);
+  }
+
+  onRow(row) {
+    trace("EventDetailsCopyer.onRow ");
+  }
+  
+  get trace() {
+    return "{EventDetailsCopyer}";
+  }
+}
+
+
 //=============================================================================================
 // Class PriceListPackage
 //

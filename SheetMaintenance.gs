@@ -42,6 +42,43 @@ function onInstallInstructionSheets() {
 }
 
 
+/**
+ * Forces all formulas in the active sheet to recalculate.
+ * It does this by finding every "=" in formulas and replacing it with itself.
+ */
+function onRecalculateFormulas() {
+  var sheet = SpreadsheetApp.getActiveSheet(); // https://developers.google.com/apps-script/reference/spreadsheet/spreadsheet-app#getactivesheet
+  // This uses the TextFinder API which is much faster than looping through cells
+  sheet.createTextFinder("=")
+       .matchFormulaText(true)  // Look inside formulas only
+       .replaceAllWith("=");    // Replace with itself
+       
+  SpreadsheetApp.flush(); // Applies all pending spreadsheet changes
+  SpreadsheetApp.getUi().alert('Formulas have been refreshed.');
+}
+
+
+/**
+ * Refreshes Data Validation rules on the active sheet.
+ * It grabs every rule and immediately re-saves it, forcing
+ * Sheets to re-link Named Ranges that may have been recreated.
+ */
+function onRefreshDataValidations() {
+  var sheet = SpreadsheetApp.getActiveSheet(); // https://developers.google.com/apps-script/reference/spreadsheet/spreadsheet-app#getactivesheet
+  var range = sheet.getDataRange();
+  
+  // 1. Get all existing validation rules in the used range
+  var rules = range.getDataValidations();
+  
+  // 2. Re-apply the exact same rules to the same range
+  // This forces the "internal ID" lookup to happen again
+  range.setDataValidations(rules);
+  
+  SpreadsheetApp.flush();
+  SpreadsheetApp.getUi().alert('Data Validation rules have been re-bound.');
+}
+
+
 class SheetMaintenance {
 
   static cleanUpNamedRanges() {
@@ -61,7 +98,7 @@ class SheetMaintenance {
   //
   static installSheetTemplate(templateUrl, sheetName, newSheetTabOrder = 1) {
     trace(` > SheetMaintenance.installSheetTemplate ${sheetName}`);
-    if (Dialog.confirm("Install New Template Sheet", `Are you sure you want to install a new version of the sheet "${sheetName}"?`) == false) {
+    if (Dialog.confirm(`Install New "${sheetName}" Tab`, `Are you sure you want to install a new version of the sheet "${sheetName}"? NOTE, old tab will be deleted!`) == false) {
       return;
     } 
     const activeSpreadSheet = Spreadsheet.active;

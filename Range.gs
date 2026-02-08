@@ -8,7 +8,9 @@ class Range {
     this._nativeRange = nativeRange;
     this._name = name;
     this._sheet = null;
-    this._values = this.nativeRange.getValues();  // Note: we cache this as we need to allow the array to be sorted
+    if (this.nativeRange !== null) { // There are situations related to named ranges where constructing a Range around a null native range can happen...
+      this._values = this.nativeRange.getValues();  // Note: we cache this as we need to allow the array to be sorted
+    }
     this._currentRowOffset = 0;
     this._currentColumnOffset = 0;
     this._trace = `{Range ${name} ${Range.trace(nativeRange)} `; // NOTE: This static trace string is incomplete on purpose, see trace access method below
@@ -297,7 +299,7 @@ class NamedRange {
 
   get nativeNamedRange()      { return this._nativeNamedRange; }
   get name()                  { return this._nativeNamedRange===null ? '[null]' : this._nativeNamedRange.getName(); }
-  get range()                 { return this._range === null ? this._range = new Range(this._nativeRange) : this._range; }
+  get range()                 { return this._nativeRange === null ? null : (this._range === null ? this._range = new Range(this._nativeRange) : this._range); }
   get trace()                 { return this._trace; }
   get rangeString()           { return this._rangeString; }
 
