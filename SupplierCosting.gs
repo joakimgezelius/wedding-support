@@ -128,7 +128,7 @@ class SupplierCostingBuilder {
     if (!row.isSelected) return true;             // Ignore rows that are not selected
     if (row.quantity == 0) return true;           // Ignore rows with no quantity
     if (((row.nativeUnitCostWithVAT) == 0) && ((row.totalPrice) == 0)) return true; // Ignore rows with no monetary value
-    if (row.grouping == "Bundle") return true;    // Ignore the bundle summaries
+    if (row.isBundle) return true;                // Ignore the bundle summaries
 //  if (Math.abs(row.nativeUnitCostWithVAT) > 0.01) return true;
     return false;
   }

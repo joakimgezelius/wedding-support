@@ -78,7 +78,10 @@ class EventRow extends RangeRow {
   //get isStaffTicked()     { return this.get("StaffTicked", "boolean"); }
   get isItineraryTicked()   { return this.get("ItineraryTicked", "boolean"); }
   get isTitle()             { return this.category.toLowerCase() === "title"; }    // Is this a title row?
-  get isSubItem()           { return (this.category.toLowerCase() === "part" || this.grouping.toLowerCase() === "part"); } // Is this a sub-item?
+  get isVisibleSubItem()    { return (this.category.toLowerCase() === "part" || this.grouping.toLowerCase() === "part"); } // Is this a visible sub-item?
+  get isInvisibleSubItem()  { return (this.grouping.toLowerCase() === "invisible"); } // Is this an invisible sub-item?
+  get isSubItem()           { return (this.isVisibleSubItem || this.isInvisibleSubItem); } // Is this a sub-item (visible or invisible)?
+  get isBundle()            { return (this.grouping.toLowerCase() === "bundle"); } // Is this a bundle?
   get isInStock()           { return this.category.toLowerCase() === "in stock"; }   // Is this item in stock?
   get isCancelled()         { return this.status.toLowerCase() === "cancelled"; }  // Is this item cancelled?
   get responsible()         { return this.get("Responsible", "string"); }

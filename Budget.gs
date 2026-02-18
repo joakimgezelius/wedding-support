@@ -5,6 +5,11 @@ function onUpdateClientBudget() {
   eventDetails.apply(budgetBuilder);
 }
 
+function onSaveClientBudgetAsPDF() {
+  trace("onSaveClientBudgetAsPDF");
+  BudgetBuilder.saveAsPDF();
+}
+
 //=============================================================================================
 // Class BudgetBuilder
 //
@@ -80,17 +85,11 @@ class BudgetBuilder {
 
   onRow(row) {
     let totalPrice = row.totalPrice;
-    let category = row.category;
-    let isSelected = row.isSelected;
-    if (Math.abs(totalPrice) > 0 && 
-        isSelected === true
-//      category != "Labour" &&
-//      category != "Styling"
-    ) { // This is an item for the invoice
+    if (Math.abs(totalPrice) > 0 && row.isSelected === true && row.isInvisibleSubItem === false) { // This is an item for the invoice
       trace("BudgetBuilder.onRow " + row.description);
       let description = row.description;
       let unitPrice = row.unitPrice;
-      if (row.isSubItem) { // This is a sub-item, not to be added to the sum
+      if (row.isVisibleSubItem) { // This is a visible sub-item, not to be added to the sum, but listed as a detail in the budget
         description = "- " + description;
         unitPrice = "";
         totalPrice = "";
@@ -124,4 +123,8 @@ class BudgetBuilder {
   get trace() {
     return "{BudgetBuilder " + this.targetRange.trace + "}";
   }
-}
+
+  static saveAsPDF() {
+    ;
+  }
+} // BudgetBuilder

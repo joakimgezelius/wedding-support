@@ -11,6 +11,7 @@ class Menu {
       //.addItem("Check Client Sheet", libName + ".onCheckClientSheet")             // In ClientSheet.gs
       .addItem("Recalculate Formulas", libName + ".onRecalculateFormulas")          // In SheetMaintenance.gs
       .addItem("Update Client Budget", libName + ".onUpdateClientBudget")           // In Budget.gs
+      .addItem("Save Client Budget as PDF", libName + ".onSaveClientBudgetAsPDF")   // In Budget.gs
       .addItem("Update Client Itinerary", libName + ".onUpdateClientItinerary")     // In itinerary.gs
       .addItem("Update Decor Summary", libName + ".onUpdateDecorSummary")           // In DecorSummary.gs
       .addItem("Update Supplier Costing", libName + ".onUpdateSupplierCosting")     // In SupplierCosting.gs      

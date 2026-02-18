@@ -290,8 +290,14 @@ class Spreadsheet {
     // https://developers.google.com/apps-script/reference/spreadsheet/spreadsheet#deletesheetsheet
     trace(`> ${this.trace}.deleteSheet(${sheet.trace}), forced=${forced}`);
     if (forced || Dialog.confirm("Delete Sheet Tab - Confirmation Required", `Are you sure you want to delete the sheet tab "${sheet.name}"?`) == true) {
-      this.nativeSpreadsheet.deleteSheet(sheet.nativeSheet);
-      trace(`- ${this.trace}.deleteSheet(${sheet.trace}) Done`);
+      try {
+        this.nativeSpreadsheet.deleteSheet(sheet.nativeSheet);
+        trace(`- ${this.trace}.deleteSheet(${sheet.trace}) Done`);
+      }
+      catch (error) {
+        trace(`- ${this.trace}.deleteSheet(${sheet.trace}) failed - error: ${error}`);
+        Dialog.notify(`Delete Tab ${sheet.name} Failed`, `${this.trace}.deleteSheet(${sheet.trace}) failed - error: ${error}`);
+      }
     }
   }
 
