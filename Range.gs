@@ -272,11 +272,17 @@ class NamedRange {
   // If a corresponding global named range already exists then repoint it (don't delete it, as this would break existing formulas and other dependencies).
   // If not, create a new one. Once the global named range is set, delete the local range. Only act on sheet-local named ranges.
   //
-  makeGlobal() {
+  makeGlobal() { 
     if (this.name.includes('!')) { // Only act on sheet-local named ranges.
       const globalName = this.name.split('!')[1];
       trace(`${this.trace}.makeGlobal --> "${globalName}"`);
-      const globalNamedRange = Spreadsheet.active.getNamedRange(globalName); // return null if not found
+      let globalNamedRange = null;
+      try {
+        globalNamedRange = Spreadsheet.active.getNamedRange(globalName); // return null if not found
+      }
+      catch(error) {
+        trace(`Caught error ${error} while making global named range ${this.trace}`);
+      }
       if (globalNamedRange !== null) { // A global named range by the same name exists, repoint it
         trace(`repoint existing global named range ${globalNamedRange.trace} to ${this.rangeString}`);
         globalNamedRange.range = this.range;

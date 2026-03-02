@@ -10,6 +10,8 @@
   "jsonExtensions": [
     ".json"
   ],
-  "filePushOrder": [],
+  "filePushOrder": [
+    "Range.gs"
+  ],
   "skipSubdirectories": false
 }
