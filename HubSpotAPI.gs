@@ -1,11 +1,11 @@
-const SecureToken="pat-na1-d82619fe-af03-4d4b-bbe3-07c8f30d514b";
+const SecureToken=;
 const HubSpotBaseUrl = "https://api.hubapi.com/crm/v3/objects";
 
 const DataDictionarySheetId = "1C_uOMH30siZLSGzYOziBfcl_lx5ZZRYCBv7fqpegGEk";
 const urlFetchAppParams = { "headers": { "Authorization": `Bearer ${SecureToken}` } };
 
 function onUpdateClientData() {
-  trace("onUpdateClientData");  
+  trace("onUpdateClientData");
   HubSpot.getClientData();
 }
 
