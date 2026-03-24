@@ -58,16 +58,8 @@ function onTestCase2() {
 
 function onTestCase3() {        // Other Testings
   trace("onTestCase3");
-  //let hubSpotDataDictionary = HubSpotDataDictionary.current;
-  //let hubSpotDataDictionary2 = HubSpotDataDictionary.current;
-  let templateFolderLink = Spreadsheet.getCellValueLinkUrl("TemplateClientFolder");     // W & E's >> Upcoming
-  let sourceFolder = Folder.getByUrl(templateFolderLink);
-  let templateClientSheetLink = Spreadsheet.getCellValueLinkUrl("TemplateClientSheet"); // URL to the W & E's template sheet
-  let templateClientSheet = Folder.getByUrl(templateClientSheetLink);
-  let destinationFolderURL = Spreadsheet.getCellValueLinkUrl("ClientFoldersRoot"); // Destination - W & E's param named range ClientFoldersRoot
-  let destinationFolder = Folder.getByUrl(destinationFolderURL);
-  trace(`Source Folder: ${sourceFolder.trace}`);
-  trace(`Destination Folder: ${destinationFolder.trace}`);
-  destinationFolder.createShortcut(templateClientSheet);
-  destinationFolder.createShortcut(sourceFolder, "New name for this shortcut");
+  const token = HubSpot.token;
+  trace(`Token: ${token}`);
+  const token2 = HubSpot.token;
+  trace(`Token: ${token2}`);
 }

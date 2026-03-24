@@ -1,8 +1,6 @@
-const SecureToken=;
 const HubSpotBaseUrl = "https://api.hubapi.com/crm/v3/objects";
 
 const DataDictionarySheetId = "1C_uOMH30siZLSGzYOziBfcl_lx5ZZRYCBv7fqpegGEk";
-const urlFetchAppParams = { "headers": { "Authorization": `Bearer ${SecureToken}` } };
 
 function onUpdateClientData() {
   trace("onUpdateClientData");
@@ -16,13 +14,28 @@ function onUpdateClientData() {
 
 class HubSpot {
 
+  static get token() {
+    if (this._token === undefined) {
+      trace("Getting HubSpot token from Script Properties");
+      this._token = PropertiesService.getScriptProperties().getProperty('HUBSPOT_PRIVATE_APP_TOKEN');
+    }
+    if (!this._token) {
+      throw("Missing HUBSPOT_PRIVATE_APP_TOKEN in Script Properties.");
+    }
+    return this._token;
+  }
+
+  static get urlFetchAppParams() {
+    return `{ "headers": { "Authorization": Bearer ${HubSpot.token} } }`;
+  }
+
   static getUrl(method) {
     return `${HubSpotBaseUrl}/${method}`; // for Contacts & Deals
   }
 
   static listContacts() {
     let url = HubSpot.getUrl("contacts?limit=100&properties=hs_object_id,firstname,lastname,createdate,email,hs_email_domain,phone,annualrevenue,how_many_people_in_total_including_the_couple_will_be_at_the_ceremony_and_or_the_celebration_,asana_link,hs_lifecyclestage_customer_date,hs_lifecyclestage_lead_date,hs_lifecyclestage_marketingqualifiedlead_date,hs_lifecyclestage_salesqualifiedlead_date,hs_lifecyclestage_subscriber_date,hs_lifecyclestage_evangelist_date,hs_lifecyclestage_opportunity_date,hs_lifecyclestage_other_date,city,company,hs_object_id,country,date,date_worked,do_you_agree_to_special_terms_in_the_event_of_a_coronavirus_event,hs_content_membership_email_confirmed,event_start_time,industry,is_there_any_food_that_you_dislike,is_your_kitchen_fulled_equipped_and_functional,jobtitle,kitchen,kitchen_1,lastmodifieddate,hs_latest_sequence_ended_date,hs_latest_sequence_enrolled,hs_latest_sequence_enrolled_date,lifecyclestage,hs_marketable_status,hs_marketable_reason_id,hs_marketable_reason_type,hs_marketable_until_renewal,mobilephone,numemployees,hs_sequences_enrolled_count,hs_createdate,hs_persona,zip,hs_language,salutation,state,address,hs_content_membership_registration_email_sent_at,time_sheet,twitterhandle,website,what_the_occasion&archived=false");
-    let response = UrlFetchApp.fetch(url, urlFetchAppParams);
+    let response = UrlFetchApp.fetch(url, JSON.parse(HubSpot.urlFetchAppParams));
     trace(`HubSpot.listContacts --> ${response.getContentText()}`);
     let data = JSON.parse(response.getContentText());
     let results = data['results'];
@@ -38,7 +51,7 @@ class HubSpot {
 
   static listDeals() {
     let url = HubSpot.getUrl("deals?limit=100&properties=hs_object_id,amount,closedate,createdate,dealname,description,hubspot_owner_id,dealstage,dealtype,departure_date,hs_forecast_amount,hs_manual_forecast_category,hs_forecast_probability,hubspot_team_id,hs_lastmodifieddate,hs_next_step,num_associated_contacts,hs_priority,pipeline&archived=false");
-    let response = UrlFetchApp.fetch(url, urlFetchAppParams);
+    let response = UrlFetchApp.fetch(url, HubSpot.urlFetchAppParams);
     //trace(`HubSpot.listDeals --> ${response.getContentText()}`);
     let data = JSON.parse(response.getContentText());
     let results = data['results'];

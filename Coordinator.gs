@@ -70,20 +70,21 @@ class EventDetailsUpdater {
     trace("EventDetailsUpdater.onRow " + row.sectionId + " " + this.itemNo);
     ++this.itemNo;
 
-    let a1_category = row.getA1Notation("Category");
-    let a1_status   = row.getA1Notation("Status");
-    let a1_selected = row.getA1Notation("Selected");
-    let a1_currency = row.getA1Notation("Currency");
-    let a1_quantity = row.getA1Notation("Quantity");
-    let a1_nativeUnitCost = row.getA1Notation("NativeUnitCost");
-    let a1_vat = row.getA1Notation("VAT");
-    let a1_nativeUnitCostWithVAT = row.getA1Notation("NativeUnitCostWithVAT");
-    let a1_unitCost = row.getA1Notation("UnitCost");
-    let a1_commissionPercentage = row.getA1Notation("CommissionPercentage");
-    let a1_markup = row.getA1Notation("Markup");
-    let a1_unitPrice = row.getA1Notation("UnitPrice");
-    let a1_startTime = row.getA1Notation("Time");
-    let a1_endTime = row.getA1Notation("EndTime");    
+    const a1_category = row.getA1Notation("Category");
+    const a1_status   = row.getA1Notation("Status");
+    const a1_grouping = row.getA1Notation("Grouping");
+    const a1_selected = row.getA1Notation("Selected");
+    const a1_currency = row.getA1Notation("Currency");
+    const a1_quantity = row.getA1Notation("Quantity");
+    const a1_nativeUnitCost = row.getA1Notation("NativeUnitCost");
+    const a1_vat = row.getA1Notation("VAT");
+    const a1_nativeUnitCostWithVAT = row.getA1Notation("NativeUnitCostWithVAT");
+    const a1_unitCost = row.getA1Notation("UnitCost");
+    const a1_commissionPercentage = row.getA1Notation("CommissionPercentage");
+    const a1_markup = row.getA1Notation("Markup");
+    const a1_unitPrice = row.getA1Notation("UnitPrice");
+    const a1_startTime = row.getA1Notation("Time");
+    const a1_endTime = row.getA1Notation("EndTime");    
 
     if (row.itemNo === "" || this.forced) { // Only set item number if empty (or forced)
       row.itemNo = this.generateItemId();
@@ -101,7 +102,7 @@ class EventDetailsUpdater {
     row.unitCost = `=IF(OR(${a1_currency}="", ${a1_nativeUnitCostWithVAT}="", ${a1_nativeUnitCostWithVAT}=0), "", IF(${a1_currency}="GBP", ${a1_nativeUnitCostWithVAT}, ${a1_nativeUnitCostWithVAT} / EURGBP))`;
     row.totalGrossCost = `=IF(OR(${a1_quantity}="", ${a1_quantity}=0, ${a1_unitCost}="", ${a1_unitCost}=0, ${a1_selected}=FALSE), "", ${a1_quantity} * ${a1_unitCost})`;
     row.totalNettCost = `=IF(OR(${a1_quantity}="", ${a1_quantity}=0, ${a1_unitCost}="", ${a1_unitCost}=0, ${a1_selected}=FALSE), "", ${a1_quantity} * ${a1_unitCost} * (1-${a1_commissionPercentage}))`;
-    row.unitPrice = `=IF(OR(${a1_unitCost}="", ${a1_unitCost}=0), "", ${a1_unitCost} * ( 1 + ${a1_markup}))`;
+    row.unitPrice = `=IF(OR(${a1_unitCost}="", ${a1_unitCost}=0, ${a1_grouping}="Part", ${a1_grouping}="Invisible"), "", ${a1_unitCost} * ( 1 + ${a1_markup}))`;
     row.totalPrice = `=IF(OR(${a1_quantity}="", ${a1_quantity}=0, ${a1_unitPrice}="", ${a1_unitPrice}=0, ${a1_selected}=FALSE), "", ${a1_quantity} * ${a1_unitPrice})`;
 //  row.commission = `=IF(OR(${a1_commissionPercentage}="", ${a1_commissionPercentage}=0), "", ${a1_quantity} * ${a1_unitCost} * ${a1_commissionPercentage})`;
     // Check this quantity calculation formula after StaffTicked is replaced with StoreTicked
