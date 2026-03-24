@@ -66,7 +66,7 @@ class SupplierCostingBuilder {
     trace("SupplierCostingBuilder.onTitle " + row.title + " - ignore");
   }
   
-   onRow(row) {
+  onRow(row) {
     if (this.isRowToBeIgnored(row)) {  // Check if this row is to be ignored
       trace("SupplierCostingBuilder.onRow - ignore: " + row.description);
     } 
@@ -78,7 +78,7 @@ class SupplierCostingBuilder {
       trace(`SupplierCostingBuilder.onRow ${this.currentSection}:${this.currentSectionRows} ${row.description}`);
 
       var totalNativeGrossCost = Number(row.totalNativeGrossCost);
-      this.currentSupplierGrossSum += totalNativeGrossCost; // Summing gross cost for the supplier sub-header
+      this.currentSupplierGrossSum += Number(row.totalNetCost); // Summing gross cost for the supplier sub-header
 
       var totalClientPrice = Number(row.totalPrice);
       this.currentSupplierClientPriceSum += Number(totalClientPrice);
@@ -98,13 +98,13 @@ class SupplierCostingBuilder {
       targetRow.getCell(1,column++).setValue(row.description);
       targetRow.getCell(1,column++).setValue(row.status);
       targetRow.getCell(1,column++).setValue(row.quantity);  // Quantity
-      targetRow.getCell(1,column++).setValue(row.nativeUnitCostWithVAT).setNumberFormat(row.currencyFormat);
-      targetRow.getCell(1,column++).setValue(totalNativeGrossCost).setNumberFormat(row.currencyFormat);
-      targetRow.getCell(1,column++).setValue(totalClientPrice).setNumberFormat("£ #,##0.00");
+      targetRow.getCell(1,column++).setValue(row.nativeUnitCostWithVAT !== 0 ? row.nativeUnitCostWithVAT : "").setNumberFormat(row.currencyFormat);
+      targetRow.getCell(1,column++).setValue(totalNativeGrossCost !== 0 ? totalNativeGrossCost : "").setNumberFormat(row.currencyFormat);
+      targetRow.getCell(1,column++).setValue(totalClientPrice !== 0 ? totalClientPrice : "").setNumberFormat("£ #,##0.00");
       
       if (commissionPercentage !== 0) { // Only show if there is a commission
         targetRow.getCell(1,column++).setValue(commissionPercentage);  // Commission %
-        targetRow.getCell(1,column++).setValue(commissionAmount).setNumberFormat(row.currencyFormat);  // Commission amount
+        targetRow.getCell(1,column++).setValue(commissionAmount !== 0 ? commissionAmount : "").setNumberFormat(row.currencyFormat);  // Commission amount
       } 
       else {
         ++column;
@@ -123,13 +123,10 @@ class SupplierCostingBuilder {
   }
 
   isRowToBeIgnored(row) { 
-//  if (row.supplier === "") return true;         // Ignore rows with no supplier 
     if (row.status == "Cancelled") return true;   // Ignore cancelled rows 
     if (!row.isSelected) return true;             // Ignore rows that are not selected
     if (row.quantity == 0) return true;           // Ignore rows with no quantity
     if (((row.nativeUnitCostWithVAT) == 0) && ((row.totalPrice) == 0)) return true; // Ignore rows with no monetary value
-    if (row.isBundle) return true;                // Ignore the bundle summaries
-//  if (Math.abs(row.nativeUnitCostWithVAT) > 0.01) return true;
     return false;
   }
 

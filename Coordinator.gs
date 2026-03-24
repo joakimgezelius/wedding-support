@@ -70,6 +70,7 @@ class EventDetailsUpdater {
     trace("EventDetailsUpdater.onRow " + row.sectionId + " " + this.itemNo);
     ++this.itemNo;
 
+    const a1_itemNo = row.getA1Notation("ItemNo");
     const a1_category = row.getA1Notation("Category");
     const a1_status   = row.getA1Notation("Status");
     const a1_grouping = row.getA1Notation("Grouping");
@@ -84,7 +85,9 @@ class EventDetailsUpdater {
     const a1_markup = row.getA1Notation("Markup");
     const a1_unitPrice = row.getA1Notation("UnitPrice");
     const a1_startTime = row.getA1Notation("Time");
-    const a1_endTime = row.getA1Notation("EndTime");    
+    const a1_endTime = row.getA1Notation("EndTime");
+    const a1_totalCost = row.getA1Notation("TotalCost");
+    const a1_totalPrice = row.getA1Notation("TotalPrice");
 
     if (row.itemNo === "" || this.forced) { // Only set item number if empty (or forced)
       row.itemNo = this.generateItemId();
@@ -96,18 +99,25 @@ class EventDetailsUpdater {
       row.status = `Not Actioned`;
     }
 
-    this.setNativeUnitCost(row);
-    row.nativeUnitCostWithVAT = `=IF(OR(${a1_currency}="", ${a1_nativeUnitCost}="", ${a1_nativeUnitCost}=0), "", ${a1_nativeUnitCost}*(1+${a1_vat}))`;
-    row.getCell("NativeUnitCostWithVAT").setNumberFormat(row.currencyFormat);
-    row.unitCost = `=IF(OR(${a1_currency}="", ${a1_nativeUnitCostWithVAT}="", ${a1_nativeUnitCostWithVAT}=0), "", IF(${a1_currency}="GBP", ${a1_nativeUnitCostWithVAT}, ${a1_nativeUnitCostWithVAT} / EURGBP))`;
-    row.totalGrossCost = `=IF(OR(${a1_quantity}="", ${a1_quantity}=0, ${a1_unitCost}="", ${a1_unitCost}=0, ${a1_selected}=FALSE), "", ${a1_quantity} * ${a1_unitCost})`;
-    row.totalNettCost = `=IF(OR(${a1_quantity}="", ${a1_quantity}=0, ${a1_unitCost}="", ${a1_unitCost}=0, ${a1_selected}=FALSE), "", ${a1_quantity} * ${a1_unitCost} * (1-${a1_commissionPercentage}))`;
-    row.unitPrice = `=IF(OR(${a1_unitCost}="", ${a1_unitCost}=0, ${a1_grouping}="Part", ${a1_grouping}="Invisible"), "", ${a1_unitCost} * ( 1 + ${a1_markup}))`;
-    row.totalPrice = `=IF(OR(${a1_quantity}="", ${a1_quantity}=0, ${a1_unitPrice}="", ${a1_unitPrice}=0, ${a1_selected}=FALSE), "", ${a1_quantity} * ${a1_unitPrice})`;
-//  row.commission = `=IF(OR(${a1_commissionPercentage}="", ${a1_commissionPercentage}=0), "", ${a1_quantity} * ${a1_unitCost} * ${a1_commissionPercentage})`;
-    // Check this quantity calculation formula after StaffTicked is replaced with StoreTicked
-    if (row.isStoreTicked && (row.quantity === "")) { // Calculate quantity if staff and time fields are filled  (isStoreTicked instead StaffTicked)
-      row.quantity = `=IF(OR(${a1_startTime}="", ${a1_endTime}=""), "", ((hour(${a1_endTime})*60+minute(${a1_endTime}))-(hour(${a1_startTime})*60+minute(${a1_startTime})))/60)`;
+    if (row.isBundle) {  // Don't touch the bundle items as they are entered manually, except summing up the cost of the parts
+      // Sum over all rows where the itemNo starts with the current itemNo and the grouping is "Part" or "Invisible"
+      // row.totalGrossCost = `=sum(query(A:AA, "select Z where A contains '"&REGEXEXTRACT(${a1_itemNo}, "^([^-]+)")&"' and (N='Part' or N='Invisible')", 0))`
+      row.totalNetCost = `=sum(query(A:AA, "select AA where A contains '"&REGEXEXTRACT(${a1_itemNo}, "^([^-]+)")&"' and (N='Part' or N='Invisible')", 0))`
+      row.markup = `=(${a1_totalPrice}-${a1_totalCost})/${a1_totalCost}`;
+    } else {
+      this.setNativeUnitCost(row);
+      row.nativeUnitCostWithVAT = `=IF(OR(${a1_currency}="", ${a1_nativeUnitCost}="", ${a1_nativeUnitCost}=0), "", ${a1_nativeUnitCost}*(1+${a1_vat}))`;
+      row.getCell("NativeUnitCostWithVAT").setNumberFormat(row.currencyFormat);
+      row.unitCost = `=IF(OR(${a1_currency}="", ${a1_nativeUnitCostWithVAT}="", ${a1_nativeUnitCostWithVAT}=0), "", IF(${a1_currency}="GBP", ${a1_nativeUnitCostWithVAT}, ${a1_nativeUnitCostWithVAT} / EURGBP))`;
+      row.totalGrossCost = `=IF(OR(${a1_quantity}="", ${a1_quantity}=0, ${a1_unitCost}="", ${a1_unitCost}=0, ${a1_selected}=FALSE), "", ${a1_quantity} * ${a1_unitCost})`;
+      row.totalNetCost = `=IF(OR(${a1_quantity}="", ${a1_quantity}=0, ${a1_unitCost}="", ${a1_unitCost}=0, ${a1_selected}=FALSE), "", ${a1_quantity} * ${a1_unitCost} * (1-${a1_commissionPercentage}))`;
+      row.unitPrice = `=IF(OR(${a1_unitCost}="", ${a1_unitCost}=0, ${a1_grouping}="Part", ${a1_grouping}="Invisible"), "", ${a1_unitCost} * ( 1 + ${a1_markup}))`;
+      row.totalPrice = `=IF(OR(${a1_quantity}="", ${a1_quantity}=0, ${a1_unitPrice}="", ${a1_unitPrice}=0, ${a1_selected}=FALSE), "", ${a1_quantity} * ${a1_unitPrice})`;
+//    row.commission = `=IF(OR(${a1_commissionPercentage}="", ${a1_commissionPercentage}=0), "", ${a1_quantity} * ${a1_unitCost} * ${a1_commissionPercentage})`;
+      // Check this quantity calculation formula after StaffTicked is replaced with StoreTicked
+      if (row.isStoreTicked && (row.quantity === "")) { // Calculate quantity if staff and time fields are filled  (isStoreTicked instead StaffTicked)
+        row.quantity = `=IF(OR(${a1_startTime}="", ${a1_endTime}=""), "", ((hour(${a1_endTime})*60+minute(${a1_endTime}))-(hour(${a1_startTime})*60+minute(${a1_startTime})))/60)`;
+      }
     }
 //. if (row.isInStock && this.forced) { // Set mark-up and commission for in-stock items
 //    trace("- Set In Stock commision & mark-up on " + this.itemNo);

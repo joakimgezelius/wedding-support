@@ -62,7 +62,7 @@ class BudgetBuilder {
   onTitle(row) {
     this.currentTitle = row.title;
     ++this.currentSection;
-    trace("BudgetBuilder.onTitle " + this.currentTitle);
+    trace(`BudgetBuilder.onTitle ${this.currentTitle}`);
     if (this.currentSection > 1) { // This is not the first section (if it is, no need for clean-up house-keeping)
       if (this.currentTitleSum == 0) {          // Section with no content?
         this.targetRange.getPreviousRow();      //  - back up instead of moving on
@@ -84,13 +84,15 @@ class BudgetBuilder {
   }
 
   onRow(row) {
-    let totalPrice = row.totalPrice;
-    if (Math.abs(totalPrice) > 0 && row.isSelected === true && row.isInvisibleSubItem === false) { // This is an item for the invoice
-      trace("BudgetBuilder.onRow " + row.description);
+    if (row.isSelected && !row.isInvisibleSubItem) { // This is an item for the invoice
+      trace(`BudgetBuilder.onRow ${row.description}`);
       let description = row.description;
+      let quantity = row.quantity;
       let unitPrice = row.unitPrice;
+      let totalPrice = row.totalPrice;
       if (row.isVisibleSubItem) { // This is a visible sub-item, not to be added to the sum, but listed as a detail in the budget
         description = "- " + description;
+        quantity ="";
         unitPrice = "";
         totalPrice = "";
       }
@@ -101,14 +103,14 @@ class BudgetBuilder {
       let column = 1;
       targetRow.getCell(1,column++).setValue(this.currentTitle);
       targetRow.getCell(1,column++).setValue(description);
-      targetRow.getCell(1,column++).setValue(row.quantity);
+      targetRow.getCell(1,column++).setValue(quantity);
       targetRow.getCell(1,column++).setValue(unitPrice).setNumberFormat("£#,##0");
       targetRow.getCell(1,column++).setValue(totalPrice).setNumberFormat("£#,##0");
       targetRow.setFontWeight("normal");
       targetRow.setFontSize(10);
       targetRow.setBackground("#ffffff"); // White
     } else {
-      trace("BudgetBuilder.onRow - ignore (no price): " + row.description);
+      trace(`BudgetBuilder.onRow - ignore (no price): ${row.description}`);
     }
   }
 
@@ -121,7 +123,7 @@ class BudgetBuilder {
   }
 
   get trace() {
-    return "{BudgetBuilder " + this.targetRange.trace + "}";
+    return `BudgetBuilder ${this.targetRange.trace}`;
   }
 
   static saveAsPDF() {

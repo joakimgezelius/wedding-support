@@ -108,7 +108,7 @@ class EventRow extends RangeRow {
   get unitCost()            { return this.get("UnitCost");  } // Accept blank
   get totalNativeGrossCost(){ return this.quantity * this.nativeUnitCostWithVAT; }
   get totalGrossCost()      { return this.get("TotalGrossCost");  } // Accept blank
-  get totalNettCost()       { return this.get("TotalCost");  } // Accept blank
+  get totalNetCost()        { return this.get("TotalCost");  } // Accept blank
   get markup()              { return this.get("Markup"); } // Accept ref errors
   get commissionPercentage(){ return this.get("CommissionPercentage"); } // Accept ref errors
   get unitPrice()           { return this.get("UnitPrice"); } // Accept blank
@@ -135,7 +135,7 @@ class EventRow extends RangeRow {
   set nativeUnitCostWithVAT(value) { this.set("NativeUnitCostWithVAT", value); }
   set unitCost(value)       { this.set("UnitCost", value); }
   set totalGrossCost(value) { this.set("TotalGrossCost", value); }
-  set totalNettCost(value)  { this.set("TotalCost", value); }
+  set totalNetCost(value)  { this.set("TotalCost", value); }
   set unitPrice(value)      { this.set("UnitPrice", value); }
   set totalPrice(value)     { this.set("TotalPrice", value); }
   set commissionPercentage(value) { this.set("CommissionPercentage", value); }
