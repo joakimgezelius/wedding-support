@@ -176,9 +176,13 @@ class Spreadsheet {
   }
 
   static setCellValue(rangeName, value) {
-    let nativeRange = SpreadsheetApp.getActiveSpreadsheet().getRangeByName(rangeName);
-    nativeRange.getCell(1,1).setValue(value);
-    trace(`Spreadsheet.setCellValue(${rangeName}, ${value})`);
+    try {
+      let nativeRange = SpreadsheetApp.getActiveSpreadsheet().getRangeByName(rangeName);
+      nativeRange.getCell(1,1).setValue(value);
+      trace(`Spreadsheet.setCellValue(${rangeName}, ${value})`);
+    } catch (e) {
+      trace(`Spreadsheet.setCellValue(${rangeName}, ${value}) failed: ${e}`);
+    }
   }
 
   static getCellValueLinkUrl(rangeName) {
