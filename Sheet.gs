@@ -175,6 +175,12 @@ class Spreadsheet {
     return value;
   }
 
+  static setCellValue(rangeName, value) {
+    let nativeRange = SpreadsheetApp.getActiveSpreadsheet().getRangeByName(rangeName);
+    nativeRange.getCell(1,1).setValue(value);
+    trace(`Spreadsheet.setCellValue(${rangeName}, ${value})`);
+  }
+
   static getCellValueLinkUrl(rangeName) {
     let nativeRange = SpreadsheetApp.getActiveSpreadsheet().getRangeByName(rangeName);
     // https://developers.google.com/apps-script/reference/spreadsheet/rich-text-value#getLinkUrl()

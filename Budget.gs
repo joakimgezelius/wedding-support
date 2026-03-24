@@ -46,7 +46,7 @@ class BudgetBuilder {
   }
 
   onEnd() {
-    trace("BudgetBuilder.onEnd - fill final title sum, autofit & trim");
+    trace("BudgetBuilder.onEnd - fill final title sum, autofit, trim & timestamp");
     if (this.currentTitleSum == 0) {     // Last section is empty?
       this.targetRange.getPreviousRow(); //  yes - Back up one row (last title will be trimmed away)
     }
@@ -57,6 +57,9 @@ class BudgetBuilder {
     this.targetSheet.nativeSheet.setColumnWidth(2, 500);
 //  this.targetSheet.autoResizeColumns(3, this.targetSheet.getMaxColumns());
     this.targetRange.trim(); // delete excessive rows at the end
+    
+    // Add timestamp
+    Spreadsheet.setCellValue("BudgetTimestamp", TimeUtils.timestamp);
   }
 
   onTitle(row) {

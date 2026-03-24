@@ -153,3 +153,12 @@ class StringUtils {
   }
 
 }
+
+class TimeUtils {
+  static get timestamp() { 
+    // https://developers.google.com/apps-script/reference/document/date
+    //https://developers.google.com/apps-script/reference/utilities/utilities#formatdatedate,-timezone,-format
+    const timestamp = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyyy-MM-dd HH:mm');
+    return timestamp;
+  }
+}

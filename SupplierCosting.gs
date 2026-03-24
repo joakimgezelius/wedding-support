@@ -60,6 +60,9 @@ class SupplierCostingBuilder {
 //  this.targetSheet.nativeSheet.setColumnWidth(2, 500);
 //  this.targetSheet.autoResizeColumns(3, this.targetSheet.getMaxColumns());
     this.targetRange.trim(); // delete excessive rows at the end
+
+    // Add timestamp
+    Spreadsheet.setCellValue("SupplierCostingTimestamp", TimeUtils.timestamp);
   }
 
   onTitle(row) {
