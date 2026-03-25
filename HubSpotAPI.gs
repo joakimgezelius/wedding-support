@@ -15,7 +15,7 @@ function onUpdateClientData() {
 class HubSpot {
 
   static get token() {
-    if (this._token === undefined) {
+    if (this._token === undefined) { // Lazy singleton pattern
       trace("Getting HubSpot token from Script Properties");
       this._token = PropertiesService.getScriptProperties().getProperty('HUBSPOT_PRIVATE_APP_TOKEN');
     }

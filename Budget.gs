@@ -130,6 +130,50 @@ class BudgetBuilder {
   }
 
   static saveAsPDF() {
-    ;
+    trace("BudgetBuilder.saveAsPDF");
+
+    const activeSpreadsheet = Spreadsheet.active;
+    const spreadsheetId = activeSpreadsheet.id;
+    const sheetId = activeSpreadsheet.getRangeByName("Budget", true).sheet.id;
+
+    const exportUrlBase = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/export`;
+    const exportParams = {
+      format: "pdf",
+      gid: sheetId,
+      portrait: "true",
+      fitw: "true",
+      top_margin: "0.50",
+      bottom_margin: "0.50",
+      left_margin: "0.50",
+      right_margin: "0.50",
+      sheetnames: "false",
+      printtitle: "false",
+      pagenumbers: "false",
+      gridlines: "false",
+      fzr: "false",
+    };
+
+    const query = Object.keys(exportParams)
+      .map((k) => `${encodeURIComponent(k)}=${encodeURIComponent(exportParams[k])}`)
+      .join("&");
+    const exportUrl = `${exportUrlBase}?${query}`;
+
+    const token = ScriptApp.getOAuthToken();
+    const response = UrlFetchApp.fetch(exportUrl, {
+      headers: { Authorization: `Bearer ${token}` },
+      muteHttpExceptions: false,
+    });
+
+    const timestamp = Spreadsheet.getCellDisplayValue("BudgetTimestamp").replace(":", ".");
+    const fileName = `${activeSpreadsheet.name} - Budget - ${timestamp}.pdf`;
+    const blob = response.getBlob().setName(fileName);
+
+    const spreadsheetFile = DriveApp.getFileById(spreadsheetId);
+    const parents = spreadsheetFile.getParents();
+    const destinationFolder = parents.hasNext() ? parents.next() : DriveApp.getRootFolder();
+    const createdFile = destinationFolder.createFile(blob);
+
+    Dialog.notify("Budget PDF saved", `Saved "${fileName}" to Drive folder "${destinationFolder.getName()}".\n\n${createdFile.getUrl()}`);
+    return new File(createdFile);
   }
 } // BudgetBuilder

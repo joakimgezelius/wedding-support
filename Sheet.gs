@@ -110,6 +110,7 @@ class Sheet {
   activate()                  { this.nativeSheet.activate; return this; }
   
   get nativeSheet()      { return this._nativeSheet; }
+  get id()               { return this._nativeSheet.getSheetId(); }
   get name()             { return this.nativeSheet === null ? "NULL" : this.nativeSheet.getName(); }
   get maxColumns()       { return this.nativeSheet.getMaxColumns(); }
   get maxRows()          { return this.nativeSheet.getMaxRows(); }
@@ -129,8 +130,6 @@ class Sheet {
 // Wrapper for https://developers.google.com/apps-script/reference/spreadsheet/spreadsheet
 //
 
-let _activeSpreadsheet = null;
-
 class Spreadsheet {
 
   constructor(nativeSpreadsheet) {
@@ -141,9 +140,10 @@ class Spreadsheet {
   }
 
   static get active() {
-    return _activeSpreadsheet === null 
-      ? _activeSpreadsheet = new Spreadsheet(SpreadsheetApp.getActiveSpreadsheet())
-      : _activeSpreadsheet;
+    if (this._activeSpreadsheet === undefined) { // Lazy singleton pattern
+      this._activeSpreadsheet = new Spreadsheet(SpreadsheetApp.getActiveSpreadsheet())
+    }
+    return this._activeSpreadsheet;
   } 
 
   static openById(id) {
@@ -172,6 +172,13 @@ class Spreadsheet {
     let nativeRange = SpreadsheetApp.getActiveSpreadsheet().getRangeByName(rangeName);
     let value = nativeRange.getCell(1,1).getValue();
     trace(`Spreadsheet.getCellValue(${rangeName}) --> ${value}`);
+    return value;
+  }
+
+  static getCellDisplayValue(rangeName) {
+    let nativeRange = SpreadsheetApp.getActiveSpreadsheet().getRangeByName(rangeName);
+    let value = nativeRange.getCell(1,1).getDisplayValue();
+    trace(`Spreadsheet.getCellDisplayValue(${rangeName}) --> ${value}`);
     return value;
   }
 
