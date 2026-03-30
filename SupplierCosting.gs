@@ -34,6 +34,7 @@ class SupplierCostingBuilder {
     this.currentSupplierCurrencyFormat = Helper.currencyFormat(this.currentSupplierCurrency);
     this.currentSupplierGrossSum = 0;
     this.currentSupplierCommissionSum = 0;
+    this.currentSupplierNetSum = 0;
     this.currentSupplierClientPriceSum = 0;
     this.currentSupplierMarginSum = 0;
     this.eurGbpRate = Spreadsheet.getCellValue("EURGBP");
@@ -80,45 +81,46 @@ class SupplierCostingBuilder {
       this.currentSectionRows++;
       trace(`SupplierCostingBuilder.onRow ${this.currentSection}:${this.currentSectionRows} ${row.description}`);
 
-      var totalNativeGrossCost = Number(row.totalNativeGrossCost);
-      this.currentSupplierGrossSum += Number(row.totalNetCost); // Summing gross cost for the supplier sub-header
+      const totalNativeGrossCost = Number(row.totalNativeGrossCost); // Note: this is a calculated value, [native unit cost] x [quantity]
+      this.currentSupplierGrossSum += totalNativeGrossCost; // Summing gross cost for the supplier sub-header
 
-      var totalClientPrice = Number(row.totalPrice);
+      const totalClientPrice = Number(row.totalPrice);
       this.currentSupplierClientPriceSum += Number(totalClientPrice);
 
       // Commission calculations
-      var commissionPercentage = Number(row.commissionPercentage);
-      var commissionAmount = commissionPercentage * totalNativeGrossCost;
+      const commissionPercentage = Number(row.commissionPercentage);
+      const commissionAmount = commissionPercentage * totalNativeGrossCost;
       this.currentSupplierCommissionSum += commissionAmount;  // Summing commission for the supplier sub-header
 
-      // Margin calculations
-      var margin = totalClientPrice - totalNativeGrossCost / (row.currency == "GBP" ? 1 : this.eurGbpRate) + commissionAmount;
-      this.currentSupplierMarginSum += margin;  // Summing margin for the supplier sub-header
-      var marginPercentage = (totalClientPrice != 0 ? margin / totalClientPrice : "-");
+      const totalNativeNetCost = totalNativeGrossCost - commissionAmount;
+      this.currentSupplierNetSum += Number(totalNativeNetCost); // Summing net cost for the supplier sub-header
 
-      let targetRow = this.targetRange.getNextRowAndExtend();
+      // Margin calculations
+      const margin = totalClientPrice - totalNativeGrossCost / (row.currency == "GBP" ? 1 : this.eurGbpRate) + commissionAmount;
+      this.currentSupplierMarginSum += margin;  // Summing margin for the supplier sub-header
+      const marginPercentage = (totalClientPrice != 0 ? margin / totalClientPrice : "-");
+
+      const targetRow = this.targetRange.getNextRowAndExtend();
       let column = 1;
-      targetRow.getCell(1,column++).setValue(row.description);
-      targetRow.getCell(1,column++).setValue(row.status);
+      targetRow.getCell(1,column++).setValue(row.description); // Description
+      targetRow.getCell(1,column++).setValue(row.status); // Status
       targetRow.getCell(1,column++).setValue(row.quantity);  // Quantity
-      targetRow.getCell(1,column++).setValue(row.nativeUnitCostWithVAT !== 0 ? row.nativeUnitCostWithVAT : "").setNumberFormat(row.currencyFormat);
-      targetRow.getCell(1,column++).setValue(totalNativeGrossCost !== 0 ? totalNativeGrossCost : "").setNumberFormat(row.currencyFormat);
-      targetRow.getCell(1,column++).setValue(totalClientPrice !== 0 ? totalClientPrice : "").setNumberFormat("£ #,##0.00");
-      
+      targetRow.getCell(1,column++).setValue(row.nativeUnitCostWithVAT !== 0 ? row.nativeUnitCostWithVAT : "").setNumberFormat(row.currencyFormat); // Unit cost with VAT
+      targetRow.getCell(1,column++).setValue(totalNativeGrossCost !== 0 ? totalNativeGrossCost : "").setNumberFormat(row.currencyFormat); // Total gross cost
       if (commissionPercentage !== 0) { // Only show if there is a commission
-        targetRow.getCell(1,column++).setValue(commissionPercentage);  // Commission %
         targetRow.getCell(1,column++).setValue(commissionAmount !== 0 ? commissionAmount : "").setNumberFormat(row.currencyFormat);  // Commission amount
-      } 
-      else {
-        ++column;
-        ++column;
+        targetRow.getCell(1,column++).setValue(commissionPercentage).setNumberFormat("0%");  // Commission %
+      } else {
+        column += 2;
       }
-      targetRow.getCell(1,column++).setValue(marginPercentage);
-      targetRow.getCell(1,column++).setValue(margin);
-      targetRow.getCell(1,column++).setValue(row.itemNo);
-      targetRow.getCell(1,column++).setValue(row.currency);  // Currency
-      targetRow.getCell(1,column++).setValue(row.supplier);
-      targetRow.getCell(1,column++).setValue(row.location);
+      targetRow.getCell(1,column++).setValue(totalNativeNetCost !== 0 ? totalNativeNetCost : "").setNumberFormat(row.currencyFormat); // Total net cost
+      targetRow.getCell(1,column++).setValue(totalClientPrice !== 0 ? totalClientPrice : "").setNumberFormat("£ #,##0.00"); // Total client price
+      targetRow.getCell(1,column++).setValue(margin);           // Margin
+      targetRow.getCell(1,column++).setValue(marginPercentage).setNumberFormat("0%");; // Margin percentage
+      targetRow.getCell(1,column++).setValue(row.itemNo);       // Item number
+      targetRow.getCell(1,column++).setValue(row.currency);     // Currency
+      targetRow.getCell(1,column++).setValue(row.supplier);     // Supplier
+      targetRow.getCell(1,column++).setValue(row.location);     // Location
       targetRow.setFontWeight("normal");
       targetRow.setFontSize(10);
       targetRow.setBackground("#ffffff"); // White
@@ -156,22 +158,24 @@ class SupplierCostingBuilder {
     this.currentSectionRows = 0;
     this.currentSupplierGrossSum = 0;
     this.currentSupplierCommissionSum = 0;
+    this.currentSupplierNetSum = 0;
     this.currentSupplierClientPriceSum = 0;
     this.currentSupplierMarginSum = 0;
   }
 
   fillSectionHeader() {
     let headerRow = this.sectionHeaderRow;
-    headerRow.getCell(1,13).setValue(this.currentSupplier);  // Set supplier in supplier column
+    headerRow.getCell(1,14).setValue(this.currentSupplier);  // Set supplier in supplier column
     headerRow.getCell(1,1).setValue(this.currentSupplier);   // Also set supplier header in column 1 (Description)
     headerRow.getCell(1,5).setValue(this.currentSupplierGrossSum).setNumberFormat(this.currentSupplierCurrencyFormat);
     if (this.currentSupplierCommissionSum > 0) { // Only fill in a commission sum if non-zero
-      headerRow.getCell(1,8).setValue(this.currentSupplierCommissionSum).setNumberFormat(this.currentSupplierCurrencyFormat);
+      headerRow.getCell(1,6).setValue(this.currentSupplierCommissionSum).setNumberFormat(this.currentSupplierCurrencyFormat);
     }
-    headerRow.getCell(1,6).setValue(this.currentSupplierClientPriceSum).setNumberFormat("£ #,##0.00");
+    headerRow.getCell(1,8).setValue(this.currentSupplierNetSum).setNumberFormat(this.currentSupplierCurrencyFormat);
+    headerRow.getCell(1,9).setValue(this.currentSupplierClientPriceSum).setNumberFormat("£ #,##0.00");
     headerRow.getCell(1,10).setValue(this.currentSupplierMarginSum).setNumberFormat("£ #,##0.00");
     let marginPercentage = (this.currentSupplierClientPriceSum != 0 ? this.currentSupplierMarginSum / this.currentSupplierClientPriceSum : "-");
-    headerRow.getCell(1,9).setValue(marginPercentage).setNumberFormat("0%");
+    headerRow.getCell(1,11).setValue(marginPercentage).setNumberFormat("0%");
 
     // Format the row
     headerRow.setFontWeight("bold");
