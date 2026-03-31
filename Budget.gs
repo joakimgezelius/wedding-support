@@ -170,7 +170,10 @@ class BudgetBuilder {
 
     const spreadsheetFile = DriveApp.getFileById(spreadsheetId);
     const parents = spreadsheetFile.getParents();
-    const destinationFolder = parents.hasNext() ? parents.next() : DriveApp.getRootFolder();
+    const homeFolder = parents.hasNext() ? parents.next() : DriveApp.getRootFolder();
+    const destinationFolderName = "Budgets & Invoices";
+    const candidateFolders = homeFolder.getFoldersByName(destinationFolderName);
+    const destinationFolder = candidateFolders.hasNext() ? candidateFolders.next() : homeFolder;
     const createdFile = destinationFolder.createFile(blob);
 
     Dialog.notify("Budget PDF saved", `Saved "${fileName}" to Drive folder "${destinationFolder.getName()}".\n\n${createdFile.getUrl()}`);
