@@ -45,6 +45,7 @@ class Menu {
         .addSubMenu(ui.createMenu("Sheet Maintenance")
           .addItem("Apply Format Template", libName + ".onApplyFormat")                                     // In SheetFormat.gs
           .addItem("Format Coordinator", libName + ".onFormatCoordinator")                                  // In SheetFormat.gs
+          .addItem("Install New Org Charges Sheet", libName + ".onInstallOrgChargesSheet")                  // In SheetMaintenance.gs
           .addItem("Install New Summary Sheet", libName + ".onInstallSummarySheet")                         // In SheetMaintenance.gs
           .addItem("Install New Client Budget Sheet", libName + ".onInstallClientBudgetSheet")              // In SheetMaintenance.gs
           .addItem("Install New Supplier Costing Sheet", libName + ".onInstallSupplierCostingSheet")        // In SheetMaintenance.gs

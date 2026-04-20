@@ -1,18 +1,22 @@
 // Weddings & Events > Templates & Snippets >  > 2026 Wedding Template (USE THIS ONE ONLY)
 const templateSheetUrl = "https://docs.google.com/spreadsheets/d/1uBFQrefEIyegbogwe8u0r_QYCcD9CxlWh5BMzwBH3bs/edit?gid=1229250297#gid=1229250297";
+const orgChargesSheetName = "Org Charges";
 const summarySheetName = "Summary";
 const clientBudgetSheetName = "Client Budget";
 const supplierCostingSheetName = "Supplier Costing";
 const logisticsSheetName = "Logistics";
 const paramsSheetName = "Params";
 const instructionsSheetName = "Instructions";
-const orgChargesSheetName = "Org Charges";
 const emailsSheetName = "Emails to Clients";
 
 function onCleanUpNamedRanges() {
   trace("> onCleanUpNamedRanges");
   SheetMaintenance.cleanUpNamedRanges();
   trace("< onCleanUpNamedRanges");
+}
+
+function onInstallOrgChargesSheet() {
+  SheetMaintenance.installSheetTemplate(templateSheetUrl, orgChargesSheetName);
 }
 
 function onInstallSummarySheet() {
